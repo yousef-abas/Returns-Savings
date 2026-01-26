@@ -3,107 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Analytics - Private</title>
+    <title>Returns Dashboard - Classic Dark</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        #loginOverlay { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        body { font-family: 'Outfit', sans-serif; background: #f8fafc; }
-        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        /* شاشة تسجيل الدخول */
+        #loginOverlay {
+            position: fixed; inset: 0; background: #0f172a; 
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+        }
+        .login-card { background: white; padding: 40px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
+        
+        /* تصميم الداش بورد القديم */
+        body { background-color: #f0f2f5; font-family: sans-serif; }
+        .main-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 2rem; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; border-bottom: 4px solid #10b981; }
+        .input-section { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .hidden-content { display: none; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-10">
 
     <div id="loginOverlay">
-        <div class="bg-white p-10 rounded-3xl shadow-2xl text-center w-full max-w-sm">
-            <h2 class="text-2xl font-bold mb-4">Admin Login 🔒</h2>
-            <input type="password" id="passInput" placeholder="Enter Password" class="w-full p-3 border rounded-xl mb-4 text-center outline-emerald-500">
-            <button onclick="checkPass()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold hover:bg-emerald-700 transition">Access Dashboard</button>
-            <p id="loginError" class="text-rose-500 mt-2 hidden">Wrong Password!</p>
+        <div class="login-card shadow-2xl">
+            <h2 class="text-xl font-bold mb-4 text-slate-800">ادخل الرقم السري 🔒</h2>
+            <input type="password" id="passInput" class="w-full p-3 border rounded-xl mb-4 text-center border-slate-300 outline-none focus:border-emerald-500">
+            <button onclick="checkPass()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold hover:bg-slate-800">دخول</button>
+            <p id="loginError" class="text-red-500 mt-2 hidden text-sm">عفواً، الرقم السري خطأ!</p>
         </div>
     </div>
 
     <div id="mainDashboard" class="hidden-content">
-        <nav class="bg-slate-900 p-6 text-white mb-8 flex justify-between items-center px-10">
-            <h1 class="text-xl font-bold">RETURNS PRO v4</h1>
-            <button onclick="location.reload()" class="text-xs bg-white/10 px-3 py-1 rounded">Logout</button>
-        </nav>
+        <header class="main-header mb-8">
+            <div class="container mx-auto flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold">Returns Dashboard</h1>
+                    <p class="text-slate-400 text-sm">Tracking Savings & Issues</p>
+                </div>
+                <button onclick="location.reload()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-xs">خروج</button>
+            </div>
+        </header>
 
-        <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-3">
-                <div class="card sticky top-8">
-                    <h2 class="font-bold border-b pb-2 mb-4">New Entry</h2>
-                    <form onsubmit="addEntry(event)" class="space-y-4">
-                        <input type="date" id="date" class="w-full p-2 border rounded-lg" required>
-                        <input type="text" id="orderId" placeholder="Order ID" class="w-full p-2 border rounded-lg" required>
-                        <input type="text" id="asin" placeholder="ASIN" class="w-full p-2 border rounded-lg" required>
-                        <input type="number" step="0.01" id="price" placeholder="Price/Savings" class="w-full p-2 border rounded-lg" required>
-                        <select id="issue" class="w-full p-2 border rounded-lg">
+        <main class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card text-center">
+                    <h3 class="text-slate-500 text-sm font-bold uppercase mb-2">Total Savings</h3>
+                    <p id="totalSavings" class="text-3xl font-black text-emerald-600">0</p>
+                </div>
+                <div class="stat-card text-center" style="border-bottom-color: #3b82f6;">
+                    <h3 class="text-slate-500 text-sm font-bold uppercase mb-2">Total Items</h3>
+                    <p id="totalItems" class="text-3xl font-black text-blue-600">0</p>
+                </div>
+                <div class="stat-card text-center" style="border-bottom-color: #f59e0b;">
+                    <h3 class="text-slate-500 text-sm font-bold uppercase mb-2">Sync Status</h3>
+                    <p id="syncStatus" class="text-sm font-bold mt-2 text-amber-500">Local Mode</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="input-section">
+                    <h2 class="text-xl font-bold mb-6 text-slate-800 border-b pb-2">Add New Record</h2>
+                    <form onsubmit="saveData(event)" class="space-y-4">
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Date</label><input type="date" id="date" class="w-full p-3 border rounded-xl" required></div>
+                        <input type="text" id="orderId" placeholder="Order ID" class="w-full p-3 border rounded-xl" required>
+                        <input type="text" id="asin" placeholder="ASIN" class="w-full p-3 border rounded-xl uppercase" required>
+                        <input type="number" step="0.01" id="price" placeholder="Price / Value" class="w-full p-3 border rounded-xl" required>
+                        <select id="issue" class="w-full p-3 border rounded-xl">
                             <option value="Fake item">Fake item</option>
                             <option value="Empty box">Empty box</option>
                             <option value="Switch item">Switch item</option>
                             <option value="Broken">Broken</option>
-                            <option value="Missing part">Missing part</option>
                             <option value="Other">Other</option>
                         </select>
-                        <select id="road" class="w-full p-2 border rounded-lg">
-                            <option value="RTN">RTN</option>
-                            <option value="RTO">RTO</option>
+                        <select id="road" class="w-full p-3 border rounded-xl text-emerald-600 font-bold">
+                            <option value="RTN">RTN (Return)</option>
+                            <option value="RTO (Return to Origin)">RTO</option>
                         </select>
-                        <button type="submit" id="saveBtn" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold shadow-lg shadow-emerald-200">Save Transaction</button>
+                        <button type="submit" id="saveBtn" class="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-emerald-700 transition-all">+ Save Transaction</button>
                     </form>
                 </div>
+
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 class="text-center font-bold text-slate-600 mb-4">Issue Types</h3>
+                            <canvas id="issueChart" style="max-height: 250px;"></canvas>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 class="text-center font-bold text-slate-600 mb-4">Return Road</h3>
+                            <canvas id="roadChart" style="max-height: 250px;"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-800 text-white text-xs uppercase">
+                                <tr>
+                                    <th class="p-4">Date</th>
+                                    <th class="p-4">Order / ASIN</th>
+                                    <th class="p-4">Issue</th>
+                                    <th class="p-4 text-right">Value</th>
+                                    <th class="p-4 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-
-            <div class="lg:col-span-9 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                    <div class="card"><span class="text-xs text-slate-400 font-bold uppercase">Total Savings</span><p class="text-2xl font-bold text-emerald-600" id="mTotal">0</p></div>
-                    <div class="card"><span class="text-xs text-slate-400 font-bold uppercase">Items Count</span><p class="text-2xl font-bold" id="iCount">0</p></div>
-                    <div class="card"><span class="text-xs text-slate-400 font-bold uppercase">Cloud Sync</span><p id="syncStatus" class="text-xs font-bold text-amber-500">Wait for Sync...</p></div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="card"><h3 class="font-bold mb-4 text-center text-xs uppercase text-slate-400">Issues Distribution</h3><div class="h-64"><canvas id="issueChart"></canvas></div></div>
-                    <div class="card"><h3 class="font-bold mb-4 text-center text-xs uppercase text-slate-400">Return Road</h3><div class="h-64"><canvas id="roadChart"></canvas></div></div>
-                </div>
-
-                <div class="card overflow-hidden p-0">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 border-b text-[10px] uppercase text-slate-400">
-                            <tr><th class="p-4">Date</th><th class="p-4">Order / ASIN</th><th class="p-4 text-right">Value</th><th class="p-4 text-center">X</th></tr>
-                        </thead>
-                        <tbody id="tableBody" class="divide-y"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 
     <script>
-        // --- الإعدادات الهامة ---
-        const DASHBOARD_PASS = "2066"; // كلمة سر الدخول
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqkCTgox5u1cQ3xWErHYE-04sqwraWP8o411mlfoG3WPZPN08sNwJJmUtKAjpq_P_NUA/exec"; // ضع رابط الـ Web App هنا
-        // -----------------------
+        // --- الإعدادات ---
+        const PASSWORD = "2066"; // الرقم السري
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqkCTgox5u1cQ3xWErHYE-04sqwraWP8o411mlfoG3WPZPN08sNwJJmUtKAjpq_P_NUA/exec"; 
+        // ----------------
 
-        let entries = JSON.parse(localStorage.getItem('returns_v4_data') || "[]");
-        let charts = {};
+        let records = JSON.parse(localStorage.getItem('returns_v4_classic') || "[]");
+        let myCharts = {};
 
         function checkPass() {
-            if(document.getElementById('passInput').value === DASHBOARD_PASS) {
+            if(document.getElementById('passInput').value === PASSWORD) {
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('mainDashboard').classList.remove('hidden-content');
-                updateUI();
+                updateDisplay();
             } else {
                 document.getElementById('loginError').classList.remove('hidden');
             }
         }
 
-        async function addEntry(e) {
+        async function saveData(e) {
             e.preventDefault();
             const btn = document.getElementById('saveBtn');
-            const data = {
+            const newRecord = {
                 id: Date.now(),
                 date: document.getElementById('date').value,
                 orderId: document.getElementById('orderId').value,
@@ -113,74 +146,74 @@
                 road: document.getElementById('road').value
             };
 
-            // حفظ محلي
-            entries.push(data);
-            localStorage.setItem('returns_v4_data', JSON.stringify(entries));
-            updateUI();
+            records.push(newRecord);
+            localStorage.setItem('returns_v4_classic', JSON.stringify(records));
+            updateDisplay();
             e.target.reset();
             document.getElementById('date').valueAsDate = new Date();
 
             // إرسال لجوجل شيت
-            if(SCRIPT_URL.includes("google.com")) {
+            if(GOOGLE_SCRIPT_URL.startsWith("https")) {
                 btn.innerText = "Syncing...";
                 try {
-                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-                    document.getElementById('syncStatus').innerText = "Synced ✅";
-                    document.getElementById('syncStatus').className = "text-xs font-bold text-emerald-500";
-                } catch(e) { console.error(e); }
-                btn.innerText = "Save Transaction";
+                    await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(newRecord) });
+                    document.getElementById('syncStatus').innerText = "Synced to Cloud ✅";
+                    document.getElementById('syncStatus').className = "text-sm font-bold mt-2 text-emerald-500";
+                } catch(err) { console.log(err); }
+                btn.innerText = "+ Save Transaction";
             }
         }
 
-        function updateUI() {
-            const body = document.getElementById('tableBody');
-            body.innerHTML = '';
+        function updateDisplay() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
             let total = 0;
 
-            entries.slice().reverse().forEach(e => {
-                total += e.price;
-                body.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-4 text-[10px] text-slate-400 font-mono">${e.date}</td>
-                        <td class="p-4"><div class="font-bold text-slate-700">${e.orderId}</div><div class="text-[10px] text-indigo-500 font-bold">${e.asin}</div></td>
-                        <td class="p-4 text-right font-bold text-emerald-600">+${e.price.toLocaleString()}</td>
-                        <td class="p-4 text-center"><button onclick="deleteItem(${e.id})" class="text-rose-300 hover:text-rose-500 text-lg">✕</button></td>
+            records.slice().reverse().forEach(item => {
+                total += item.price;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-4 text-xs text-slate-400 font-mono">${item.date}</td>
+                        <td class="p-4 font-bold text-slate-700">${item.orderId}<br><span class="text-[10px] text-blue-500">${item.asin}</span></td>
+                        <td class="p-4 text-xs"><span class="px-2 py-1 bg-slate-100 rounded-full">${item.issue}</span></td>
+                        <td class="p-4 text-right font-black text-emerald-600 font-mono">+${item.price.toLocaleString()}</td>
+                        <td class="p-4 text-center"><button onclick="deleteRow(${item.id})" class="text-red-300 hover:text-red-600">✕</button></td>
                     </tr>`;
             });
 
-            document.getElementById('mTotal').innerText = total.toLocaleString();
-            document.getElementById('iCount').innerText = entries.length;
+            document.getElementById('totalSavings').innerText = total.toLocaleString();
+            document.getElementById('totalItems').innerText = records.length;
             renderCharts();
         }
 
         function renderCharts() {
-            const issueCounts = {};
-            const roadCounts = {RTN:0, RTO:0};
-            entries.forEach(e => {
-                issueCounts[e.issue] = (issueCounts[e.issue] || 0) + 1;
-                roadCounts[e.road]++;
+            const issueMap = {};
+            const roadMap = {RTN:0, RTO:0};
+            records.forEach(r => {
+                issueMap[r.issue] = (issueMap[r.issue] || 0) + 1;
+                if(r.road.includes("RTN")) roadMap.RTN++; else roadMap.RTO++;
             });
 
-            if(charts.iss) charts.iss.destroy();
-            charts.iss = new Chart(document.getElementById('issueChart'), {
-                type: 'pie',
-                data: { labels: Object.keys(issueCounts), datasets: [{ data: Object.values(issueCounts), backgroundColor: ['#6366f1','#ec4899','#f59e0b','#10b981','#06b6d4','#ef4444'] }] },
-                options: { maintainAspectRatio: false }
+            if(myCharts.iss) myCharts.iss.destroy();
+            myCharts.iss = new Chart(document.getElementById('issueChart'), {
+                type: 'doughnut',
+                data: { labels: Object.keys(issueMap), datasets: [{ data: Object.values(issueMap), backgroundColor: ['#10b981','#3b82f6','#f59e0b','#ef4444','#8b5cf6'] }] },
+                options: { plugins: { legend: { position: 'bottom' } } }
             });
 
-            if(charts.rod) charts.rod.destroy();
-            charts.rod = new Chart(document.getElementById('roadChart'), {
+            if(myCharts.rod) myCharts.rod.destroy();
+            myCharts.rod = new Chart(document.getElementById('roadChart'), {
                 type: 'pie',
-                data: { labels: Object.keys(roadCounts), datasets: [{ data: Object.values(roadCounts), backgroundColor: ['#10b981','#f43f5e'] }] },
-                options: { maintainAspectRatio: false }
+                data: { labels: ['RTN', 'RTO'], datasets: [{ data: [roadMap.RTN, roadMap.RTO], backgroundColor: ['#10b981', '#f43f5e'] }] },
+                options: { plugins: { legend: { position: 'bottom' } } }
             });
         }
 
-        function deleteItem(id) {
-            if(confirm('Delete permanently?')) {
-                entries = entries.filter(e => e.id !== id);
-                localStorage.setItem('returns_v4_data', JSON.stringify(entries));
-                updateUI();
+        function deleteRow(id) {
+            if(confirm('Delete this record?')) {
+                records = records.filter(r => r.id !== id);
+                localStorage.setItem('returns_v4_classic', JSON.stringify(records));
+                updateDisplay();
             }
         }
         document.getElementById('date').valueAsDate = new Date();
