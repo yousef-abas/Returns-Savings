@@ -1,84 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Dashboard - Classic</title>
+    <title>Returns Monitor Classic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* شاشة تسجيل الدخول */
         #loginOverlay { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .login-card { background: white; padding: 40px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
-        
-        /* التصميم القديم اللي إنت بتحبه */
-        body { background-color: #f0f2f5; font-family: sans-serif; }
-        .header-classic { background: #1e293b; color: white; padding: 25px; border-bottom: 5px solid #10b981; }
-        .card-old { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        body { background-color: #f1f5f9; font-family: sans-serif; }
+        .old-style-header { background: #1e293b; color: white; padding: 25px; border-bottom: 5px solid #10b981; text-align: center; }
+        .old-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .hidden-content { display: none; }
+        table thead { background: #334155; color: white; }
     </style>
 </head>
 <body>
-
     <div id="loginOverlay">
-        <div class="login-card shadow-2xl">
-            <h2 class="text-xl font-bold mb-4">ادخل الرقم السري 🔒</h2>
-            <input type="password" id="passInput" class="w-full p-3 border rounded-xl mb-4 text-center">
-            <button onclick="checkPass()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold">دخول</button>
-            <p id="loginError" class="text-red-500 mt-2 hidden text-sm">الرقم السري خطأ!</p>
+        <div class="bg-white p-10 rounded-2xl shadow-2xl text-center w-80">
+            <h2 class="text-xl font-bold mb-4">Password Required 🔒</h2>
+            <input type="password" id="passInput" class="border-2 p-2 rounded-lg mb-4 w-full text-center outline-none focus:border-emerald-500" placeholder="0000">
+            <button onclick="checkPass()" class="w-full bg-emerald-600 text-white p-3 rounded-lg font-bold hover:bg-emerald-700">Open Dashboard</button>
         </div>
     </div>
 
     <div id="mainDashboard" class="hidden-content">
-        <div class="header-classic mb-8">
-            <div class="container mx-auto flex justify-between items-center">
-                <h1 class="text-2xl font-bold italic">RETURNS MONITOR</h1>
-                <button onclick="location.reload()" class="bg-white/10 px-3 py-1 rounded text-xs">خروج</button>
-            </div>
+        <div class="old-style-header mb-8">
+            <h1 class="text-2xl font-black italic tracking-widest">RETURNS ANALYTICS CLASSIC</h1>
         </div>
 
-        <div class="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div class="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-4 gap-8">
             <div class="lg:col-span-1">
-                <div class="card-old">
-                    <h3 class="font-bold border-b mb-4 pb-2">تسجيل جديد</h3>
-                    <form onsubmit="handleSave(event)" class="space-y-3">
-                        <input type="date" id="date" class="w-full p-2 border rounded" required>
-                        <input type="text" id="orderId" placeholder="Order ID" class="w-full p-2 border rounded" required>
-                        <input type="text" id="asin" placeholder="ASIN" class="w-full p-2 border rounded uppercase" required>
-                        <input type="number" step="0.01" id="price" placeholder="Price" class="w-full p-2 border rounded" required>
-                        <select id="issue" class="w-full p-2 border rounded">
-                            <option value="Fake item">Fake item</option>
-                            <option value="Empty box">Empty box</option>
-                            <option value="Switch item">Switch item</option>
-                            <option value="Broken">Broken</option>
-                        </select>
-                        <select id="road" class="w-full p-2 border rounded font-bold text-emerald-600">
-                            <option value="RTN">RTN</option>
-                            <option value="RTO">RTO</option>
-                        </select>
-                        <button type="submit" id="saveBtn" class="w-full bg-emerald-600 text-white p-3 rounded-lg font-bold uppercase hover:bg-emerald-700">Save</button>
+                <div class="old-card">
+                    <h3 class="font-bold border-b-2 border-emerald-500 mb-4 pb-2">New Entry</h3>
+                    <form onsubmit="handleSave(event)" class="space-y-4">
+                        <input type="date" id="date" class="w-full p-2 border rounded-lg" required>
+                        <input type="text" id="orderId" placeholder="Order ID" class="w-full p-2 border rounded-lg" required>
+                        <input type="text" id="asin" placeholder="ASIN" class="w-full p-2 border rounded-lg uppercase" required>
+                        <input type="number" step="0.01" id="price" placeholder="Price/Value" class="w-full p-2 border rounded-lg" required>
+                        <select id="issue" class="w-full p-2 border rounded-lg"><option>Fake item</option><option>Empty box</option><option>Switch item</option><option>Broken</option></select>
+                        <select id="road" class="w-full p-2 border rounded-lg font-bold text-emerald-600"><option>RTN</option><option>RTO</option></select>
+                        <button type="submit" id="saveBtn" class="w-full bg-emerald-600 text-white p-4 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform">SAVE RECORD</button>
                     </form>
                 </div>
             </div>
 
             <div class="lg:col-span-3 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="card-old text-center bg-emerald-50"><p class="text-xs font-bold text-emerald-600 uppercase">Total Savings</p><p id="tSavings" class="text-2xl font-black">0</p></div>
-                    <div class="card-old text-center bg-blue-50"><p class="text-xs font-bold text-blue-600 uppercase">Total Items</p><p id="tItems" class="text-2xl font-black">0</p></div>
-                    <div class="card-old text-center bg-amber-50"><p class="text-xs font-bold text-amber-600 uppercase">Cloud Sync</p><p id="syncText" class="text-xs font-bold">Local</p></div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="old-card bg-emerald-50 border-b-4 border-emerald-500"><p class="text-[10px] font-bold text-emerald-600 uppercase">Total Savings</p><p id="tSavings" class="text-3xl font-black">0</p></div>
+                    <div class="old-card bg-blue-50 border-b-4 border-blue-500"><p class="text-[10px] font-bold text-blue-600 uppercase">Total Items</p><p id="tItems" class="text-3xl font-black">0</p></div>
+                    <div class="old-card bg-amber-50 border-b-4 border-amber-500"><p class="text-[10px] font-bold text-amber-600 uppercase">Sync Status</p><p id="syncText" class="text-xs font-bold mt-2">Active</p></div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="card-old"><h4 class="text-center font-bold mb-2">Issues</h4><canvas id="issChart"></canvas></div>
-                    <div class="card-old"><h4 class="text-center font-bold mb-2">Road</h4><canvas id="rodChart"></canvas></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="old-card"><h4 class="text-center text-xs font-bold mb-4 uppercase">Issues Breakdown</h4><canvas id="issChart"></canvas></div>
+                    <div class="old-card"><h4 class="text-center text-xs font-bold mb-4 uppercase">Return Road</h4><canvas id="rodChart"></canvas></div>
                 </div>
 
-                <div class="card-old overflow-x-auto p-0">
+                <div class="old-card p-0 overflow-hidden shadow-xl">
                     <table class="w-full text-sm">
-                        <thead class="bg-slate-100">
-                            <tr><th class="p-3 text-left">Date</th><th class="p-3 text-left">Order/ASIN</th><th class="p-3 text-right">Value</th><th class="p-3 text-center">X</th></tr>
-                        </thead>
-                        <tbody id="tableBody"></tbody>
+                        <thead><tr><th class="p-4 text-left">Date</th><th class="p-4 text-left">Order / ASIN</th><th class="p-4 text-right">Value</th><th class="p-4 text-center">X</th></tr></thead>
+                        <tbody id="tableBody" class="divide-y"></tbody>
                     </table>
                 </div>
             </div>
@@ -86,70 +68,53 @@
     </div>
 
     <script>
-        // --- الإعدادات الشخصية ---
-        const MY_PASS = "2066"; // الرقم السري
+        const MY_PASS = "2066"; 
         const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwqkCTgox5u1cQ3xWErHYE-04sqwraWP8o411mlfoG3WPZPN08sNwJJmUtKAjpq_P_NUA/exec"; 
-        // -----------------------
-
-        let dataStore = JSON.parse(localStorage.getItem('my_old_style_v4') || "[]");
-        let activeCharts = {};
+        
+        let dataStore = JSON.parse(localStorage.getItem('returns_classic_final') || "[]");
+        let charts = {};
 
         function checkPass() {
             if(document.getElementById('passInput').value === MY_PASS) {
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('mainDashboard').classList.remove('hidden-content');
-                renderUI();
+                render();
             } else { alert("Wrong Password!"); }
         }
 
         async function handleSave(e) {
             e.preventDefault();
-            const record = {
-                id: Date.now(),
-                date: document.getElementById('date').value,
-                orderId: document.getElementById('orderId').value,
-                asin: document.getElementById('asin').value.toUpperCase(),
-                price: parseFloat(document.getElementById('price').value),
-                issue: document.getElementById('issue').value,
-                road: document.getElementById('road').value
-            };
+            const record = { id: Date.now(), date: document.getElementById('date').value, orderId: document.getElementById('orderId').value, asin: document.getElementById('asin').value.toUpperCase(), price: parseFloat(document.getElementById('price').value), issue: document.getElementById('issue').value, road: document.getElementById('road').value };
             dataStore.push(record);
-            localStorage.setItem('my_old_style_v4', JSON.stringify(dataStore));
-            renderUI();
+            localStorage.setItem('returns_classic_final', JSON.stringify(dataStore));
+            render();
             e.target.reset();
             document.getElementById('date').valueAsDate = new Date();
-
-            if(GOOGLE_URL.startsWith("http")) {
-                try {
-                    await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(record) });
-                    document.getElementById('syncText').innerText = "Synced ✅";
-                } catch(err) { console.log(err); }
-            }
+            if(GOOGLE_URL) fetch(GOOGLE_URL, {method:'POST', mode:'no-cors', body:JSON.stringify(record)});
         }
 
-        function renderUI() {
-            const body = document.getElementById('tableBody');
-            body.innerHTML = '';
+        function render() {
+            const body = document.getElementById('tableBody'); body.innerHTML = '';
             let total = 0;
             dataStore.slice().reverse().forEach(d => {
                 total += d.price;
-                body.innerHTML += `<tr class="border-b"><td class="p-3 text-xs text-slate-400 font-mono">${d.date}</td><td class="p-3 font-bold">${d.orderId}<br><span class="text-blue-500 text-[10px]">${d.asin}</span></td><td class="p-3 text-right text-emerald-600 font-bold">+${d.price}</td><td class="p-3 text-center"><button onclick="del(${d.id})">✕</button></td></tr>`;
+                body.innerHTML += `<tr class="hover:bg-slate-50"><td class="p-4 text-xs text-slate-400">${d.date}</td><td class="p-4 font-bold">${d.orderId}<br><span class="text-blue-500 text-[10px]">${d.asin}</span></td><td class="p-4 text-right font-bold text-emerald-600">+${d.price}</td><td class="p-4 text-center"><button onclick="del(${d.id})" class="text-red-300">✕</button></td></tr>`;
             });
-            document.getElementById('tSavings').innerText = total;
+            document.getElementById('tSavings').innerText = total.toLocaleString();
             document.getElementById('tItems').innerText = dataStore.length;
-            drawCharts();
+            draw();
         }
 
-        function drawCharts() {
-            const issues = {}; const roads = {RTN:0, RTO:0};
-            dataStore.forEach(d => { issues[d.issue] = (issues[d.issue]||0)+1; roads[d.road]++; });
-            if(activeCharts.i) activeCharts.i.destroy();
-            activeCharts.i = new Chart(document.getElementById('issChart'), { type: 'doughnut', data: { labels: Object.keys(issues), datasets: [{ data: Object.values(issues), backgroundColor: ['#10b981','#3b82f6','#f59e0b','#ef4444'] }] } });
-            if(activeCharts.r) activeCharts.r.destroy();
-            activeCharts.r = new Chart(document.getElementById('rodChart'), { type: 'pie', data: { labels: ['RTN','RTO'], datasets: [{ data: [roads.RTN, roads.RTO], backgroundColor: ['#10b981','#f43f5e'] }] } });
+        function draw() {
+            const iss = {}; const rods = {RTN:0, RTO:0};
+            dataStore.forEach(d => { iss[d.issue] = (iss[d.issue]||0)+1; rods[d.road]++; });
+            if(charts.i) charts.i.destroy();
+            charts.i = new Chart(document.getElementById('issChart'), { type: 'doughnut', data: { labels: Object.keys(iss), datasets: [{ data: Object.values(iss), backgroundColor: ['#10b981','#3b82f6','#f59e0b','#ef4444'] }] } });
+            if(charts.r) charts.r.destroy();
+            charts.r = new Chart(document.getElementById('rodChart'), { type: 'pie', data: { labels: ['RTN','RTO'], datasets: [{ data: [roads.RTN, roads.RTO], backgroundColor: ['#10b981','#f43f5e'] }] } });
         }
 
-        function del(id) { dataStore = dataStore.filter(d => d.id !== id); localStorage.setItem('my_old_style_v4', JSON.stringify(dataStore)); renderUI(); }
+        function del(id) { dataStore = dataStore.filter(d => d.id !== id); localStorage.setItem('returns_classic_final', JSON.stringify(dataStore)); render(); }
         document.getElementById('date').valueAsDate = new Date();
     </script>
 </body>
