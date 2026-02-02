@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns & Savings - Cloud Sync</title>
+    <title>Returns & Savings - Top 10 Analysis</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -46,8 +46,10 @@
         .tab-active { background-color: #10b981; color: white; }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
 
-        .high-value { background-color: #fffbeb !important; border-left: 4px solid #f59e0b !important; }
-        
+        .top-asin-row:nth-child(1) { background-color: #fff1f2; }
+        .top-asin-row:nth-child(2) { background-color: #fff7ed; }
+        .top-asin-row:nth-child(3) { background-color: #f0fdf4; }
+
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; }
@@ -62,7 +64,7 @@
             <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl border border-white/20">💰</div>
             <div class="text-white">
                 <h1 class="text-2xl font-bold">Returns & Savings</h1>
-                <p class="text-xs opacity-80" id="syncStatus">Performance Tracking</p>
+                <p class="text-xs opacity-80" id="syncStatus">Cloud Sync Ready</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
@@ -141,6 +143,14 @@
                 <div class="h-[300px]"><canvas id="timeChart"></canvas></div>
             </div>
 
+            <div class="card">
+                <h3 class="text-lg font-bold mb-4 text-slate-800 flex items-center gap-2">
+                    <span class="text-amber-500">🏆</span> Top 10 High-Risk ASINs
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3" id="topAsinGrid">
+                    </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-xs uppercase tracking-widest text-center">Issues</h3><div class="h-[220px]"><canvas id="issueChart"></canvas></div></div>
                 <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-xs uppercase tracking-widest text-center">Return Road</h3><div class="h-[220px]"><canvas id="roadChart"></canvas></div></div>
@@ -157,7 +167,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase tracking-tight">
-                            <tr><th class="p-4">Date</th><th class="p-4">Order / ASIN</th><th class="p-4">Issue</th><th class="p-4">Road</th><th class="p-4 text-right">Savings</th><th class="p-4 text-center no-print">X</th></tr>
+                            <tr><th class="p-4">Date</th><th class="p-4">Order / ASIN</th><th class="p-4">Issue</th><th class="p-4">Road</th><th class="p-4 text-right">Value</th><th class="p-4 text-center no-print">X</th></tr>
                         </thead>
                         <tbody id="dataTableBody" class="text-sm divide-y divide-slate-100"></tbody>
                     </table>
@@ -167,9 +177,7 @@
     </div>
 
     <script>
-        // --- إعدادات الربط بجوجل شيت ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqkCTgox5u1cQ3xWErHYE-04sqwraWP8o411mlfoG3WPZPN08sNwJJmUtKAjpq_P_NUA/exec"; 
-        // ------------------------------
 
         let entries = [];
         try { const saved = localStorage.getItem('returnsData_pro_v3'); if(saved) entries = JSON.parse(saved); } catch(e) { entries = []; }
@@ -195,39 +203,28 @@
                 comments: document.getElementById('comments').value
             };
             
-            // إضافة محلياً
             entries.push(entry);
-            saveData(); 
-            updateUI(); 
-            e.target.reset();
+            saveData(); updateUI(); e.target.reset();
             document.getElementById('date').valueAsDate = new Date();
 
-            // إرسال للسحابة (جوجل شيت)
             if(GOOGLE_SCRIPT_URL.startsWith("https")) {
                 btn.innerText = "Syncing...";
                 try {
-                    await fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        body: JSON.stringify(entry)
-                    });
+                    await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
                     statusText.innerHTML = "Cloud Sync: <span class='text-emerald-400 font-bold'>Synced ✅</span>";
-                } catch(err) {
-                    statusText.innerHTML = "Cloud Sync: <span class='text-rose-400'>Error ❌</span>";
-                }
+                } catch(err) { statusText.innerHTML = "Cloud Sync: <span class='text-rose-400'>Error ❌</span>"; }
                 btn.innerText = "+ Save Transaction";
             }
         }
 
         function saveData() { localStorage.setItem('returnsData_pro_v3', JSON.stringify(entries)); }
-        function formatNumber(num) { return Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 }); }
+        function formatNumber(num) { return Number(num).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
 
         function updateUI() {
             const now = new Date();
             const curMonth = now.getMonth();
             const curYear = now.getFullYear();
             const todayStr = now.toISOString().split('T')[0];
-            
             let d=0, m=0, y=0, total=0, refunds=0;
             
             entries.forEach(e => {
@@ -250,6 +247,34 @@
 
             renderTable();
             renderCharts();
+            renderTopAsins();
+        }
+
+        function renderTopAsins() {
+            const asinStats = {};
+            entries.forEach(e => {
+                if(!asinStats[e.asin]) asinStats[e.asin] = { count: 0, value: 0 };
+                asinStats[e.asin].count++;
+                asinStats[e.asin].value += e.price;
+            });
+
+            const sorted = Object.entries(asinStats)
+                .sort((a, b) => b[1].value - a[1].value)
+                .slice(0, 10);
+
+            const grid = document.getElementById('topAsinGrid');
+            grid.innerHTML = '';
+            
+            sorted.forEach(([asin, stat], index) => {
+                grid.innerHTML += `
+                    <div class="bg-white border border-slate-100 rounded-2xl p-3 shadow-sm flex flex-col items-center text-center">
+                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 mb-2">RANK #${index+1}</span>
+                        <div class="text-xs font-black text-slate-700 truncate w-full">${asin}</div>
+                        <div class="text-emerald-600 font-bold text-sm mt-1">${formatNumber(stat.value)}</div>
+                        <div class="text-[9px] text-slate-400 font-bold uppercase">${stat.count} Returns</div>
+                    </div>
+                `;
+            });
         }
 
         function renderTable() {
@@ -258,24 +283,14 @@
             
             entries.slice().reverse().slice(0,25).forEach(e => {
                 if(!e.orderId.toLowerCase().includes(searchTerm) && !e.asin.toLowerCase().includes(searchTerm)) return;
-
-                const isHighValue = e.price > 1000;
-                const badge = e.road==='RTO' 
-                    ? `<span class="bg-rose-50 text-rose-600 py-1 px-2 rounded text-[10px] font-bold border border-rose-100">RTO</span>` 
-                    : `<span class="bg-emerald-50 text-emerald-600 py-1 px-2 rounded text-[10px] font-bold border border-emerald-100">RTN</span>`;
-                
+                const badge = e.road==='RTO' ? 'rose' : 'emerald';
                 tbody.innerHTML += `
-                    <tr class="${isHighValue ? 'high-value' : ''} hover:bg-slate-50 transition-colors">
+                    <tr class="hover:bg-slate-50 transition-colors">
                         <td class="p-4 text-[10px] text-slate-400 font-mono">${e.date}</td>
-                        <td class="p-4">
-                            <div class="font-bold text-slate-700 text-xs">${e.orderId}</div>
-                            <div class="text-[9px] text-indigo-500 font-bold">${e.asin}</div>
-                        </td>
-                        <td class="p-4 text-xs">${e.issue} ${e.comments ? '💬' : ''}</td>
-                        <td class="p-4">${badge}</td>
-                        <td class="p-4 text-right font-bold ${isHighValue ? 'text-amber-600' : 'text-emerald-600'} text-xs">
-                            ${isHighValue ? '🔥 ' : ''}+${formatNumber(e.price)}
-                        </td>
+                        <td class="p-4"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold">${e.asin}</div></td>
+                        <td class="p-4 text-xs">${e.issue}</td>
+                        <td class="p-4"><span class="bg-${badge}-50 text-${badge}-600 py-1 px-2 rounded text-[10px] font-bold border border-${badge}-100">${e.road}</span></td>
+                        <td class="p-4 text-right font-bold text-emerald-600 text-xs">+${formatNumber(e.price)}</td>
                         <td class="p-4 text-center no-print"><button onclick="deleteEntry(${e.id})" class="text-rose-300 hover:text-rose-500">✕</button></td>
                     </tr>`;
             });
@@ -285,7 +300,6 @@
             const curY = new Date().getFullYear();
             const timeLabels = currentTimeView === 'monthly' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Q1','Q2','Q3','Q4'];
             const timeData = currentTimeView === 'monthly' ? Array(12).fill(0) : Array(4).fill(0);
-            
             entries.forEach(e => {
                 const ed = new Date(e.date);
                 if(ed.getFullYear() === curY) {
@@ -293,38 +307,14 @@
                     timeData[idx] += e.price;
                 }
             });
-
             if(charts.time) charts.time.destroy();
             charts.time = new Chart(document.getElementById('timeChart'), { type: 'line', data: { labels: timeLabels, datasets: [{ data: timeData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.05)', fill: true, tension: 0.4, borderWidth: 3 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
 
             const renderPie = (id, key, colors) => {
                 const counts = {}; entries.forEach(e => counts[e[key]] = (counts[e[key]]||0)+1);
                 if(charts[id]) charts[id].destroy();
-                charts[id] = new Chart(document.getElementById(id), { 
-                    type: 'pie', 
-                    data: { 
-                        labels: Object.keys(counts), 
-                        datasets: [{ 
-                            data: Object.values(counts), 
-                            backgroundColor: colors, 
-                            hoverOffset: 15,
-                            borderWidth: 2,
-                            borderColor: '#ffffff'
-                        }] 
-                    }, 
-                    options: { 
-                        maintainAspectRatio: false, 
-                        cutout: 0, 
-                        plugins: { 
-                            legend: { 
-                                position: 'bottom', 
-                                labels: { boxWidth: 10, padding: 15, font: { size: 10, weight: 'bold' } } 
-                            } 
-                        } 
-                    } 
-                });
+                charts[id] = new Chart(document.getElementById(id), { type: 'pie', data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10, font: { size: 9 } } } } } });
             };
-
             renderPie('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6']);
             renderPie('roadChart', 'road', ['#10b981', '#f43f5e']);
             renderPie('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b']);
@@ -333,32 +323,9 @@
         function deleteEntry(id) { if(confirm('Delete?')) { entries = entries.filter(e => e.id !== id); saveData(); updateUI(); } }
         function clearAllData() { if(confirm('Clear ALL?')) { entries = []; saveData(); updateUI(); } }
         function switchTimeView(v) { currentTimeView = v; ['monthly','quarterly'].forEach(id => document.getElementById('btn-'+id).className = (id===v)?'tab-btn tab-active':'tab-btn tab-inactive'); renderCharts(); }
-        
-        function exportCSV() {
-            let csv = "Date,Order ID,ASIN,Price,Issue,Road,Action\n";
-            entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.issue},${e.road},${e.action}\n`);
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Report.csv'; a.click();
-        }
-        function exportData() {
-            const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Data_Backup.json'; a.click();
-        }
-        function importData(input) {
-            const reader = new FileReader();
-            reader.onload = (e) => { 
-                try { 
-                    const imported = JSON.parse(e.target.result); 
-                    if(Array.isArray(imported)) {
-                        entries = imported; 
-                        saveData(); 
-                        updateUI(); 
-                        alert("Data restored successfully! ✅");
-                    }
-                } catch(e){ alert("Error: Invalid file format."); } 
-            };
-            reader.readAsText(input.files[0]);
-        }
+        function exportCSV() { let csv = "Date,Order ID,ASIN,Price,Issue,Road,Action\n"; entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.issue},${e.road},${e.action}\n`); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Report.csv'; a.click(); }
+        function exportData() { const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Data_Backup.json'; a.click(); }
+        function importData(input) { const reader = new FileReader(); reader.onload = (e) => { try { const imported = JSON.parse(e.target.result); if(Array.isArray(imported)) { entries = imported; saveData(); updateUI(); alert("Data restored!"); } } catch(e){ alert("Error!"); } }; reader.readAsText(input.files[0]); }
 
         updateUI();
     </script>
