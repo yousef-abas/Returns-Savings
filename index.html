@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns & Savings - Vendor Analysis</title>
+    <title>Returns & Savings - Complete Analysis</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,50 +26,37 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             transition: all 0.3s ease;
         }
-        .card:hover { transform: translateY(-3px); }
-        
         input, select, textarea {
             background-color: #f8fafc; border: 1px solid #cbd5e1;
             border-radius: 12px; padding: 10px 14px; width: 100%;
             outline: none; transition: all 0.3s; font-size: 0.85rem;
         }
-        input:focus, select:focus { border-color: #10b981; background-color: white; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-        
+        input:focus { border-color: #10b981; background-color: white; }
         .btn-primary {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white; padding: 12px; border-radius: 12px; font-weight: 700;
-            cursor: pointer; transition: all 0.3s; text-align: center;
+            cursor: pointer; transition: all 0.3s; text-align: center; width: 100%;
         }
-        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        
         .tab-btn { padding: 6px 16px; border-radius: 50px; font-weight: 600; font-size: 0.8rem; }
         .tab-active { background-color: #10b981; color: white; }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; }
-            .card { box-shadow: none !important; border: 1px solid #eee !important; }
-        }
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="pb-20">
 
     <nav class="w-full pt-6 pb-2 container mx-auto px-6 flex flex-wrap justify-between items-center gap-4 no-print">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl border border-white/20">💹</div>
-            <div class="text-white">
-                <h1 class="text-2xl font-bold">Returns & Savings</h1>
-                <p class="text-xs opacity-80" id="syncStatus">Advanced Vendor Analysis</p>
+        <div class="flex items-center gap-4 text-white">
+            <div class="text-3xl">📊</div>
+            <div>
+                <h1 class="text-2xl font-bold">Returns Master</h1>
+                <p class="text-xs opacity-80" id="syncStatus">Ready to sync</p>
             </div>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-            <button onclick="window.print()" class="bg-blue-600/20 text-blue-100 border border-blue-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-blue-600/40 transition">🖨️ Print</button>
-            <button onclick="exportCSV()" class="bg-emerald-600/20 text-emerald-100 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-600/40 transition">📊 Excel</button>
-            <button onclick="exportData()" class="bg-white/10 text-white border border-white/20 px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">💾 Backup</button>
-            <button onclick="document.getElementById('fileInput').click()" class="bg-amber-500/20 text-amber-100 border border-amber-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-500/40 transition">📂 Restore</button>
-            <input type="file" id="fileInput" accept=".json" onchange="importData(this)" style="display: none;">
-            <button onclick="clearAllData()" class="bg-rose-500/80 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-rose-500">Clear 🗑️</button>
+        <div class="flex gap-2">
+            <button onclick="exportCSV()" class="bg-emerald-600/20 text-emerald-100 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-600/40 transition">Excel</button>
+            <button onclick="exportData()" class="bg-white/10 text-white border border-white/20 px-4 py-2 rounded-xl text-xs font-bold">Backup</button>
+            <button onclick="clearAllData()" class="bg-rose-500/80 text-white px-4 py-2 rounded-xl text-xs font-bold">Clear 🗑️</button>
         </div>
     </nav>
 
@@ -77,17 +64,14 @@
         
         <div class="lg:col-span-3 no-print">
             <div class="card sticky top-8">
-                <h2 class="text-lg font-bold mb-4 text-slate-800 border-b pb-3 flex items-center gap-2"><span>📝</span> Entry Form</h2>
-                <form id="dataForm" onsubmit="addEntry(event)" class="space-y-3">
-                    <div><label class="block text-[9px] font-bold text-slate-400 mb-1 uppercase tracking-tighter">Transaction Details</label>
-                        <input type="date" id="date" required class="mb-2">
-                        <input type="text" id="orderId" placeholder="Order ID" required class="mb-2">
-                        <input type="text" id="asin" placeholder="ASIN" required class="mb-2 uppercase">
-                        <input type="number" step="0.01" id="price" placeholder="Value (Savings)" required>
-                    </div>
+                <h2 class="text-lg font-bold mb-4 border-b pb-2">📝 New Entry</h2>
+                <form onsubmit="addEntry(event)" class="space-y-3">
+                    <input type="date" id="date" required>
+                    <input type="text" id="orderId" placeholder="Order ID" required>
+                    <input type="text" id="asin" placeholder="ASIN" required class="uppercase">
+                    <input type="number" step="0.01" id="price" placeholder="Value (Savings)" required>
                     
                     <div class="bg-blue-50/50 p-3 rounded-xl space-y-2 border border-blue-100">
-                        <label class="block text-[9px] font-bold text-blue-500 uppercase tracking-tighter">Merchant Info</label>
                         <input type="text" id="merchantId" placeholder="Merchant ID" required>
                         <input type="text" id="merchantName" placeholder="Merchant Name" required>
                     </div>
@@ -99,8 +83,6 @@
                             <option value="Empty box">Empty box</option>
                             <option value="Switch item">Switch item</option>
                             <option value="Broken">Broken</option>
-                            <option value="Missing part">Missing part</option>
-                            <option value="Over Use">Over Use</option>
                             <option value="Other">Other</option>
                         </select>
                         <select id="road" required>
@@ -112,63 +94,54 @@
                     <select id="action">
                         <option value="Refund">Refund</option>
                         <option value="Replacement">Replacement</option>
-                        <option value="Return to Inventory">Return to Inventory</option>
-                        <option value="Disposal">Disposal</option>
+                        <option value="Inventory">Return to Inventory</option>
                     </select>
-                    <textarea id="comments" rows="2" placeholder="Notes..."></textarea>
-                    <button type="submit" id="saveBtn" class="btn-primary w-full shadow-lg">+ Save Transaction</button>
+                    <button type="submit" id="saveBtn" class="btn-primary">Save Data</button>
                 </form>
             </div>
         </div>
 
         <div class="lg:col-span-9 space-y-6">
-            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-                <div class="card p-4 border-t-4 border-indigo-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Today</span><p class="text-xl font-bold" id="dailyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-emerald-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Month</span><p class="text-xl font-bold" id="monthlyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-purple-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Year</span><p class="text-xl font-bold" id="yearlyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-amber-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Avg/Item</span><p class="text-xl font-bold" id="avgSavings">0</p></div>
-                <div class="card p-4 border-t-4 border-blue-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Items</span><p class="text-xl font-bold" id="totalItems">0</p></div>
-                <div class="card p-4 border-t-4 border-rose-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Refund %</span><p class="text-xl font-bold" id="successRate">0%</p></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="card p-4 border-t-4 border-emerald-500"><span class="text-[10px] font-bold text-slate-400">MONTH TOTAL</span><p class="text-xl font-bold" id="monthlyTotal">0</p></div>
+                <div class="card p-4 border-t-4 border-purple-500"><span class="text-[10px] font-bold text-slate-400">YEAR TOTAL</span><p class="text-xl font-bold" id="yearlyTotal">0</p></div>
+                <div class="card p-4 border-t-4 border-blue-500"><span class="text-[10px] font-bold text-slate-400">ITEMS</span><p class="text-xl font-bold" id="totalItems">0</p></div>
+                <div class="card p-4 border-t-4 border-rose-500"><span class="text-[10px] font-bold text-slate-400">REFUND %</span><p class="text-xl font-bold" id="successRate">0%</p></div>
             </div>
 
             <div class="card">
-                <h3 class="text-lg font-bold mb-4 text-slate-800 flex items-center gap-2">
-                    <span class="text-blue-500">🏢</span> Top 10 High-Loss Merchants
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3" id="topMerchantGrid"></div>
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold">Financial Trends (Monthly)</h3>
+                    <div class="bg-slate-100 p-1 rounded-full flex gap-1">
+                        <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
+                        <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
+                    </div>
+                </div>
+                <div class="h-[250px]"><canvas id="timeChart"></canvas></div>
             </div>
 
-            <div class="card">
-                <h3 class="text-lg font-bold mb-4 text-slate-800 flex items-center gap-2">
-                    <span class="text-amber-500">🏆</span> Top 10 High-Risk ASINs
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3" id="topAsinGrid"></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-xs uppercase tracking-widest text-center">Issues</h3><div class="h-[200px]"><canvas id="issueChart"></canvas></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-xs uppercase tracking-widest text-center">Return Road</h3><div class="h-[200px]"><canvas id="roadChart"></canvas></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-xs uppercase tracking-widest text-center">Actions</h3><div class="h-[200px]"><canvas id="actionChart"></canvas></div></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="font-bold mb-4 text-blue-600">🏢 Top 10 Merchants</h3>
+                    <div id="topMerchantGrid" class="space-y-2"></div>
+                </div>
+                <div class="card">
+                    <h3 class="font-bold mb-4 text-amber-600">🏆 Top 10 ASINs</h3>
+                    <div id="topAsinGrid" class="space-y-2"></div>
+                </div>
             </div>
 
             <div class="card p-0 overflow-hidden">
-                <div class="p-5 border-b bg-white flex flex-wrap justify-between items-center gap-4 no-print">
-                    <h3 class="font-bold text-slate-800">Transaction History</h3>
-                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search Order, ASIN or Merchant..." class="w-full md:w-64 py-2 text-xs">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h3 class="font-bold">Recent History</h3>
+                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search..." class="w-48 py-1">
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase tracking-tight">
-                            <tr>
-                                <th class="p-4">Date</th>
-                                <th class="p-4">Order / ASIN</th>
-                                <th class="p-4">Merchant</th>
-                                <th class="p-4">Issue</th>
-                                <th class="p-4 text-right">Value</th>
-                                <th class="p-4 text-center no-print">X</th>
-                            </tr>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50">
+                            <tr><th class="p-3">Date</th><th class="p-3">Info</th><th class="p-3">Merchant</th><th class="p-3 text-right">Value</th><th class="p-3">X</th></tr>
                         </thead>
-                        <tbody id="dataTableBody" class="text-sm divide-y divide-slate-100"></tbody>
+                        <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -177,145 +150,123 @@
 
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqkCTgox5u1cQ3xWErHYE-04sqwraWP8o411mlfoG3WPZPN08sNwJJmUtKAjpq_P_NUA/exec"; 
-
-        let entries = [];
-        try { const saved = localStorage.getItem('returnsData_pro_v3'); if(saved) entries = JSON.parse(saved); } catch(e) { entries = []; }
-
+        let entries = JSON.parse(localStorage.getItem('returns_v4') || '[]');
         let charts = {};
+        let currentView = 'monthly';
         document.getElementById('date').valueAsDate = new Date();
+
+        function saveData() { localStorage.setItem('returns_v4', JSON.stringify(entries)); }
 
         async function addEntry(e) {
             e.preventDefault();
-            const btn = document.getElementById('saveBtn');
-            const statusText = document.getElementById('syncStatus');
-            
             const entry = {
                 id: Date.now(),
                 date: document.getElementById('date').value,
-                orderId: document.getElementById('orderId').value.trim(),
-                asin: document.getElementById('asin').value.trim().toUpperCase(),
+                orderId: document.getElementById('orderId').value,
+                asin: document.getElementById('asin').value.toUpperCase(),
                 price: parseFloat(document.getElementById('price').value),
-                merchantId: document.getElementById('merchantId').value.trim(),
-                merchantName: document.getElementById('merchantName').value.trim(),
+                merchantId: document.getElementById('merchantId').value,
+                merchantName: document.getElementById('merchantName').value,
                 issue: document.getElementById('issue').value,
                 road: document.getElementById('road').value,
-                action: document.getElementById('action').value,
-                comments: document.getElementById('comments').value
+                action: document.getElementById('action').value
             };
-            
             entries.push(entry);
             saveData(); updateUI(); e.target.reset();
             document.getElementById('date').valueAsDate = new Date();
-
-            if(GOOGLE_SCRIPT_URL.startsWith("https")) {
-                btn.innerText = "Syncing...";
-                try {
-                    await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
-                    statusText.innerHTML = "Cloud Sync: <span class='text-emerald-400 font-bold'>Synced ✅</span>";
-                } catch(err) { statusText.innerHTML = "Cloud Sync: <span class='text-rose-400'>Error ❌</span>"; }
-                btn.innerText = "+ Save Transaction";
+            
+            if(GOOGLE_SCRIPT_URL.startsWith("http")) {
+                fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
             }
         }
 
-        function saveData() { localStorage.setItem('returnsData_pro_v3', JSON.stringify(entries)); }
-        function formatNumber(num) { return Number(num).toLocaleString(undefined, { maximumFractionDigits: 0 }); }
-
         function updateUI() {
             const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
-            let d=0, m=0, y=0, total=0, refunds=0;
-            
+            let m=0, y=0, ref=0;
             entries.forEach(e => {
                 const ed = new Date(e.date);
-                total += e.price;
-                if(e.date === todayStr) d += e.price;
                 if(ed.getFullYear() === now.getFullYear()) {
                     y += e.price;
                     if(ed.getMonth() === now.getMonth()) m += e.price;
                 }
-                if(e.action === 'Refund') refunds++;
+                if(e.action === 'Refund') ref++;
             });
 
-            document.getElementById('dailyTotal').innerText = formatNumber(d);
-            document.getElementById('monthlyTotal').innerText = formatNumber(m);
-            document.getElementById('yearlyTotal').innerText = formatNumber(y);
+            document.getElementById('monthlyTotal').innerText = m.toLocaleString();
+            document.getElementById('yearlyTotal').innerText = y.toLocaleString();
             document.getElementById('totalItems').innerText = entries.length;
-            document.getElementById('avgSavings').innerText = entries.length ? formatNumber(total / entries.length) : 0;
-            document.getElementById('successRate').innerText = entries.length ? Math.round((refunds/entries.length)*100) + '%' : '0%';
+            document.getElementById('successRate').innerText = entries.length ? Math.round((ref/entries.length)*100)+'%' : '0%';
 
+            renderTimeChart();
+            renderTopList('topMerchantGrid', 'merchantName');
+            renderTopList('topAsinGrid', 'asin');
             renderTable();
-            renderCharts();
-            renderTopAnalysis('topMerchantGrid', 'merchantName');
-            renderTopAnalysis('topAsinGrid', 'asin');
         }
 
-        function renderTopAnalysis(containerId, key) {
-            const stats = {};
+        function renderTimeChart() {
+            const labels = currentView === 'monthly' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Q1','Q2','Q3','Q4'];
+            const dataArr = Array(labels.length).fill(0);
+            const curYear = new Date().getFullYear();
+
             entries.forEach(e => {
-                const val = e[key] || "N/A";
-                if(!stats[val]) stats[val] = { count: 0, value: 0 };
-                stats[val].count++;
-                stats[val].value += e.price;
+                const ed = new Date(e.date);
+                if(ed.getFullYear() === curYear) {
+                    const idx = currentView === 'monthly' ? ed.getMonth() : Math.floor(ed.getMonth()/3);
+                    dataArr[idx] += e.price;
+                }
             });
 
-            const sorted = Object.entries(stats).sort((a, b) => b[1].value - a[1].value).slice(0, 10);
-            const grid = document.getElementById(containerId);
-            grid.innerHTML = '';
-            
-            sorted.forEach(([label, stat], index) => {
-                grid.innerHTML += `
-                    <div class="bg-white border border-slate-100 rounded-2xl p-3 shadow-sm flex flex-col items-center text-center">
-                        <span class="text-[8px] font-bold px-2 py-0.5 rounded-full bg-slate-50 text-slate-400 mb-2">#${index+1}</span>
-                        <div class="text-[10px] font-black text-slate-700 truncate w-full uppercase">${label}</div>
-                        <div class="text-emerald-600 font-bold text-xs mt-1">${formatNumber(stat.value)}</div>
-                        <div class="text-[8px] text-slate-400 uppercase">${stat.count} cases</div>
-                    </div>
-                `;
+            if(charts.time) charts.time.destroy();
+            charts.time = new Chart(document.getElementById('timeChart'), {
+                type: 'line',
+                data: { labels, datasets: [{ label: 'Savings', data: dataArr, borderColor: '#10b981', tension: 0.3, fill: true, backgroundColor: 'rgba(16, 185, 129, 0.1)' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
+        }
+
+        function renderTopList(gridId, key) {
+            const stats = {};
+            entries.forEach(e => { stats[e[key]] = (stats[e[key]] || 0) + e.price; });
+            const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]).slice(0, 10);
+            const grid = document.getElementById(gridId);
+            grid.innerHTML = sorted.map(([name, val], i) => `
+                <div class="flex justify-between items-center text-xs p-2 bg-slate-50 rounded-lg">
+                    <span class="font-bold">#${i+1} ${name}</span>
+                    <span class="text-emerald-600 font-bold">${val.toLocaleString()}</span>
+                </div>
+            `).join('');
         }
 
         function renderTable() {
-            const s = (document.getElementById('tableSearch')?.value || "").toLowerCase();
-            const tbody = document.getElementById('dataTableBody'); tbody.innerHTML = '';
-            
-            entries.slice().reverse().slice(0,30).forEach(e => {
-                if(!e.orderId.toLowerCase().includes(s) && !e.asin.toLowerCase().includes(s) && !e.merchantName.toLowerCase().includes(s)) return;
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-4 text-[10px] text-slate-400 font-mono">${e.date}</td>
-                        <td class="p-4"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold">${e.asin}</div></td>
-                        <td class="p-4"><div class="text-xs text-slate-600 font-semibold">${e.merchantName}</div><div class="text-[8px] text-slate-400 uppercase">${e.merchantId}</div></td>
-                        <td class="p-4 text-xs">${e.issue}</td>
-                        <td class="p-4 text-right font-bold text-emerald-600 text-xs">${formatNumber(e.price)}</td>
-                        <td class="p-4 text-center no-print"><button onclick="deleteEntry(${e.id})" class="text-rose-300 hover:text-rose-500">✕</button></td>
-                    </tr>`;
-            });
+            const s = document.getElementById('tableSearch').value.toLowerCase();
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = entries.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
+                .slice(0,20).map(e => `
+                <tr>
+                    <td class="p-3 text-[10px] text-slate-400">${e.date}</td>
+                    <td class="p-3"><div class="font-bold">${e.orderId}</div><div class="text-[9px] text-blue-500">${e.asin}</div></td>
+                    <td class="p-3 text-xs">${e.merchantName}</td>
+                    <td class="p-3 text-right font-bold text-emerald-600">${e.price.toLocaleString()}</td>
+                    <td class="p-3 text-center"><button onclick="deleteEntry(${e.id})" class="text-rose-300">✕</button></td>
+                </tr>
+            `).join('');
         }
 
-        function renderCharts() {
-            const counts = (k) => { 
-                const o = {}; 
-                entries.forEach(e => o[e[k]] = (o[e[k]]||0)+1); 
-                return o; 
-            };
-            const renderPie = (id, dataObj, colors) => {
-                if(charts[id]) charts[id].destroy();
-                charts[id] = new Chart(document.getElementById(id), { 
-                    type: 'pie', 
-                    data: { labels: Object.keys(dataObj), datasets: [{ data: Object.values(dataObj), backgroundColor: colors }] }, 
-                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 9 } } } } } 
-                });
-            };
-            renderPie('issueChart', counts('issue'), ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6']);
-            renderPie('roadChart', counts('road'), ['#10b981', '#f43f5e']);
-            renderPie('actionChart', counts('action'), ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b']);
+        function switchTimeView(v) {
+            currentView = v;
+            document.getElementById('btn-monthly').className = v==='monthly' ? 'tab-btn tab-active' : 'tab-btn tab-inactive';
+            document.getElementById('btn-quarterly').className = v==='quarterly' ? 'tab-btn tab-active' : 'tab-btn tab-inactive';
+            renderTimeChart();
         }
 
         function deleteEntry(id) { if(confirm('Delete?')) { entries = entries.filter(e => e.id !== id); saveData(); updateUI(); } }
         function clearAllData() { if(confirm('Clear ALL?')) { entries = []; saveData(); updateUI(); } }
-        function exportCSV() { let csv = "Date,Order ID,ASIN,Price,Merchant,Issue,Road,Action\n"; entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantName},${e.issue},${e.road},${e.action}\n`); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Vendor_Report.csv'; a.click(); }
-        function exportData() { const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Data_Backup.json'; a.click(); }
-        function importData(input) { const reader = new FileReader(); reader.onload = (e) => { try { const imported = JSON.parse(e.target.result); if(Array.isArray(imported)) { entries = imported; saveData(); updateUI(); alert("Data restored!"); } } catch(e){ alert("Error!"); } }; reader.readAsText(input.files[0]); }
+        function exportCSV() { 
+            let csv = "Date,Order,ASIN,Price,Merchant,Issue\n";
+            entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantName},${e.issue}\n`);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns.csv'; a.click();
+        }
 
         updateUI();
     </script>
