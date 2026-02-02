@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns & Savings - Complete Dashboard v7</title>
+    <title>Returns Master - Cloud Live</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,26 +28,20 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             transition: all 0.3s ease;
         }
-        .card:hover { transform: translateY(-3px); }
-        
         input, select, textarea {
             background-color: #f8fafc; border: 1px solid #cbd5e1;
             border-radius: 12px; padding: 10px 14px; width: 100%;
             outline: none; transition: all 0.3s; font-size: 0.85rem;
         }
-        input:focus { border-color: #10b981; background-color: white; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-        
+        input:focus { border-color: #10b981; background-color: white; }
         .btn-primary {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white; padding: 12px; border-radius: 12px; font-weight: 700;
             cursor: pointer; transition: all 0.3s; text-align: center;
         }
-        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        
         .tab-btn { padding: 6px 16px; border-radius: 50px; font-weight: 600; font-size: 0.8rem; }
         .tab-active { background-color: #10b981; color: white; }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
-
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
@@ -53,14 +49,14 @@
 
     <nav class="w-full pt-6 pb-2 container mx-auto px-6 flex flex-wrap justify-between items-center gap-4 no-print">
         <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl border border-white/20">💰</div>
+            <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl border border-white/20">💹</div>
             <div class="text-white">
                 <h1 class="text-2xl font-bold">Returns Master</h1>
-                <p class="text-xs opacity-80" id="syncStatus">Full Analysis System</p>
+                <p class="text-xs opacity-80" id="syncStatus">Initializing Cloud Sync...</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <button onclick="exportCSV()" class="bg-emerald-600/20 text-emerald-100 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-600/40 transition">📊 Excel Full</button>
+            <button onclick="exportCSV()" class="bg-emerald-600/20 text-emerald-100 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold">📊 Excel Full</button>
             <button onclick="exportData()" class="bg-white/10 text-white border border-white/20 px-4 py-2 rounded-xl text-xs font-bold">💾 Backup</button>
             <button onclick="document.getElementById('importFile').click()" class="bg-amber-500/20 text-amber-100 border border-amber-500/30 px-4 py-2 rounded-xl text-xs font-bold">📂 Restore</button>
             <input type="file" id="importFile" hidden onchange="importData(this)">
@@ -69,7 +65,6 @@
     </nav>
 
     <div class="container mx-auto px-6 pt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
         <div class="lg:col-span-3 no-print">
             <div class="card sticky top-8">
                 <h2 class="text-lg font-bold mb-4 text-slate-800 border-b pb-3 flex items-center gap-2"><span>📝</span> Entry</h2>
@@ -100,17 +95,17 @@
                         <option value="Replacement">Replacement</option>
                         <option value="Inventory">Inventory</option>
                     </select>
-                    <button type="submit" id="saveBtn" class="btn-primary w-full shadow-lg">+ Save</button>
+                    <button type="submit" id="saveBtn" class="btn-primary w-full shadow-lg">+ Save & Sync</button>
                 </form>
             </div>
         </div>
 
         <div class="lg:col-span-9 space-y-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="card p-4 border-t-4 border-indigo-500"><span class="text-[10px] font-bold text-slate-400">TODAY</span><p class="text-xl font-bold" id="dailyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-emerald-500"><span class="text-[10px] font-bold text-slate-400">MONTH</span><p class="text-xl font-bold" id="monthlyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-purple-500"><span class="text-[10px] font-bold text-slate-400">YEAR</span><p class="text-xl font-bold" id="yearlyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-rose-500"><span class="text-[10px] font-bold text-slate-400">ITEMS</span><p class="text-xl font-bold" id="totalItems">0</p></div>
+                <div class="card p-4 border-t-4 border-indigo-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Today</span><p class="text-xl font-bold" id="dailyTotal">0</p></div>
+                <div class="card p-4 border-t-4 border-emerald-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Month</span><p class="text-xl font-bold" id="monthlyTotal">0</p></div>
+                <div class="card p-4 border-t-4 border-purple-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Year</span><p class="text-xl font-bold" id="yearlyTotal">0</p></div>
+                <div class="card p-4 border-t-4 border-rose-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Items</span><p class="text-xl font-bold" id="totalItems">0</p></div>
             </div>
 
             <div class="card">
@@ -125,31 +120,25 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="card">
-                    <h3 class="font-bold mb-4 text-amber-600 border-b pb-2">🏆 Top 10 High-Risk ASINs</h3>
-                    <div id="topAsinGrid" class="space-y-2"></div>
-                </div>
-                <div class="card">
-                    <h3 class="font-bold mb-4 text-blue-600 border-b pb-2">🏢 Top 10 Merchants</h3>
-                    <div id="topMerchantGrid" class="space-y-2"></div>
-                </div>
+                <div class="card"><h3 class="font-bold mb-4 text-amber-600 border-b pb-2">🏆 Top 10 High-Risk ASINs</h3><div id="topAsinGrid" class="space-y-2"></div></div>
+                <div class="card"><h3 class="font-bold mb-4 text-blue-600 border-b pb-2">🏢 Top 10 Merchants</h3><div id="topMerchantGrid" class="space-y-2"></div></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-xs text-center">ISSUE ANALYSIS</h3><div class="h-[220px]"><canvas id="issueChart"></canvas></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-xs text-center">ROAD DISTRIBUTION</h3><div class="h-[220px]"><canvas id="roadChart"></canvas></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-xs text-center">ACTION TAKEN</h3><div class="h-[220px]"><canvas id="actionChart"></canvas></div></div>
+                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase">Issue Analysis</h3><div class="h-[200px]"><canvas id="issueChart"></canvas></div></div>
+                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase">Road Distribution</h3><div class="h-[200px]"><canvas id="roadChart"></canvas></div></div>
+                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase">Action Taken</h3><div class="h-[200px]"><canvas id="actionChart"></canvas></div></div>
             </div>
 
             <div class="card p-0 overflow-hidden">
                 <div class="p-4 border-b flex justify-between items-center bg-white">
                     <h3 class="font-bold">Recent History</h3>
-                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search Order/ASIN/Merchant..." class="w-64 py-1.5 text-xs">
+                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search..." class="w-64 py-1.5 text-xs">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold">
-                            <tr><th class="p-4">Date</th><th class="p-4">Info</th><th class="p-4">Merchant</th><th class="p-4 text-right">Value</th><th class="p-4">X</th></tr>
+                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400">
+                            <tr><th class="p-4">Date</th><th class="p-4">Info</th><th class="p-4">Merchant</th><th class="p-4 text-right">Value</th><th class="p-4 text-center">X</th></tr>
                         </thead>
                         <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
                     </table>
@@ -159,11 +148,41 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUWO0lDj3wXiupGXQ4Q1jFDLy7VMlQECIbghKWuiVa4JSxAaxnokeScgu5EVxZz8mN8w/exec"; 
-        let entries = JSON.parse(localStorage.getItem('returns_v7_final') || '[]');
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFAht24zvBJ4o0DddZyqFtaBrl3K06_R7bnagwxFM5VhuC70jIZKbxCQuk9UF5-qOU/exec"; 
+        let entries = [];
         let charts = {};
         let currentView = 'monthly';
         document.getElementById('date').valueAsDate = new Date();
+
+        // جلب البيانات من السحابة عند الفتح
+        async function fetchCloudData() {
+            document.getElementById('syncStatus').innerText = "☁️ Syncing Cloud Data...";
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const cloudData = await response.json();
+                if (cloudData && cloudData.length > 0) {
+                    entries = cloudData.map(item => ({
+                        id: Date.now() + Math.random(),
+                        date: new Date(item.date || item.Date).toISOString().split('T')[0],
+                        orderId: String(item.orderId || item["Order ID"]),
+                        asin: String(item.asin || item.ASIN).toUpperCase(),
+                        price: parseFloat(item.price || item.Price),
+                        merchantId: String(item.merchantId || item["Merchant ID"]),
+                        merchantName: String(item.merchantName || item["Merchant Name"]),
+                        issue: item.issue || item.Issue,
+                        road: item.road || item.Road,
+                        action: item.action || item.Action
+                    }));
+                    updateUI();
+                    document.getElementById('syncStatus').innerText = "✅ Cloud Live Feed Active";
+                }
+            } catch (e) {
+                console.log("Cloud fetch failed, using local storage");
+                entries = JSON.parse(localStorage.getItem('returns_v9_final') || '[]');
+                updateUI();
+                document.getElementById('syncStatus').innerText = "⚠️ Local Mode (Offline)";
+            }
+        }
 
         async function addEntry(e) {
             e.preventDefault();
@@ -180,18 +199,25 @@
                 action: document.getElementById('action').value
             };
             entries.push(entry);
-            localStorage.setItem('returns_v7_final', JSON.stringify(entries));
-            updateUI(); e.target.reset();
+            localStorage.setItem('returns_v9_final', JSON.stringify(entries));
+            updateUI(); 
+            e.target.reset();
             document.getElementById('date').valueAsDate = new Date();
-            if(GOOGLE_SCRIPT_URL.startsWith("http")) fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
+            
+            document.getElementById('syncStatus').innerText = "📡 Sending to Cloud...";
+            if(GOOGLE_SCRIPT_URL.startsWith("http")) {
+                await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
+                document.getElementById('syncStatus').innerText = "✅ Saved & Synced";
+            }
         }
 
         function updateUI() {
             const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
             let d=0, m=0, y=0;
             entries.forEach(e => {
                 const ed = new Date(e.date);
-                if(e.date === now.toISOString().split('T')[0]) d += e.price;
+                if(e.date === todayStr) d += e.price;
                 if(ed.getFullYear() === now.getFullYear()) {
                     y += e.price;
                     if(ed.getMonth() === now.getMonth()) m += e.price;
@@ -202,11 +228,7 @@
             document.getElementById('yearlyTotal').innerText = y.toLocaleString();
             document.getElementById('totalItems').innerText = entries.length;
 
-            renderTimeChart();
-            renderPieCharts();
-            renderTopList('topAsinGrid', 'asin');
-            renderTopList('topMerchantGrid', 'merchantName');
-            renderTable();
+            renderTimeChart(); renderPieCharts(); renderTopList('topAsinGrid', 'asin'); renderTopList('topMerchantGrid', 'merchantName'); renderTable();
         }
 
         function renderTimeChart() {
@@ -234,7 +256,7 @@
                 charts[id] = new Chart(document.getElementById(id), {
                     type: 'pie',
                     data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors }] },
-                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } } }
+                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 8 } } } } }
                 });
             };
             generatePie('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6']);
@@ -246,56 +268,37 @@
             const stats = {};
             entries.forEach(e => { stats[e[key]] = (stats[e[key]] || 0) + e.price; });
             const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]).slice(0, 10);
-            document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `
-                <div class="flex justify-between p-2 bg-slate-50 rounded-lg text-xs border border-transparent hover:border-emerald-200">
-                    <span class="font-bold">#${i+1} ${name}</span>
-                    <span class="text-emerald-600 font-bold">${val.toLocaleString()}</span>
-                </div>
-            `).join('');
+            document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `<div class="flex justify-between p-2 bg-slate-50 rounded-lg text-[11px]"><b>#${i+1} ${name}</b><span class="text-emerald-600 font-bold">${val.toLocaleString()}</span></div>`).join('');
         }
 
         function renderTable() {
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
             tbody.innerHTML = entries.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
-                .slice(0,15).map(e => `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-4 text-[10px] text-slate-400 font-mono">${e.date}</td>
-                    <td class="p-4"><b>${e.orderId}</b><br><small class="text-blue-500 font-bold">${e.asin}</small></td>
-                    <td class="p-4"><div class="text-xs font-semibold">${e.merchantName}</div><div class="text-[9px] text-slate-400">${e.merchantId}</div></td>
-                    <td class="p-4 text-right text-emerald-600 font-bold">${e.price.toLocaleString()}</td>
-                    <td class="p-4 text-center"><button onclick="deleteEntry(${e.id})" class="text-rose-300">✕</button></td>
-                </tr>
-            `).join('');
+                .slice(0,15).map(e => `<tr><td class="p-4 text-[10px] text-slate-400 font-mono">${e.date}</td><td class="p-4"><b>${e.orderId}</b><br><small class="text-blue-500 font-bold">${e.asin}</small></td><td class="p-4"><div class="text-xs font-semibold">${e.merchantName}</div><div class="text-[9px] text-slate-400">${e.merchantId}</div></td><td class="p-4 text-right text-emerald-600 font-bold">${e.price.toLocaleString()}</td><td class="p-4 text-center"><button onclick="deleteEntry(${e.id})" class="text-rose-300">✕</button></td></tr>`).join('');
         }
 
         function switchTimeView(v) { currentView = v; document.getElementById('btn-monthly').className = v==='monthly'?'tab-btn tab-active':'tab-btn tab-inactive'; document.getElementById('btn-quarterly').className = v==='quarterly'?'tab-btn tab-active':'tab-btn tab-inactive'; renderTimeChart(); }
-        function deleteEntry(id) { if(confirm('Delete?')) { entries = entries.filter(e => e.id !== id); localStorage.setItem('returns_v7_final', JSON.stringify(entries)); updateUI(); } }
-        function clearAllData() { if(confirm('Clear ALL?')) { entries = []; localStorage.setItem('returns_v7_final', JSON.stringify(entries)); updateUI(); } }
-        
+        function deleteEntry(id) { if(confirm('Delete locally? (Will remain in Cloud)')) { entries = entries.filter(e => e.id !== id); updateUI(); } }
+        function clearAllData() { if(confirm('Clear ALL?')) { entries = []; localStorage.removeItem('returns_v9_final'); updateUI(); } }
         function exportCSV() {
             let csv = "Date,Order ID,ASIN,Price,Merchant ID,Merchant Name,Issue,Road,Action\n";
             entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Master_Full.csv'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Master.csv'; a.click();
         }
-
-        function exportData() {
-            const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Backup_V7.json'; a.click();
-        }
-
+        function exportData() { const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Backup.json'; a.click(); }
         function importData(input) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if(Array.isArray(data)) { entries = data; localStorage.setItem('returns_v7_final', JSON.stringify(entries)); updateUI(); alert("Data Restored!"); }
-                } catch(e) { alert("Invalid File"); }
+                const data = JSON.parse(e.target.result);
+                if(Array.isArray(data)) { entries = data; updateUI(); alert("Data Imported Locally!"); }
             };
             reader.readAsText(input.files[0]);
         }
-        updateUI();
+
+        // بدء سحب البيانات عند التحميل
+        window.onload = fetchCloudData;
     </script>
 </body>
 </html>
