@@ -9,40 +9,58 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-gradient: radial-gradient(at 0% 0%, hsla(160, 40%, 10%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(210, 40%, 30%, 1) 0, transparent 50%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #334155;
+            --text-title: #1e293b;
+        }
+
+        .dark {
+            --bg-gradient: radial-gradient(at 0% 0%, hsla(160, 40%, 5%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(222, 47%, 11%, 1) 0, transparent 50%);
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --text-main: #f1f5f9;
+            --text-title: #ffffff;
+            background-color: #0f172a;
+        }
+
         body { 
             font-family: 'Outfit', sans-serif; background-color: #f8fafc; 
-            background-image: radial-gradient(at 0% 0%, hsla(160, 40%, 10%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(210, 40%, 30%, 1) 0, transparent 50%);
-            background-repeat: no-repeat; background-size: 100% 800px; min-height: 100vh; color: #334155;
+            background-image: var(--bg-gradient);
+            background-repeat: no-repeat; background-size: 100% 800px; min-height: 100vh; color: var(--text-main);
+            transition: background 0.3s ease;
         }
+        
         .card { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 28px; padding: 25px; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04); border: 1px solid rgba(255, 255, 255, 0.6);
+            background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 28px; padding: 25px; 
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04); border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .dark .card { border: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-main); }
         .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
         
         .list-item-glow { transition: all 0.3s ease; border: 1px solid transparent; }
-        .list-item-glow:hover { background: white !important; border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); transform: translateX(5px); }
+        .list-item-glow:hover { background: rgba(16, 185, 129, 0.1) !important; border-color: #10b981 !important; transform: translateX(5px); }
 
         .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--text-title); }
         .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
         .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-        .tab-inactive { color: #64748b; background: #f1f5f9; }
-        .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
+        .tab-inactive { color: #64748b; background: rgba(0,0,0,0.05); }
+        .dark .tab-inactive { background: rgba(255,255,255,0.05); color: #94a3b8; }
         
+        .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         #syncStatus { animation: pulse 2s infinite; }
 
-        /* تعديل قائمة التجار لتكون واضحة فوراً */
         .merchant-select {
             background: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.5); color: #1e293b;
             backdrop-filter: blur(10px); border-radius: 15px; padding: 8px 15px; font-size: 12px; font-weight: 700; outline: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .merchant-select option { color: #1e293b; background: white; }
-
-        .date-input { background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; cursor: pointer; }
+        .dark .merchant-select { background: rgba(15, 23, 42, 0.8); color: white; border-color: rgba(255,255,255,0.1); }
+        .date-input { background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; }
+        .dark .date-input { color: #cbd5e1; }
+        .dark h3 { color: white !important; }
     </style>
 </head>
 <body class="pb-12">
@@ -67,6 +85,9 @@
                 <option value="all">🌐 All Merchants</option>
             </select>
             <div class="flex gap-3">
+                <button onclick="toggleDarkMode()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 p-2.5 rounded-2xl transition-all" title="Toggle Dark Mode">
+                    <span id="darkIcon">🌙</span>
+                </button>
                 <button onclick="exportCSV()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">📊 Export Report</button>
                 <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg hover:scale-105 transition-all">🔄 Sync Cloud</button>
             </div>
@@ -84,10 +105,10 @@
         <div class="card">
             <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
                 <h3 class="text-xl font-bold text-slate-800">Financial Trend Analysis</h3>
-                <div class="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl">
+                <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl transition-colors">
                     <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
                     <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
-                    <div class="h-6 w-px bg-slate-300 mx-1"></div>
+                    <div class="h-6 w-px bg-slate-300 dark:bg-slate-700 mx-1"></div>
                     <div class="flex items-center gap-2 px-3">
                         <span class="text-[10px] font-bold text-slate-400">FROM:</span>
                         <input type="date" id="startDate" onchange="updateUI()" class="date-input">
@@ -109,27 +130,21 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="card">
-                <div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏆</span><h3 class="text-lg font-bold text-slate-800">Top 10 High-Value ASINs</h3></div>
-                <div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div>
-            </div>
-            <div class="card">
-                <div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏢</span><h3 class="text-lg font-bold text-slate-800">Top 10 Merchant Ranking</h3></div>
-                <div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div>
-            </div>
+            <div class="card"><div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏆</span><h3 class="text-lg font-bold text-slate-800">Top 10 High-Value ASINs</h3></div><div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div></div>
+            <div class="card"><div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏢</span><h3 class="text-lg font-bold text-slate-800">Top 10 Merchant Ranking</h3></div><div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div></div>
         </div>
 
         <div class="card p-0 overflow-hidden">
-            <div class="p-6 border-b flex justify-between items-center bg-white">
+            <div class="p-6 border-b flex justify-between items-center bg-white dark:bg-slate-900 transition-colors">
                 <h3 class="text-lg font-bold">Comprehensive Logs</h3>
-                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search by Order, ASIN, Merchant ID..." class="w-80 px-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
+                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search by Order, ASIN..." class="w-80 px-4 py-2 bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-xl outline-none text-sm">
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
-                    <thead class="bg-slate-50 text-[11px] uppercase text-slate-400 font-bold">
+                    <thead class="bg-slate-50 dark:bg-slate-800 text-[11px] uppercase text-slate-400 font-bold">
                         <th class="p-5">Date</th><th class="p-5">Order & ASIN</th><th class="p-5">Merchant Info</th><th class="p-5 text-right">Value ($)</th><th class="p-5 text-center">Status</th>
                     </thead>
-                    <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="dataTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
                 </table>
             </div>
         </div>
@@ -138,6 +153,37 @@
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFAht24zvBJ4o0DddZyqFtaBrl3K06_R7bnagwxFM5VhuC70jIZKbxCQuk9UF5-qOU/exec"; 
         let entries = []; let charts = {}; let currentView = 'monthly';
+
+        // وظيفة التبديل للوضع الليلي
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('darkIcon').innerText = isDark ? '☀️' : '🌙';
+            // تحديث الرسوم البيانية لتناسب الوضع الجديد
+            updateChartsTheme(isDark);
+        }
+
+        function updateChartsTheme(isDark) {
+            const textColor = isDark ? '#cbd5e1' : '#64748b';
+            const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            
+            Object.values(charts).forEach(chart => {
+                if(chart.options.scales) {
+                    if(chart.options.scales.x) {
+                        chart.options.scales.x.grid.color = gridColor;
+                        chart.options.scales.x.ticks.color = textColor;
+                    }
+                    if(chart.options.scales.y) {
+                        chart.options.scales.y.grid.color = gridColor;
+                        chart.options.scales.y.ticks.color = textColor;
+                    }
+                }
+                if(chart.options.plugins.legend) {
+                    chart.options.plugins.legend.labels.color = textColor;
+                }
+                chart.update();
+            });
+        }
 
         async function fetchCloudData() {
             const bar = document.getElementById('progressBar');
@@ -210,9 +256,9 @@
             data.forEach(e => counts[e.merchantName] = (counts[e.merchantName] || 0) + 1);
             const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 5);
             document.getElementById('serialReturnersList').innerHTML = sorted.map(([name, count]) => `
-                <div class="bg-slate-50/80 p-3 rounded-2xl flex justify-between items-center border border-slate-100 list-item-glow">
-                    <span class="text-xs font-bold text-slate-700 truncate w-32">${name}</span>
-                    <span class="bg-rose-100 text-rose-600 font-bold text-[10px] px-2 py-1 rounded-full">${count} Returns</span>
+                <div class="bg-slate-50/50 dark:bg-slate-800/50 p-3 rounded-2xl flex justify-between items-center border border-slate-100 dark:border-slate-700 list-item-glow">
+                    <span class="text-xs font-bold truncate w-32">${name}</span>
+                    <span class="bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 font-bold text-[10px] px-2 py-1 rounded-full">${count} Returns</span>
                 </div>`).join('');
         }
 
@@ -224,10 +270,10 @@
             });
             const sorted = Object.entries(stats).sort((a,b) => b[1].val - a[1].val).slice(0, 10);
             document.getElementById(id).innerHTML = sorted.map(([name, obj], i) => `
-                <div class="flex justify-between items-center p-3 bg-slate-50/50 rounded-2xl list-item-glow">
+                <div class="flex justify-between items-center p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl list-item-glow">
                     <div class="flex items-center gap-3">
-                        <span class="w-7 h-7 flex items-center justify-center bg-slate-200 rounded-lg text-[10px] font-bold text-slate-500">${i+1}</span>
-                        <div><p class="font-bold text-slate-700 text-xs">${name}</p>${showID ? `<p class="text-[9px] text-slate-400 font-mono">${obj.sub}</p>` : ''}</div>
+                        <span class="w-7 h-7 flex items-center justify-center bg-slate-200 dark:bg-slate-700 rounded-lg text-[10px] font-bold text-slate-500">${i+1}</span>
+                        <div><p class="font-bold text-xs">${name}</p>${showID ? `<p class="text-[9px] text-slate-400 font-mono">${obj.sub}</p>` : ''}</div>
                     </div>
                     <span class="text-emerald-600 font-bold text-xs">$${obj.val.toLocaleString()}</span>
                 </div>`).join('');
@@ -238,24 +284,19 @@
             const tbody = document.getElementById('dataTableBody');
             const mCounts = {}; entries.forEach(e => mCounts[e.merchantName] = (mCounts[e.merchantName] || 0) + 1);
 
-            // إصلاح منطق البحث ليشمل كل الحقول
             const filteredData = data.slice().reverse().filter(e => 
-                e.orderId.toLowerCase().includes(s) || 
-                e.asin.toLowerCase().includes(s) || 
-                e.merchantName.toLowerCase().includes(s) || 
-                e.merchantId.toLowerCase().includes(s) || 
-                e.action.toLowerCase().includes(s)
+                e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s)
             );
 
             tbody.innerHTML = filteredData.slice(0,25).map(e => {
                 const badge = mCounts[e.merchantName] > 5 ? '🔴' : '🟢';
                 return `
-                <tr class="hover:bg-emerald-50/40 transition-colors">
+                <tr class="hover:bg-emerald-50/40 dark:hover:bg-emerald-900/10 transition-colors">
                     <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
-                    <td class="p-5"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
-                    <td class="p-5"><div class="text-xs font-semibold text-slate-600">${e.merchantName} <span class="text-[10px]">${badge}</span></div><div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div></td>
+                    <td class="p-5"><div class="font-bold text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
+                    <td class="p-5"><div class="text-xs font-semibold">${e.merchantName} <span class="text-[10px]">${badge}</span></div><div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div></td>
                     <td class="p-5 text-right font-bold text-emerald-600">$${e.price.toLocaleString()}</td>
-                    <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
+                    <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
                 </tr>`}).join('');
         }
 
@@ -273,7 +314,7 @@
             charts.time = new Chart(document.getElementById('timeChart'), {
                 type: 'line',
                 data: { labels, datasets: [{ label: 'Saved $', data: dataArr, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.05)', fill: true, tension: 0.4 }] },
-                options: { maintainAspectRatio: false }
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
