@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Master - Live Dashboard v10</title>
+    <title>Returns Master | Professional Analytics</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,204 +18,167 @@
             background-image: 
                 radial-gradient(at 0% 0%, hsla(160, 40%, 10%, 1) 0, transparent 50%), 
                 radial-gradient(at 100% 0%, hsla(210, 40%, 30%, 1) 0, transparent 50%);
-            background-repeat: no-repeat; background-size: 100% 600px;
+            background-repeat: no-repeat; background-size: 100% 800px;
             min-height: 100vh; color: #334155;
         }
-        /* البروز الخفيف اللي كان ناقص */
         .card { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            border-radius: 24px; padding: 25px; 
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);
+            border-radius: 28px; padding: 25px; 
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: default;
         }
         .card:hover { 
-            transform: translateY(-7px) scale(1.01); 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
-            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-8px); 
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.12);
+            border-color: rgba(16, 185, 129, 0.4);
         }
+        .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
         
-        input, select, textarea {
-            background-color: #f8fafc; border: 1px solid #cbd5e1;
-            border-radius: 12px; padding: 10px 14px; width: 100%;
-            outline: none; transition: all 0.3s; font-size: 0.85rem;
-        }
-        input:focus { border-color: #10b981; background-color: white; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            color: white; padding: 12px; border-radius: 12px; font-weight: 700;
-            cursor: pointer; transition: all 0.3s; text-align: center; border: none;
-        }
-        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); }
-        
-        .tab-btn { padding: 6px 16px; border-radius: 50px; font-weight: 600; font-size: 0.8rem; transition: all 0.3s; }
-        .tab-active { background-color: #10b981; color: white; }
+        .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
+        .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
+        .tab-inactive:hover { background: #e2e8f0; }
 
+        #syncStatus { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-12">
 
-    <nav class="w-full pt-6 pb-2 container mx-auto px-6 flex flex-wrap justify-between items-center gap-4 no-print">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl border border-white/20">💹</div>
-            <div class="text-white">
-                <h1 class="text-2xl font-bold">Returns Master</h1>
-                <p class="text-xs opacity-80" id="syncStatus">Syncing...</p>
+    <nav class="w-full pt-8 pb-4 container mx-auto px-8 flex flex-wrap justify-between items-center gap-6 no-print">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl border border-white/30 shadow-xl">📊</div>
+            <div>
+                <h1 class="text-3xl font-bold text-white tracking-tight">Returns Master</h1>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                    <p class="text-xs text-emerald-50 font-medium" id="syncStatus">Fetching live data...</p>
+                </div>
             </div>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-            <button onclick="exportCSV()" class="bg-emerald-600/20 text-emerald-100 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-600/40">📊 Excel</button>
-            <button onclick="exportData()" class="bg-white/10 text-white border border-white/20 px-4 py-2 rounded-xl text-xs font-bold">💾 Backup</button>
-            <button onclick="document.getElementById('importFile').click()" class="bg-amber-500/20 text-amber-100 border border-amber-500/30 px-4 py-2 rounded-xl text-xs font-bold">📂 Restore</button>
-            <input type="file" id="importFile" hidden onchange="importData(this)">
-            <button onclick="clearAllData()" class="bg-rose-500/80 text-white px-4 py-2 rounded-xl text-xs font-bold">Clear 🗑️</button>
+        <div class="flex items-center gap-3">
+            <button onclick="exportCSV()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">📊 Export Excel</button>
+            <button onclick="exportData()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">💾 Backup</button>
+            <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg shadow-emerald-900/20 hover:scale-105 transition-all">🔄 Refresh Cloud</button>
         </div>
     </nav>
 
-    <div class="container mx-auto px-6 pt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div class="lg:col-span-3 no-print">
-            <div class="card sticky top-8">
-                <h2 class="text-lg font-bold mb-4 text-slate-800 border-b pb-3 flex items-center gap-2"><span>📝</span> Entry</h2>
-                <form id="dataForm" onsubmit="addEntry(event)" class="space-y-3">
-                    <input type="date" id="date" required>
-                    <div class="bg-slate-50 p-3 rounded-xl space-y-2 border border-slate-100">
-                        <input type="text" id="orderId" placeholder="Order ID" required>
-                        <input type="text" id="asin" placeholder="ASIN" required class="uppercase">
-                        <input type="number" step="0.01" id="price" placeholder="Value" required>
-                    </div>
-                    <div class="bg-blue-50/50 p-3 rounded-xl space-y-2 border border-blue-100">
-                        <input type="text" id="merchantId" placeholder="Merchant ID" required>
-                        <input type="text" id="merchantName" placeholder="Merchant Name" required>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <select id="issue" required>
-                            <option value="Fake item">Fake item</option>
-                            <option value="Empty box">Empty box</option>
-                            <option value="Switch item">Switch item</option>
-                            <option value="Broken">Broken</option>
-                            <option value="Missing part">Missing part</option>
-                            <option value="Over Use">Over Use</option>
-                        </select>
-                        <select id="road" required><option value="RTN">RTN</option><option value="RTO">RTO</option></select>
-                    </div>
-                    <select id="action">
-                        <option value="Refund">Refund</option>
-                        <option value="Replacement">Replacement</option>
-                        <option value="Inventory">Inventory</option>
-                    </select>
-                    <button type="submit" id="saveBtn" class="btn-primary w-full shadow-lg">+ Save & Sync</button>
-                </form>
-            </div>
+    <main class="container mx-auto px-8 mt-6 space-y-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="card border-l-8 border-l-indigo-500"><p class="stat-label">Daily Revenue Lost</p><p class="stat-value" id="dailyTotal">0</p></div>
+            <div class="card border-l-8 border-l-emerald-500"><p class="stat-label">Monthly Lost Value</p><p class="stat-value" id="monthlyTotal">0</p></div>
+            <div class="card border-l-8 border-l-amber-500"><p class="stat-label">Yearly Projection</p><p class="stat-value" id="yearlyTotal">0</p></div>
+            <div class="card border-l-8 border-l-rose-500"><p class="stat-label">Total Impacted Items</p><p class="stat-value" id="totalItems">0</p></div>
         </div>
 
-        <div class="lg:col-span-9 space-y-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="card p-4 border-t-4 border-indigo-500"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Today</span><p class="text-xl font-bold" id="dailyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-emerald-500"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Month</span><p class="text-xl font-bold" id="monthlyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-purple-500"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Year</span><p class="text-xl font-bold" id="yearlyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-rose-500"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Items</span><p class="text-xl font-bold" id="totalItems">0</p></div>
+        <div class="card">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Financial Performance Trend</h3>
+                    <p class="text-sm text-slate-400">Visualization of loss over time</p>
+                </div>
+                <div class="bg-slate-100 p-1.5 rounded-2xl flex gap-1">
+                    <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
+                    <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
+                </div>
             </div>
+            <div class="h-[350px] w-full"><canvas id="timeChart"></canvas></div>
+        </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="card">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-bold text-slate-800">Financial Trends</h3>
-                    <div class="bg-slate-100 p-1 rounded-full flex gap-1">
-                        <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
-                        <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
-                    </div>
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-2xl">🏆</span>
+                    <h3 class="text-lg font-bold text-slate-800">Top 10 High-Risk ASINs</h3>
                 </div>
-                <div class="h-[300px]"><canvas id="timeChart"></canvas></div>
+                <div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="card"><h3 class="font-bold mb-4 text-amber-600 border-b pb-2">🏆 Top 10 High-Risk ASINs</h3><div id="topAsinGrid" class="space-y-2"></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-blue-600 border-b pb-2">🏢 Top 10 Merchants</h3><div id="topMerchantGrid" class="space-y-2"></div></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase tracking-widest">Issues</h3><div class="h-[200px]"><canvas id="issueChart"></canvas></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase tracking-widest">Road</h3><div class="h-[200px]"><canvas id="roadChart"></canvas></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase tracking-widest">Action</h3><div class="h-[200px]"><canvas id="actionChart"></canvas></div></div>
-            </div>
-
-            <div class="card p-0 overflow-hidden">
-                <div class="p-4 border-b flex justify-between items-center bg-white">
-                    <h3 class="font-bold">Recent History</h3>
-                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search..." class="w-64 py-1.5 text-xs">
+            <div class="card">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-2xl">🏢</span>
+                    <h3 class="text-lg font-bold text-slate-800">Merchant Risk Ranking</h3>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400">
-                            <tr><th class="p-4">Date</th><th class="p-4">Info</th><th class="p-4">Merchant</th><th class="p-4 text-right">Value</th><th class="p-4 text-center">X</th></tr>
-                        </thead>
-                        <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
+                <div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
         </div>
-    </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Root Cause Analysis</h3>
+                <div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div>
+            </div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Inbound Road Distribution</h3>
+                <div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div>
+            </div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Mitigation Action Taken</h3>
+                <div class="h-[240px] w-full"><canvas id="actionChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="card p-0 overflow-hidden">
+            <div class="p-6 border-b flex flex-wrap justify-between items-center bg-white gap-4">
+                <div>
+                    <h3 class="text-lg font-bold">Comprehensive Logs</h3>
+                    <p class="text-xs text-slate-400">Showing last 20 cloud records</p>
+                </div>
+                <div class="relative">
+                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search by Order, ASIN, or Merchant..." 
+                           class="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20">
+                    <span class="absolute left-3 top-3 text-slate-400">🔍</span>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-50/50 text-[11px] uppercase tracking-widest text-slate-400 font-bold">
+                            <th class="p-5">Recording Date</th>
+                            <th class="p-5">Transaction Details</th>
+                            <th class="p-5">Merchant Entity</th>
+                            <th class="p-5 text-right">Value ($)</th>
+                            <th class="p-5 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFAht24zvBJ4o0DddZyqFtaBrl3K06_R7bnagwxFM5VhuC70jIZKbxCQuk9UF5-qOU/exec"; 
         let entries = [];
         let charts = {};
         let currentView = 'monthly';
-        document.getElementById('date').valueAsDate = new Date();
 
         async function fetchCloudData() {
-            document.getElementById('syncStatus').innerText = "☁️ Loading Cloud...";
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const cloudData = await response.json();
-                if (cloudData && cloudData.length > 0) {
+                if (cloudData) {
                     entries = cloudData.map(item => ({
-                        id: Date.now() + Math.random(),
                         date: new Date(item.date || item.Date || new Date()).toISOString().split('T')[0],
                         orderId: String(item.orderId || item["Order ID"] || ""),
                         asin: String(item.asin || item.ASIN || "").toUpperCase(),
                         price: parseFloat(item.price || item.Price || 0),
-                        merchantId: String(item.merchantId || item["Merchant ID"] || item["merchant id"] || "N/A"),
-                        merchantName: String(item.merchantName || item["Merchant Name"] || item["merchant name"] || "N/A"),
-                        issue: item.issue || item.Issue || "",
-                        road: item.road || item.Road || "",
-                        action: item.action || item.Action || ""
+                        merchantId: String(item.merchantId || item["Merchant ID"] || "N/A"),
+                        merchantName: String(item.merchantName || item["Merchant Name"] || "N/A"),
+                        issue: item.issue || item.Issue || "Unknown",
+                        road: item.road || item.Road || "N/A",
+                        action: item.action || item.Action || "Pending"
                     }));
                     updateUI();
-                    document.getElementById('syncStatus').innerText = "✅ Cloud Live Feed";
+                    document.getElementById('syncStatus').innerText = "Live Cloud Feed Connected";
                 }
             } catch (e) {
-                entries = JSON.parse(localStorage.getItem('returns_v10_final') || '[]');
-                updateUI();
-                document.getElementById('syncStatus').innerText = "⚠️ Offline Mode";
+                document.getElementById('syncStatus').innerText = "Connection Failed (Sync Error)";
             }
-        }
-
-        async function addEntry(e) {
-            e.preventDefault();
-            const entry = {
-                id: Date.now(),
-                date: document.getElementById('date').value,
-                orderId: document.getElementById('orderId').value.trim(),
-                asin: document.getElementById('asin').value.trim().toUpperCase(),
-                price: parseFloat(document.getElementById('price').value),
-                merchantId: document.getElementById('merchantId').value.trim(),
-                merchantName: document.getElementById('merchantName').value.trim(),
-                issue: document.getElementById('issue').value,
-                road: document.getElementById('road').value,
-                action: document.getElementById('action').value
-            };
-            entries.push(entry);
-            localStorage.setItem('returns_v10_final', JSON.stringify(entries));
-            updateUI(); e.target.reset();
-            document.getElementById('date').valueAsDate = new Date();
-            
-            document.getElementById('syncStatus').innerText = "📡 Syncing...";
-            await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
-            document.getElementById('syncStatus').innerText = "✅ Synced";
         }
 
         function updateUI() {
@@ -233,7 +196,7 @@
             document.getElementById('dailyTotal').innerText = d.toLocaleString();
             document.getElementById('monthlyTotal').innerText = m.toLocaleString();
             document.getElementById('yearlyTotal').innerText = y.toLocaleString();
-            document.getElementById('totalItems').innerText = entries.length;
+            document.getElementById('totalItems').innerText = entries.length.toLocaleString();
 
             renderTimeChart(); renderPieCharts(); renderTopList('topAsinGrid', 'asin'); renderTopList('topMerchantGrid', 'merchantName'); renderTable();
         }
@@ -251,8 +214,22 @@
             if(charts.time) charts.time.destroy();
             charts.time = new Chart(document.getElementById('timeChart'), {
                 type: 'line',
-                data: { labels, datasets: [{ data: dataArr, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.05)', fill: true, tension: 0.4 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                data: { labels, datasets: [{ 
+                    label: 'Lost Value',
+                    data: dataArr, 
+                    borderColor: '#10b981', 
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)', 
+                    fill: true, 
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#fff',
+                    pointBorderWidth: 3
+                }] },
+                options: { 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+                }
             });
         }
 
@@ -261,9 +238,13 @@
                 const counts = {}; entries.forEach(e => counts[e[key]] = (counts[e[key]]||0)+1);
                 if(charts[id]) charts[id].destroy();
                 charts[id] = new Chart(document.getElementById(id), {
-                    type: 'pie',
-                    data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors }] },
-                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 8 } } } } }
+                    type: 'doughnut',
+                    data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
+                    options: { 
+                        maintainAspectRatio: false, 
+                        cutout: '70%',
+                        plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { size: 10, weight: '600' } } } } 
+                    }
                 });
             };
             generatePie('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6']);
@@ -275,34 +256,59 @@
             const stats = {};
             entries.forEach(e => { stats[e[key]] = (stats[e[key]] || 0) + e.price; });
             const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]).slice(0, 10);
-            document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `<div class="flex justify-between p-2 bg-slate-50 rounded-lg text-[11px] hover:bg-emerald-50 transition-colors"><b>#${i+1} ${name}</b><span class="text-emerald-600 font-bold">${val.toLocaleString()}</span></div>`).join('');
+            document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `
+                <div class="flex justify-between items-center p-4 bg-slate-50/50 rounded-2xl hover:bg-white transition-all border border-transparent hover:border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 flex items-center justify-center bg-slate-200 rounded-lg text-[10px] font-bold text-slate-500">${i+1}</span>
+                        <span class="font-bold text-slate-700 text-sm">${name}</span>
+                    </div>
+                    <span class="text-emerald-600 font-bold">$${val.toLocaleString()}</span>
+                </div>
+            `).join('');
         }
 
         function renderTable() {
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
             tbody.innerHTML = entries.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
-                .slice(0,15).map(e => `<tr><td class="p-4 text-[10px] text-slate-400 font-mono">${e.date}</td><td class="p-4"><b>${e.orderId}</b><br><small class="text-blue-500 font-bold">${e.asin}</small></td><td class="p-4"><div class="text-xs font-semibold">${e.merchantName}</div><div class="text-[9px] text-slate-400">${e.merchantId}</div></td><td class="p-4 text-right text-emerald-600 font-bold">${e.price.toLocaleString()}</td><td class="p-4 text-center"><button onclick="deleteEntry(${e.id})" class="text-rose-300 hover:text-rose-600">✕</button></td></tr>`).join('');
+                .slice(0,20).map(e => `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-5 font-mono text-[11px] text-slate-400">${e.date}</td>
+                    <td class="p-5">
+                        <div class="font-bold text-slate-700">${e.orderId}</div>
+                        <div class="text-[10px] text-indigo-500 font-bold uppercase tracking-wider">${e.asin}</div>
+                    </td>
+                    <td class="p-5">
+                        <div class="text-xs font-semibold text-slate-600">${e.merchantName}</div>
+                        <div class="text-[9px] text-slate-400 uppercase tracking-tighter">${e.merchantId}</div>
+                    </td>
+                    <td class="p-5 text-right font-bold text-slate-800">$${e.price.toLocaleString()}</td>
+                    <td class="p-5 text-center">
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        function switchTimeView(v) { currentView = v; document.getElementById('btn-monthly').className = v==='monthly'?'tab-btn tab-active':'tab-btn tab-inactive'; document.getElementById('btn-quarterly').className = v==='quarterly'?'tab-btn tab-active':'tab-btn tab-inactive'; renderTimeChart(); }
-        function deleteEntry(id) { if(confirm('Delete?')) { entries = entries.filter(e => e.id !== id); updateUI(); } }
-        function clearAllData() { if(confirm('Clear ALL?')) { entries = []; localStorage.removeItem('returns_v10_final'); updateUI(); } }
+        function switchTimeView(v) { 
+            currentView = v; 
+            document.getElementById('btn-monthly').className = v==='monthly'?'tab-btn tab-active':'tab-btn tab-inactive'; 
+            document.getElementById('btn-quarterly').className = v==='quarterly'?'tab-btn tab-active':'tab-btn tab-inactive'; 
+            renderTimeChart(); 
+        }
+
         function exportCSV() {
             let csv = "Date,Order ID,ASIN,Price,Merchant ID,Merchant Name,Issue,Road,Action\n";
             entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Export.csv'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Master_Report.csv'; a.click();
         }
-        function exportData() { const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Backup.json'; a.click(); }
-        function importData(input) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = JSON.parse(e.target.result);
-                if(Array.isArray(data)) { entries = data; updateUI(); alert("Imported!"); }
-            };
-            reader.readAsText(input.files[0]);
+
+        function exportData() { 
+            const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' }); 
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Cloud_Backup.json'; a.click(); 
         }
+
         window.onload = fetchCloudData;
     </script>
 </body>
