@@ -20,6 +20,19 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+        
+        /* تأثير الضي (Hover Glow) المخصص لصفوف التوب */
+        .list-item-glow {
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .list-item-glow:hover {
+            background: white !important;
+            border-color: #10b981 !important;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+            transform: translateX(5px);
+        }
+
         .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
         .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
@@ -27,7 +40,6 @@
         .tab-inactive { color: #64748b; background: #f1f5f9; }
         .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
         
-        /* Animation للكلمة اللي بتنور وتطفي */
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         #syncStatus { animation: pulse 2s infinite; }
 
@@ -202,7 +214,7 @@
             data.forEach(e => counts[e.merchantName] = (counts[e.merchantName] || 0) + 1);
             const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 5);
             document.getElementById('serialReturnersList').innerHTML = sorted.map(([name, count]) => `
-                <div class="bg-slate-50/80 p-3 rounded-2xl flex justify-between items-center border border-slate-100">
+                <div class="bg-slate-50/80 p-3 rounded-2xl flex justify-between items-center border border-slate-100 list-item-glow">
                     <span class="text-xs font-bold text-slate-700 truncate w-32">${name}</span>
                     <span class="bg-rose-100 text-rose-600 font-bold text-[10px] px-2 py-1 rounded-full">${count} Returns</span>
                 </div>`).join('');
@@ -216,7 +228,7 @@
             });
             const sorted = Object.entries(stats).sort((a,b) => b[1].val - a[1].val).slice(0, 10);
             document.getElementById(id).innerHTML = sorted.map(([name, obj], i) => `
-                <div class="flex justify-between items-center p-3 bg-slate-50/50 rounded-2xl border border-transparent">
+                <div class="flex justify-between items-center p-3 bg-slate-50/50 rounded-2xl list-item-glow">
                     <div class="flex items-center gap-3">
                         <span class="w-7 h-7 flex items-center justify-center bg-slate-200 rounded-lg text-[10px] font-bold text-slate-500">${i+1}</span>
                         <div><p class="font-bold text-slate-700 text-xs">${name}</p>${showID ? `<p class="text-[9px] text-slate-400 font-mono">${obj.sub}</p>` : ''}</div>
