@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Master | Smart Intelligence</title>
+    <title>Returns Master | Full Analysis</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -30,9 +30,7 @@
             background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white;
             backdrop-filter: blur(10px); border-radius: 15px; padding: 8px 15px; font-size: 12px; font-weight: 700; outline: none;
         }
-        .date-input {
-            background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; cursor: pointer;
-        }
+        .date-input { background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; }
     </style>
 </head>
 <body class="pb-12">
@@ -64,7 +62,7 @@
         </div>
 
         <div class="card">
-            <div class="flex justify-between items-center mb-8">
+            <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
                 <h3 class="text-xl font-bold text-slate-800">Financial Trend Analysis</h3>
                 <div class="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl">
                     <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
@@ -86,14 +84,25 @@
             <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">ROAD Summary %</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
             <div class="card flex flex-col items-center">
                 <h3 class="stat-label mb-6">Serial Returners</h3>
-                <div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px]"></div>
+                <div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px] pr-2"></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card">
+                <div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏆</span><h3 class="text-lg font-bold text-slate-800">Top 10 High-Value ASINs</h3></div>
+                <div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div>
+            </div>
+            <div class="card">
+                <div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏢</span><h3 class="text-lg font-bold text-slate-800">Top 10 Merchant Ranking</h3></div>
+                <div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
         </div>
 
         <div class="card p-0 overflow-hidden">
             <div class="p-6 border-b flex justify-between items-center bg-white">
                 <h3 class="text-lg font-bold">Comprehensive Logs</h3>
-                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search..." class="w-64 pl-4 pr-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
+                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search..." class="w-64 px-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
@@ -139,20 +148,19 @@
             const filter = document.getElementById('merchantFilter');
             const merchants = [...new Set(entries.map(e => e.merchantName))].sort();
             merchants.forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m; opt.innerText = m;
-                filter.appendChild(opt);
+                const opt = document.createElement('option'); opt.value = m; opt.innerText = m; filter.appendChild(opt);
             });
         }
 
         function updateUI() {
-            const selectedMerchant = document.getElementById('merchantFilter').value;
+            const selMerchant = document.getElementById('merchantFilter').value;
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
             let filtered = entries;
-            if (selectedMerchant !== 'all') filtered = filtered.filter(e => e.merchantName === selectedMerchant);
+            if (selMerchant !== 'all') filtered = filtered.filter(e => e.merchantName === selMerchant);
             if (start) filtered = filtered.filter(e => e.date >= start);
             if (end) filtered = filtered.filter(e => e.date <= end);
+
             const now = new Date(); const today = now.toISOString().split('T')[0];
             let d=0, m=0, y=0;
             filtered.forEach(e => {
@@ -162,11 +170,18 @@
                     y += e.price; if(ed.getMonth() === now.getMonth()) m += e.price;
                 }
             });
+
             document.getElementById('dailyTotal').innerText = d.toLocaleString();
             document.getElementById('monthlyTotal').innerText = m.toLocaleString();
             document.getElementById('yearlyTotal').innerText = y.toLocaleString();
             document.getElementById('totalItems').innerText = filtered.length.toLocaleString();
-            renderTimeChart(filtered); renderPieCharts(filtered); renderSerialReturners(filtered); renderTable(filtered);
+            
+            renderTimeChart(filtered); 
+            renderPieCharts(filtered); 
+            renderSerialReturners(filtered);
+            renderList('topAsinGrid', 'asin', false, filtered); 
+            renderList('topMerchantGrid', 'merchantName', true, filtered); 
+            renderTable(filtered);
         }
 
         function renderSerialReturners(data) {
@@ -180,19 +195,36 @@
                 </div>`).join('');
         }
 
+        function renderList(id, key, showID, data) {
+            const stats = {};
+            data.forEach(e => {
+                if (!stats[e[key]]) stats[e[key]] = { val: 0, sub: showID ? e.merchantId : '' };
+                stats[e[key]].val += e.price;
+            });
+            const sorted = Object.entries(stats).sort((a,b) => b[1].val - a[1].val).slice(0, 10);
+            document.getElementById(id).innerHTML = sorted.map(([name, obj], i) => `
+                <div class="flex justify-between items-center p-4 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-emerald-100">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 flex items-center justify-center bg-slate-200 rounded-xl text-[10px] font-bold text-slate-500">${i+1}</span>
+                        <div><p class="font-bold text-slate-700 text-xs">${name}</p>${showID ? `<p class="text-[9px] text-slate-400 font-mono">${obj.sub}</p>` : ''}</div>
+                    </div>
+                    <span class="text-emerald-600 font-bold text-xs">$${obj.val.toLocaleString()}</span>
+                </div>`).join('');
+        }
+
         function renderTable(data = entries) {
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
-            const merchantCounts = {};
-            entries.forEach(e => merchantCounts[e.merchantName] = (merchantCounts[e.merchantName] || 0) + 1);
+            const mCounts = {}; entries.forEach(e => mCounts[e.merchantName] = (mCounts[e.merchantName] || 0) + 1);
+
             tbody.innerHTML = data.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
                 .slice(0,25).map(e => {
-                    const badge = merchantCounts[e.merchantName] > 5 ? '<span class="ml-1 text-rose-500">🔴</span>' : '<span class="ml-1 text-emerald-500">🟢</span>';
+                    const badge = mCounts[e.merchantName] > 5 ? '🔴' : '🟢';
                     return `
                     <tr class="hover:bg-emerald-50/40 transition-colors">
                         <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
                         <td class="p-5"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
-                        <td class="p-5"><div class="text-xs font-semibold text-slate-600 flex items-center">${e.merchantName}${badge}</div><div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div></td>
+                        <td class="p-5"><div class="text-xs font-semibold text-slate-600">${e.merchantName} <span class="text-[10px]">${badge}</span></div><div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div></td>
                         <td class="p-5 text-right font-bold text-emerald-600">$${e.price.toLocaleString()}</td>
                         <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
                     </tr>`}).join('');
