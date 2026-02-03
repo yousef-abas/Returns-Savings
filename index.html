@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Analytics 2026 | Risk Control</title>
+    <title>Savings Master 2026 | Recovery Dashboard</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
@@ -14,112 +14,87 @@
     <style>
         body { 
             font-family: 'Outfit', sans-serif; 
-            background-color: #0f172a; /* تحويل للوضع الليلي الفخم */
+            background-color: #0f172a; 
             background-image: 
                 radial-gradient(at 0% 0%, hsla(160, 40%, 15%, 1) 0, transparent 50%), 
                 radial-gradient(at 100% 0%, hsla(210, 40%, 20%, 1) 0, transparent 50%);
-            background-repeat: no-repeat; background-size: 100% 1000px;
+            background-repeat: no-repeat; background-size: 100% 1200px;
             min-height: 100vh; color: #f1f5f9;
         }
         .card { 
             background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px);
-            border-radius: 28px; padding: 25px; 
-            box-shadow: 0 20px 50px -12px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 28px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
         }
-        .card:hover { 
-            transform: translateY(-10px); 
-            border-color: rgba(16, 185, 129, 0.5);
-            background: rgba(30, 41, 59, 0.9);
-        }
-        .stat-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; }
-        .stat-value { font-size: 2rem; font-weight: 700; color: #fff; }
+        .card:hover { transform: translateY(-5px); border-color: rgba(16, 185, 129, 0.4); }
+        .stat-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: #10b981; } /* لون أخضر للتوفير */
         
-        .trend-up { color: #f43f5e; font-size: 0.75rem; font-weight: bold; }
-        .trend-down { color: #10b981; font-size: 0.75rem; font-weight: bold; }
-
-        .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
-        .tab-active { background: #10b981; color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
-        .tab-inactive { color: #94a3b8; background: rgba(255,255,255,0.05); }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        thead th { padding: 12px; color: #64748b; font-size: 10px; text-transform: uppercase; }
+        tbody tr { background: rgba(255,255,255,0.03); transition: all 0.3s; }
+        tbody tr:hover { background: rgba(255,255,255,0.08); }
+        tbody td { padding: 15px; font-size: 13px; }
+        tbody td:first-child { border-radius: 15px 0 0 15px; }
+        tbody td:last-child { border-radius: 0 15px 15px 0; }
     </style>
 </head>
 <body class="pb-12">
 
-    <nav class="w-full pt-10 pb-6 container mx-auto px-8 flex flex-wrap justify-between items-center gap-6">
-        <div class="flex items-center gap-5">
-            <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-700 rounded-3xl flex items-center justify-center text-3xl shadow-2xl shadow-emerald-500/20">🛡️</div>
+    <nav class="container mx-auto px-8 pt-10 pb-6 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-emerald-500/20">💰</div>
             <div>
-                <h1 class="text-3xl font-bold text-white tracking-tight">Risk Control <span class="text-emerald-500">2026</span></h1>
-                <p class="text-xs text-slate-400 font-medium" id="syncStatus">Monitoring Merchant Impact...</p>
+                <h1 class="text-2xl font-bold tracking-tight text-white">Savings Master <span class="text-emerald-400">2026</span></h1>
+                <p class="text-xs text-slate-400" id="syncStatus">Calculating Recovered Value...</p>
             </div>
         </div>
-        <div class="flex items-center gap-3">
-            <div class="hidden md:block bg-slate-800/50 px-4 py-2 rounded-2xl border border-white/5 text-[10px] font-bold">
-                YEAR FILTER: <span class="text-emerald-400">01 JAN 2026 - PRESENT</span>
-            </div>
-            <button onclick="window.location.reload()" class="bg-emerald-500 hover:bg-emerald-400 text-white px-6 py-3 rounded-2xl text-xs font-bold transition-all shadow-lg shadow-emerald-500/20">🔄 Refresh Analytics</button>
-        </div>
+        <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/10">🔄 Refresh Data</button>
     </nav>
 
-    <main class="container mx-auto px-8 mt-4 space-y-8">
+    <main class="container mx-auto px-8 space-y-8">
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="card">
-                <p class="stat-label">Lost Value (2026)</p>
-                <p class="stat-value" id="yearlyTotal">0</p>
-                <p class="trend-up" id="forecastLabel">Targeting Precision...</p>
-            </div>
-            <div class="card">
-                <p class="stat-label">Merchant Count</p>
-                <p class="stat-value" id="merchantCount">0</p>
-                <p class="text-[10px] text-slate-500">Active impacted entities</p>
-            </div>
-            <div class="card">
-                <p class="stat-label">Avg. Loss Per Order</p>
-                <p class="stat-value" id="avgLoss">0</p>
-                <p class="trend-down">Based on 2026 data</p>
-            </div>
-            <div class="card">
-                <p class="stat-label">High Risk ASINs</p>
-                <p class="stat-value" id="totalItems">0</p>
-                <p class="text-[10px] text-slate-500">Total reported cases</p>
-            </div>
+            <div class="card"><p class="stat-label">Total Savings (2026)</p><p class="stat-value" id="yearlyTotal">0</p></div>
+            <div class="card"><p class="stat-label">Avg. Saved Per Item</p><p class="stat-value" id="avgSaved">0</p></div>
+            <div class="card"><p class="stat-label">Items Recovered</p><p class="stat-value" id="totalItems">0</p></div>
+            <div class="card"><p class="stat-label">Active Merchants</p><p class="stat-value" id="merchantCount">0</p></div>
         </div>
 
         <div class="card">
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h3 class="text-xl font-bold text-white">2026 Loss Projection</h3>
-                    <p class="text-sm text-slate-400">Monthly breakdown of merchant impact</p>
-                </div>
-            </div>
-            <div class="h-[350px]"><canvas id="timeChart"></canvas></div>
+            <h3 class="text-lg font-bold mb-6">Savings Momentum (Monthly)</h3>
+            <div class="h-[300px]"><canvas id="timeChart"></canvas></div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-8 card">
-                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">🏢 Top Impacted Merchants <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">Ranked by Value</span></h3>
-                <div id="topMerchantGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card">
+                <h3 class="font-bold text-emerald-400 mb-6 flex items-center gap-2">🏆 Top 10 High-Value ASINs (Saved)</h3>
+                <div id="topAsinGrid" class="space-y-3"></div>
             </div>
-            <div class="lg:col-span-4 card flex flex-col items-center justify-center">
-                <h3 class="stat-label mb-8">Loss Source (Issues)</h3>
-                <div class="h-[280px] w-full"><canvas id="issueChart"></canvas></div>
+            <div class="card">
+                <h3 class="font-bold text-blue-400 mb-6 flex items-center gap-2">🏢 Top 10 Impacted Merchants</h3>
+                <div id="topMerchantGrid" class="space-y-3"></div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="card flex flex-col items-center">
-                <h3 class="stat-label mb-6">Road Risk Distribution</h3>
-                <div class="h-[220px] w-full"><canvas id="roadChart"></canvas></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Issue Types</h3><div class="h-[200px] w-full"><canvas id="issueChart"></canvas></div></div>
+            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Road Type</h3><div class="h-[200px] w-full"><canvas id="roadChart"></canvas></div></div>
+            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Action Success</h3><div class="h-[200px] w-full"><canvas id="actionChart"></canvas></div></div>
+        </div>
+
+        <div class="card">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Recent Recovery Logs</h3>
+                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search logs..." class="bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-sm w-64 outline-none focus:border-emerald-500">
             </div>
-            <div class="card flex flex-col items-center">
-                <h3 class="stat-label mb-6">Mitigation Strategy</h3>
-                <div class="h-[220px] w-full"><canvas id="actionChart"></canvas></div>
+            <div class="overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr><th>Date</th><th>Order & ASIN</th><th>Merchant</th><th class="text-right">Saved Value</th><th>Action</th></tr>
+                    </thead>
+                    <tbody id="dataTableBody"></tbody>
+                </table>
             </div>
         </div>
     </main>
@@ -134,104 +109,79 @@
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const cloudData = await response.json();
                 if (cloudData) {
-                    // فلترة الداتا لتكون من 2026 فقط
-                    entries = cloudData.filter(item => {
-                        const d = new Date(item.date || item.Date);
-                        return d.getFullYear() === 2026;
-                    }).map(item => ({
+                    entries = cloudData.filter(item => new Date(item.date || item.Date).getFullYear() === 2026).map(item => ({
                         date: new Date(item.date || item.Date).toISOString().split('T')[0],
                         orderId: String(item.orderId || item["Order ID"] || ""),
                         asin: String(item.asin || item.ASIN || "").toUpperCase(),
                         price: parseFloat(item.price || item.Price || 0),
-                        merchantName: String(item.merchantName || item["Merchant Name"] || "Unknown"),
-                        issue: item.issue || item.Issue || "Unknown",
+                        merchantName: String(item.merchantName || item["Merchant Name"] || "N/A"),
+                        issue: item.issue || item.Issue || "N/A",
                         road: item.road || item.Road || "N/A",
-                        action: item.action || item.Action || "Pending"
+                        action: item.action || item.Action || "N/A"
                     }));
                     updateUI();
-                    document.getElementById('syncStatus').innerText = "✅ 2026 Risk Shield Active";
+                    document.getElementById('syncStatus').innerText = "✅ Live Cloud Savings Connected";
                 }
-            } catch (e) {
-                document.getElementById('syncStatus').innerText = "❌ Sync Error";
-            }
+            } catch (e) { document.getElementById('syncStatus').innerText = "❌ Sync Error"; }
         }
 
         function updateUI() {
-            let totalLoss = 0;
-            const merchants = new Set();
-            entries.forEach(e => {
-                totalLoss += e.price;
-                merchants.add(e.merchantName);
-            });
-
-            document.getElementById('yearlyTotal').innerText = "$" + totalLoss.toLocaleString();
-            document.getElementById('merchantCount').innerText = merchants.size;
+            let total = 0; const merchants = new Set();
+            entries.forEach(e => { total += e.price; merchants.add(e.merchantName); });
+            document.getElementById('yearlyTotal').innerText = "$" + total.toLocaleString();
             document.getElementById('totalItems').innerText = entries.length;
-            document.getElementById('avgLoss').innerText = "$" + (entries.length ? (totalLoss / entries.length).toFixed(1) : 0);
-            
-            // Forecast simple logic (متوسط شهري x 12)
-            const currentMonth = new Date().getMonth() + 1;
-            const projected = (totalLoss / currentMonth) * 12;
-            document.getElementById('forecastLabel').innerText = `Est. Year End: $${projected.toLocaleString()}`;
-
-            renderTimeChart(); renderPieCharts(); renderMerchantList();
+            document.getElementById('merchantCount').innerText = merchants.size;
+            document.getElementById('avgSaved').innerText = "$" + (entries.length ? (total/entries.length).toFixed(1) : 0);
+            renderTimeChart(); renderPieCharts(); renderTopList('topAsinGrid', 'asin'); renderTopList('topMerchantGrid', 'merchantName'); renderTable();
         }
 
         function renderTimeChart() {
-            const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            const dataArr = Array(12).fill(0);
-            entries.forEach(e => {
-                const m = new Date(e.date).getMonth();
-                dataArr[m] += e.price;
-            });
+            const dataArr = Array(12).fill(0); entries.forEach(e => dataArr[new Date(e.date).getMonth()] += e.price);
             if(charts.time) charts.time.destroy();
             charts.time = new Chart(document.getElementById('timeChart'), {
                 type: 'line',
-                data: { labels, datasets: [{ 
-                    data: dataArr, 
-                    borderColor: '#10b981', 
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)', 
-                    fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#10b981'
-                }] },
-                options: { 
-                    maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } },
-                    scales: { 
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                    }
-                }
+                data: { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], datasets: [{ data: dataArr, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
             });
         }
 
         function renderPieCharts() {
-            const config = (id, key, colors, isDoughnut = true) => {
+            const cfg = (id, key, colors) => {
                 const counts = {}; entries.forEach(e => counts[e[key]] = (counts[e[key]]||0)+1);
                 if(charts[id]) charts[id].destroy();
                 charts[id] = new Chart(document.getElementById(id), {
-                    type: isDoughnut ? 'doughnut' : 'pie',
+                    type: 'doughnut',
                     data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
-                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', usePointStyle: true, font: { size: 10 } } } } }
+                    options: { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 9 } } } } }
                 });
             };
-            config('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
-            config('roadChart', 'road', ['#10b981', '#f43f5e']);
-            config('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981']);
+            cfg('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
+            cfg('roadChart', 'road', ['#10b981', '#f43f5e']);
+            cfg('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981']);
         }
 
-        function renderMerchantList() {
-            const stats = {};
-            entries.forEach(e => { stats[e.merchantName] = (stats[e.merchantName] || 0) + e.price; });
+        function renderTopList(id, key) {
+            const stats = {}; entries.forEach(e => stats[e[key]] = (stats[e[key]] || 0) + e.price);
             const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]).slice(0, 10);
-            document.getElementById('topMerchantGrid').innerHTML = sorted.map(([name, val], i) => `
-                <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-emerald-500/30 transition-all">
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs font-bold text-slate-500">0${i+1}</span>
-                        <span class="font-bold text-sm text-slate-200">${name}</span>
-                    </div>
+            document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
+                    <span class="text-xs font-bold text-slate-500">#${i+1} <span class="text-slate-200 ml-2">${name}</span></span>
                     <span class="text-emerald-400 font-bold">$${val.toLocaleString()}</span>
-                </div>
-            `).join('');
+                </div>`).join('');
+        }
+
+        function renderTable() {
+            const s = document.getElementById('tableSearch').value.toLowerCase();
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = entries.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
+                .slice(0,15).map(e => `
+                <tr>
+                    <td class="text-slate-500 font-mono text-xs">${e.date}</td>
+                    <td><div class="font-bold">${e.orderId}</div><div class="text-[10px] text-blue-400 font-bold uppercase">${e.asin}</div></td>
+                    <td class="text-xs text-slate-300">${e.merchantName}</td>
+                    <td class="text-right font-bold text-emerald-400">$${e.price.toLocaleString()}</td>
+                    <td><span class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded text-[9px] font-bold uppercase">${e.action}</span></td>
+                </tr>`).join('');
         }
 
         window.onload = fetchCloudData;
