@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Master - Cloud Live</title>
+    <title>Returns Master - Live Dashboard v10</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
@@ -21,27 +21,39 @@
             background-repeat: no-repeat; background-size: 100% 600px;
             min-height: 100vh; color: #334155;
         }
+        /* البروز الخفيف اللي كان ناقص */
         .card { 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             border-radius: 24px; padding: 25px; 
-            box-shadow: 0 20px 40px -5px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
             border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
         }
+        .card:hover { 
+            transform: translateY(-7px) scale(1.01); 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        
         input, select, textarea {
             background-color: #f8fafc; border: 1px solid #cbd5e1;
             border-radius: 12px; padding: 10px 14px; width: 100%;
             outline: none; transition: all 0.3s; font-size: 0.85rem;
         }
-        input:focus { border-color: #10b981; background-color: white; }
+        input:focus { border-color: #10b981; background-color: white; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+        
         .btn-primary {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white; padding: 12px; border-radius: 12px; font-weight: 700;
-            cursor: pointer; transition: all 0.3s; text-align: center;
+            cursor: pointer; transition: all 0.3s; text-align: center; border: none;
         }
-        .tab-btn { padding: 6px 16px; border-radius: 50px; font-weight: 600; font-size: 0.8rem; }
+        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); }
+        
+        .tab-btn { padding: 6px 16px; border-radius: 50px; font-weight: 600; font-size: 0.8rem; transition: all 0.3s; }
         .tab-active { background-color: #10b981; color: white; }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
+
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
@@ -52,11 +64,11 @@
             <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl border border-white/20">💹</div>
             <div class="text-white">
                 <h1 class="text-2xl font-bold">Returns Master</h1>
-                <p class="text-xs opacity-80" id="syncStatus">Initializing Cloud Sync...</p>
+                <p class="text-xs opacity-80" id="syncStatus">Syncing...</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <button onclick="exportCSV()" class="bg-emerald-600/20 text-emerald-100 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold">📊 Excel Full</button>
+            <button onclick="exportCSV()" class="bg-emerald-600/20 text-emerald-100 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-600/40">📊 Excel</button>
             <button onclick="exportData()" class="bg-white/10 text-white border border-white/20 px-4 py-2 rounded-xl text-xs font-bold">💾 Backup</button>
             <button onclick="document.getElementById('importFile').click()" class="bg-amber-500/20 text-amber-100 border border-amber-500/30 px-4 py-2 rounded-xl text-xs font-bold">📂 Restore</button>
             <input type="file" id="importFile" hidden onchange="importData(this)">
@@ -102,10 +114,10 @@
 
         <div class="lg:col-span-9 space-y-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="card p-4 border-t-4 border-indigo-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Today</span><p class="text-xl font-bold" id="dailyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-emerald-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Month</span><p class="text-xl font-bold" id="monthlyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-purple-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Year</span><p class="text-xl font-bold" id="yearlyTotal">0</p></div>
-                <div class="card p-4 border-t-4 border-rose-500"><span class="text-[10px] font-bold text-slate-400 uppercase">Items</span><p class="text-xl font-bold" id="totalItems">0</p></div>
+                <div class="card p-4 border-t-4 border-indigo-500"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Today</span><p class="text-xl font-bold" id="dailyTotal">0</p></div>
+                <div class="card p-4 border-t-4 border-emerald-500"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Month</span><p class="text-xl font-bold" id="monthlyTotal">0</p></div>
+                <div class="card p-4 border-t-4 border-purple-500"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Year</span><p class="text-xl font-bold" id="yearlyTotal">0</p></div>
+                <div class="card p-4 border-t-4 border-rose-500"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Items</span><p class="text-xl font-bold" id="totalItems">0</p></div>
             </div>
 
             <div class="card">
@@ -125,9 +137,9 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase">Issue Analysis</h3><div class="h-[200px]"><canvas id="issueChart"></canvas></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase">Road Distribution</h3><div class="h-[200px]"><canvas id="roadChart"></canvas></div></div>
-                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase">Action Taken</h3><div class="h-[200px]"><canvas id="actionChart"></canvas></div></div>
+                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase tracking-widest">Issues</h3><div class="h-[200px]"><canvas id="issueChart"></canvas></div></div>
+                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase tracking-widest">Road</h3><div class="h-[200px]"><canvas id="roadChart"></canvas></div></div>
+                <div class="card"><h3 class="font-bold mb-4 text-slate-700 text-[10px] text-center uppercase tracking-widest">Action</h3><div class="h-[200px]"><canvas id="actionChart"></canvas></div></div>
             </div>
 
             <div class="card p-0 overflow-hidden">
@@ -154,33 +166,31 @@
         let currentView = 'monthly';
         document.getElementById('date').valueAsDate = new Date();
 
-        // جلب البيانات من السحابة عند الفتح
         async function fetchCloudData() {
-            document.getElementById('syncStatus').innerText = "☁️ Syncing Cloud Data...";
+            document.getElementById('syncStatus').innerText = "☁️ Loading Cloud...";
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const cloudData = await response.json();
                 if (cloudData && cloudData.length > 0) {
                     entries = cloudData.map(item => ({
                         id: Date.now() + Math.random(),
-                        date: new Date(item.date || item.Date).toISOString().split('T')[0],
-                        orderId: String(item.orderId || item["Order ID"]),
-                        asin: String(item.asin || item.ASIN).toUpperCase(),
-                        price: parseFloat(item.price || item.Price),
-                        merchantId: String(item.merchantId || item["Merchant ID"]),
-                        merchantName: String(item.merchantName || item["Merchant Name"]),
-                        issue: item.issue || item.Issue,
-                        road: item.road || item.Road,
-                        action: item.action || item.Action
+                        date: new Date(item.date || item.Date || new Date()).toISOString().split('T')[0],
+                        orderId: String(item.orderId || item["Order ID"] || ""),
+                        asin: String(item.asin || item.ASIN || "").toUpperCase(),
+                        price: parseFloat(item.price || item.Price || 0),
+                        merchantId: String(item.merchantId || item["Merchant ID"] || item["merchant id"] || "N/A"),
+                        merchantName: String(item.merchantName || item["Merchant Name"] || item["merchant name"] || "N/A"),
+                        issue: item.issue || item.Issue || "",
+                        road: item.road || item.Road || "",
+                        action: item.action || item.Action || ""
                     }));
                     updateUI();
-                    document.getElementById('syncStatus').innerText = "✅ Cloud Live Feed Active";
+                    document.getElementById('syncStatus').innerText = "✅ Cloud Live Feed";
                 }
             } catch (e) {
-                console.log("Cloud fetch failed, using local storage");
-                entries = JSON.parse(localStorage.getItem('returns_v9_final') || '[]');
+                entries = JSON.parse(localStorage.getItem('returns_v10_final') || '[]');
                 updateUI();
-                document.getElementById('syncStatus').innerText = "⚠️ Local Mode (Offline)";
+                document.getElementById('syncStatus').innerText = "⚠️ Offline Mode";
             }
         }
 
@@ -199,16 +209,13 @@
                 action: document.getElementById('action').value
             };
             entries.push(entry);
-            localStorage.setItem('returns_v9_final', JSON.stringify(entries));
-            updateUI(); 
-            e.target.reset();
+            localStorage.setItem('returns_v10_final', JSON.stringify(entries));
+            updateUI(); e.target.reset();
             document.getElementById('date').valueAsDate = new Date();
             
-            document.getElementById('syncStatus').innerText = "📡 Sending to Cloud...";
-            if(GOOGLE_SCRIPT_URL.startsWith("http")) {
-                await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
-                document.getElementById('syncStatus').innerText = "✅ Saved & Synced";
-            }
+            document.getElementById('syncStatus').innerText = "📡 Syncing...";
+            await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
+            document.getElementById('syncStatus').innerText = "✅ Synced";
         }
 
         function updateUI() {
@@ -268,36 +275,34 @@
             const stats = {};
             entries.forEach(e => { stats[e[key]] = (stats[e[key]] || 0) + e.price; });
             const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]).slice(0, 10);
-            document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `<div class="flex justify-between p-2 bg-slate-50 rounded-lg text-[11px]"><b>#${i+1} ${name}</b><span class="text-emerald-600 font-bold">${val.toLocaleString()}</span></div>`).join('');
+            document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `<div class="flex justify-between p-2 bg-slate-50 rounded-lg text-[11px] hover:bg-emerald-50 transition-colors"><b>#${i+1} ${name}</b><span class="text-emerald-600 font-bold">${val.toLocaleString()}</span></div>`).join('');
         }
 
         function renderTable() {
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
             tbody.innerHTML = entries.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
-                .slice(0,15).map(e => `<tr><td class="p-4 text-[10px] text-slate-400 font-mono">${e.date}</td><td class="p-4"><b>${e.orderId}</b><br><small class="text-blue-500 font-bold">${e.asin}</small></td><td class="p-4"><div class="text-xs font-semibold">${e.merchantName}</div><div class="text-[9px] text-slate-400">${e.merchantId}</div></td><td class="p-4 text-right text-emerald-600 font-bold">${e.price.toLocaleString()}</td><td class="p-4 text-center"><button onclick="deleteEntry(${e.id})" class="text-rose-300">✕</button></td></tr>`).join('');
+                .slice(0,15).map(e => `<tr><td class="p-4 text-[10px] text-slate-400 font-mono">${e.date}</td><td class="p-4"><b>${e.orderId}</b><br><small class="text-blue-500 font-bold">${e.asin}</small></td><td class="p-4"><div class="text-xs font-semibold">${e.merchantName}</div><div class="text-[9px] text-slate-400">${e.merchantId}</div></td><td class="p-4 text-right text-emerald-600 font-bold">${e.price.toLocaleString()}</td><td class="p-4 text-center"><button onclick="deleteEntry(${e.id})" class="text-rose-300 hover:text-rose-600">✕</button></td></tr>`).join('');
         }
 
         function switchTimeView(v) { currentView = v; document.getElementById('btn-monthly').className = v==='monthly'?'tab-btn tab-active':'tab-btn tab-inactive'; document.getElementById('btn-quarterly').className = v==='quarterly'?'tab-btn tab-active':'tab-btn tab-inactive'; renderTimeChart(); }
-        function deleteEntry(id) { if(confirm('Delete locally? (Will remain in Cloud)')) { entries = entries.filter(e => e.id !== id); updateUI(); } }
-        function clearAllData() { if(confirm('Clear ALL?')) { entries = []; localStorage.removeItem('returns_v9_final'); updateUI(); } }
+        function deleteEntry(id) { if(confirm('Delete?')) { entries = entries.filter(e => e.id !== id); updateUI(); } }
+        function clearAllData() { if(confirm('Clear ALL?')) { entries = []; localStorage.removeItem('returns_v10_final'); updateUI(); } }
         function exportCSV() {
             let csv = "Date,Order ID,ASIN,Price,Merchant ID,Merchant Name,Issue,Road,Action\n";
             entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Master.csv'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Export.csv'; a.click();
         }
         function exportData() { const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Backup.json'; a.click(); }
         function importData(input) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const data = JSON.parse(e.target.result);
-                if(Array.isArray(data)) { entries = data; updateUI(); alert("Data Imported Locally!"); }
+                if(Array.isArray(data)) { entries = data; updateUI(); alert("Imported!"); }
             };
             reader.readAsText(input.files[0]);
         }
-
-        // بدء سحب البيانات عند التحميل
         window.onload = fetchCloudData;
     </script>
 </body>
