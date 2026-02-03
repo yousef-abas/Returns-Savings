@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Returns Master | Smart Intelligence</title>
-    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
     <style>
         body { 
             font-family: 'Outfit', sans-serif; background-color: #f8fafc; 
@@ -23,52 +20,39 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
-        .alert-card { background: linear-gradient(135deg, #fff 0%, #fff5f5 100%); border-left: 6px solid #ef4444; }
         .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
         .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
         .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
         .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        #syncStatus { animation: pulse 2s infinite; }
         .merchant-select {
             background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white;
-            backdrop-filter: blur(10px); border-radius: 15px; padding: 8px 15px; font-size: 12px; font-weight: 700; outline: none; cursor: pointer;
+            backdrop-filter: blur(10px); border-radius: 15px; padding: 8px 15px; font-size: 12px; font-weight: 700; outline: none;
         }
-        .merchant-select option { color: #334155; }
+        .date-input {
+            background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; cursor: pointer;
+        }
     </style>
 </head>
 <body class="pb-12">
-
     <nav class="w-full pt-8 pb-4 container mx-auto px-8 flex flex-wrap justify-between items-center gap-6">
         <div class="flex items-center gap-5">
             <div class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl border border-white/30 shadow-xl">🚀</div>
             <div>
                 <h1 class="text-3xl font-bold text-white tracking-tight">Returns Master Pro</h1>
-                <div class="flex flex-col mt-1">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
-                        <p class="text-xs text-emerald-50 font-medium" id="syncStatus">System Ready</p>
-                    </div>
-                    <div class="w-full bg-white/10 rounded-full h-1 mt-2 overflow-hidden"><div id="progressBar" class="progress-bar"></div></div>
-                </div>
+                <div class="w-full bg-white/10 rounded-full h-1 mt-2 overflow-hidden"><div id="progressBar" class="progress-bar"></div></div>
             </div>
         </div>
         <div class="flex items-center gap-4">
             <select id="merchantFilter" onchange="updateUI()" class="merchant-select">
                 <option value="all">🌐 All Merchants</option>
             </select>
-            <div class="flex gap-3">
-                <button onclick="exportCSV()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">📊 Export Report</button>
-                <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg hover:scale-105 transition-all">🔄 Sync Cloud</button>
-            </div>
+            <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg hover:scale-105 transition-all">🔄 Sync Cloud</button>
         </div>
     </nav>
 
     <main class="container mx-auto px-8 mt-6 space-y-8">
-        <div id="alertSection" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div class="card border-l-8 border-l-emerald-500"><p class="stat-label">Daily Savings</p><p class="stat-value" id="dailyTotal">0</p></div>
             <div class="card border-l-8 border-l-indigo-500"><p class="stat-label">Monthly Recovery</p><p class="stat-value" id="monthlyTotal">0</p></div>
@@ -79,9 +63,16 @@
         <div class="card">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-xl font-bold text-slate-800">Financial Trend Analysis</h3>
-                <div class="bg-slate-100 p-1.5 rounded-2xl flex gap-1">
+                <div class="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl">
                     <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
                     <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
+                    <div class="h-6 w-px bg-slate-300 mx-1"></div>
+                    <div class="flex items-center gap-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-400">FROM:</span>
+                        <input type="date" id="startDate" onchange="updateUI()" class="date-input">
+                        <span class="text-[10px] font-bold text-slate-400">TO:</span>
+                        <input type="date" id="endDate" onchange="updateUI()" class="date-input">
+                    </div>
                 </div>
             </div>
             <div class="h-[350px] w-full"><canvas id="timeChart"></canvas></div>
@@ -92,25 +83,23 @@
             <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">ROAD Summary %</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
             <div class="card flex flex-col items-center">
                 <h3 class="stat-label mb-6">Serial Returners</h3>
-                <div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px] pr-2">
-                    </div>
+                <div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px]"></div>
             </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="card"><div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏆</span><h3 class="text-lg font-bold text-slate-800">Top 10 High-Value ASINs</h3></div><div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div></div>
-            <div class="card"><div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏢</span><h3 class="text-lg font-bold text-slate-800">Top 10 Merchant Ranking</h3></div><div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div></div>
         </div>
 
         <div class="card p-0 overflow-hidden">
             <div class="p-6 border-b flex justify-between items-center bg-white">
-                <div><h3 class="text-lg font-bold">Comprehensive Logs</h3></div>
-                <div class="relative">
-                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search anything..." class="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20">
-                    <span class="absolute left-3 top-3">🔍</span>
-                </div>
+                <h3 class="text-lg font-bold">Comprehensive Logs</h3>
+                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search..." class="w-64 pl-4 pr-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
             </div>
-            <div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-[11px] uppercase text-slate-400 font-bold"><th class="p-5">Date</th><th class="p-5">Order & ASIN</th><th class="p-5">Merchant Info</th><th class="p-5 text-right">Value ($)</th><th class="p-5 text-center">Status</th></thead><tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody></table></div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-slate-50 text-[11px] uppercase text-slate-400 font-bold">
+                        <th class="p-5">Date</th><th class="p-5">Order & ASIN</th><th class="p-5">Merchant Info</th><th class="p-5 text-right">Value ($)</th><th class="p-5 text-center">Status</th>
+                    </thead>
+                    <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
         </div>
     </main>
 
@@ -139,7 +128,6 @@
                     bar.style.width = "100%";
                     populateMerchantFilter();
                     updateUI();
-                    checkAlerts();
                 }
             } catch (e) { console.error(e); }
         }
@@ -154,31 +142,19 @@
             });
         }
 
-        function checkAlerts() {
-            const alertBox = document.getElementById('alertSection');
-            const asinCounts = {};
-            entries.forEach(e => asinCounts[e.asin] = (asinCounts[e.asin] || 0) + 1);
-            const criticalAsins = Object.entries(asinCounts).filter(a => a[1] >= 5).slice(0, 2);
-            if (criticalAsins.length > 0) {
-                alertBox.classList.remove('hidden');
-                alertBox.innerHTML = criticalAsins.map(([asin, count]) => `
-                    <div class="card alert-card flex items-center gap-4">
-                        <div class="text-3xl text-red-500">⚠️</div>
-                        <div>
-                            <p class="font-bold text-red-600 uppercase text-xs">Critical Return Rate</p>
-                            <p class="text-slate-700 font-medium text-sm">ASIN <span class="font-bold">${asin}</span> appeared ${count} times recently.</p>
-                        </div>
-                    </div>`).join('');
-            }
-        }
-
         function updateUI() {
             const selectedMerchant = document.getElementById('merchantFilter').value;
-            const filteredData = selectedMerchant === 'all' ? entries : entries.filter(e => e.merchantName === selectedMerchant);
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+
+            let filtered = entries;
+            if (selectedMerchant !== 'all') filtered = filtered.filter(e => e.merchantName === selectedMerchant);
+            if (start) filtered = filtered.filter(e => e.date >= start);
+            if (end) filtered = filtered.filter(e => e.date <= end);
+
             const now = new Date(); const today = now.toISOString().split('T')[0];
             let d=0, m=0, y=0;
-            
-            filteredData.forEach(e => {
+            filtered.forEach(e => {
                 const ed = new Date(e.date);
                 if(e.date === today) d += e.price;
                 if(ed.getFullYear() === now.getFullYear()) {
@@ -189,34 +165,48 @@
             document.getElementById('dailyTotal').innerText = d.toLocaleString();
             document.getElementById('monthlyTotal').innerText = m.toLocaleString();
             document.getElementById('yearlyTotal').innerText = y.toLocaleString();
-            document.getElementById('totalItems').innerText = filteredData.length.toLocaleString();
+            document.getElementById('totalItems').innerText = filtered.length.toLocaleString();
             
-            renderTimeChart(filteredData); 
-            renderPieCharts(filteredData); 
-            renderSerialReturners(filteredData); // تحديث القائمة الجديدة
-            renderList('topAsinGrid', 'asin', false, filteredData); 
-            renderList('topMerchantGrid', 'merchantName', true, filteredData); 
-            renderTable(filteredData);
+            renderTimeChart(filtered); 
+            renderPieCharts(filtered); 
+            renderSerialReturners(filtered);
+            renderTable(filtered);
         }
 
         function renderSerialReturners(data) {
             const counts = {};
             data.forEach(e => counts[e.merchantName] = (counts[e.merchantName] || 0) + 1);
             const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 5);
-            
-            const listContainer = document.getElementById('serialReturnersList');
-            listContainer.innerHTML = sorted.map(([name, count]) => `
+            document.getElementById('serialReturnersList').innerHTML = sorted.map(([name, count]) => `
                 <div class="bg-slate-50/80 p-3 rounded-2xl flex justify-between items-center border border-slate-100">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-slate-700 truncate w-32">${name}</span>
-                        <span class="text-[10px] text-slate-400">Repeated returns</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="bg-rose-100 text-rose-600 font-bold text-xs px-2.5 py-1 rounded-full">${count} times</span>
-                    </div>
-                </div>
-            `).join('');
-            if(sorted.length === 0) listContainer.innerHTML = '<p class="text-slate-400 text-xs text-center mt-10">No data available</p>';
+                    <span class="text-xs font-bold text-slate-700 truncate w-32">${name}</span>
+                    <span class="bg-rose-100 text-rose-600 font-bold text-[10px] px-2 py-1 rounded-full">${count} Returns</span>
+                </div>`).join('');
+        }
+
+        function renderTable(data = entries) {
+            const s = document.getElementById('tableSearch').value.toLowerCase();
+            const tbody = document.getElementById('dataTableBody');
+            
+            // حساب المرتجعات لكل تاجر لوضع البادج (Merchant Health)
+            const merchantCounts = {};
+            entries.forEach(e => merchantCounts[e.merchantName] = (merchantCounts[e.merchantName] || 0) + 1);
+
+            tbody.innerHTML = data.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
+                .slice(0,25).map(e => {
+                    const isHigh = merchantCounts[e.merchantName] > 5;
+                    const badge = isHigh ? '<span class="ml-1 text-rose-500">🔴</span>' : '<span class="ml-1 text-emerald-500">🟢</span>';
+                    return `
+                    <tr class="hover:bg-emerald-50/40 transition-colors">
+                        <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
+                        <td class="p-5"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
+                        <td class="p-5">
+                            <div class="text-xs font-semibold text-slate-600 flex items-center">${e.merchantName} ${badge}</div>
+                            <div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div>
+                        </td>
+                        <td class="p-5 text-right font-bold text-emerald-600">$${e.price.toLocaleString()}</td>
+                        <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
+                    </tr>`}).join('');
         }
 
         function renderTimeChart(data) {
@@ -251,51 +241,11 @@
                 charts[id] = new Chart(document.getElementById(id), {
                     type: 'doughnut',
                     data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
-                    options: { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9, weight: '600' } } } } }
+                    options: { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9 } } } } }
                 });
             };
             gen('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
             gen('roadChart', 'road', ['#10b981', '#f43f5e']);
-        }
-
-        function renderList(id, key, showID, data) {
-            const stats = {};
-            data.forEach(e => {
-                if (!stats[e[key]]) stats[e[key]] = { val: 0, sub: showID ? e.merchantId : '' };
-                stats[e[key]].val += e.price;
-            });
-            const sorted = Object.entries(stats).sort((a,b) => b[1].val - a[1].val).slice(0, 10);
-            document.getElementById(id).innerHTML = sorted.map(([name, obj], i) => `
-                <div class="flex justify-between items-center p-4 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-emerald-100">
-                    <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 flex items-center justify-center bg-slate-200 rounded-xl text-[10px] font-bold text-slate-500">${i+1}</span>
-                        <div><p class="font-bold text-slate-700 text-xs">${name}</p>${showID ? `<p class="text-[9px] text-slate-400 font-mono">${obj.sub}</p>` : ''}</div>
-                    </div>
-                    <span class="text-emerald-600 font-bold text-xs">$${obj.val.toLocaleString()}</span>
-                </div>`).join('');
-        }
-
-        function renderTable(data = entries) {
-            const s = document.getElementById('tableSearch').value.toLowerCase();
-            const tbody = document.getElementById('dataTableBody');
-            tbody.innerHTML = data.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
-                .slice(0,25).map(e => `
-                <tr class="hover:bg-emerald-50/40 transition-colors">
-                    <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
-                    <td class="p-5"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
-                    <td class="p-5"><div class="text-xs font-semibold text-slate-600">${e.merchantName}</div><div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div></td>
-                    <td class="p-5 text-right font-bold text-emerald-600">$${e.price.toLocaleString()}</td>
-                    <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
-                </tr>`).join('');
-        }
-
-        function exportCSV() {
-            const selectedMerchant = document.getElementById('merchantFilter').value;
-            const dataToExport = selectedMerchant === 'all' ? entries : entries.filter(e => e.merchantName === selectedMerchant);
-            let csv = "Date,Order ID,ASIN,Price,Merchant ID,Merchant Name,Issue,Road,Action\n";
-            dataToExport.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Returns_Report.csv`; a.click();
         }
 
         window.onload = fetchCloudData;
