@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Savings Master 2026 | Recovery Dashboard</title>
+    <title>Returns Master | Professional Analytics</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,86 +14,138 @@
     <style>
         body { 
             font-family: 'Outfit', sans-serif; 
-            background-color: #0f172a; 
+            background-color: #f8fafc; 
             background-image: 
-                radial-gradient(at 0% 0%, hsla(160, 40%, 15%, 1) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(210, 40%, 20%, 1) 0, transparent 50%);
-            background-repeat: no-repeat; background-size: 100% 1200px;
-            min-height: 100vh; color: #f1f5f9;
+                radial-gradient(at 0% 0%, hsla(160, 40%, 10%, 1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(210, 40%, 30%, 1) 0, transparent 50%);
+            background-repeat: no-repeat; background-size: 100% 800px;
+            min-height: 100vh; color: #334155;
         }
         .card { 
-            background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px);
-            border-radius: 28px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);
+            border-radius: 28px; padding: 25px; 
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .card:hover { transform: translateY(-5px); border-color: rgba(16, 185, 129, 0.4); }
-        .stat-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-size: 1.8rem; font-weight: 700; color: #10b981; } /* لون أخضر للتوفير */
+        .card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.12);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
         
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        thead th { padding: 12px; color: #64748b; font-size: 10px; text-transform: uppercase; }
-        tbody tr { background: rgba(255,255,255,0.03); transition: all 0.3s; }
-        tbody tr:hover { background: rgba(255,255,255,0.08); }
-        tbody td { padding: 15px; font-size: 13px; }
-        tbody td:first-child { border-radius: 15px 0 0 15px; }
-        tbody td:last-child { border-radius: 0 15px 15px 0; }
+        .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
+        .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .tab-inactive { color: #64748b; background: #f1f5f9; }
+        .tab-inactive:hover { background: #e2e8f0; }
+
+        #syncStatus { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="pb-12">
 
-    <nav class="container mx-auto px-8 pt-10 pb-6 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-emerald-500/20">💰</div>
+    <nav class="w-full pt-8 pb-4 container mx-auto px-8 flex flex-wrap justify-between items-center gap-6 no-print">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl border border-white/30 shadow-xl">📊</div>
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-white">Savings Master <span class="text-emerald-400">2026</span></h1>
-                <p class="text-xs text-slate-400" id="syncStatus">Calculating Recovered Value...</p>
+                <h1 class="text-3xl font-bold text-white tracking-tight">Returns Master</h1>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                    <p class="text-xs text-emerald-50 font-medium" id="syncStatus">Fetching live data...</p>
+                </div>
             </div>
         </div>
-        <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/10">🔄 Refresh Data</button>
+        <div class="flex items-center gap-3">
+            <button onclick="exportCSV()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">📊 Export Excel</button>
+            <button onclick="exportData()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">💾 Backup</button>
+            <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg shadow-emerald-900/20 hover:scale-105 transition-all">🔄 Refresh Cloud</button>
+        </div>
     </nav>
 
-    <main class="container mx-auto px-8 space-y-8">
+    <main class="container mx-auto px-8 mt-6 space-y-8">
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="card"><p class="stat-label">Total Savings (2026)</p><p class="stat-value" id="yearlyTotal">0</p></div>
-            <div class="card"><p class="stat-label">Avg. Saved Per Item</p><p class="stat-value" id="avgSaved">0</p></div>
-            <div class="card"><p class="stat-label">Items Recovered</p><p class="stat-value" id="totalItems">0</p></div>
-            <div class="card"><p class="stat-label">Active Merchants</p><p class="stat-value" id="merchantCount">0</p></div>
+            <div class="card border-l-8 border-l-indigo-500"><p class="stat-label">Daily Revenue Lost</p><p class="stat-value" id="dailyTotal">0</p></div>
+            <div class="card border-l-8 border-l-emerald-500"><p class="stat-label">Monthly Lost Value</p><p class="stat-value" id="monthlyTotal">0</p></div>
+            <div class="card border-l-8 border-l-amber-500"><p class="stat-label">Yearly Projection</p><p class="stat-value" id="yearlyTotal">0</p></div>
+            <div class="card border-l-8 border-l-rose-500"><p class="stat-label">Total Impacted Items</p><p class="stat-value" id="totalItems">0</p></div>
         </div>
 
         <div class="card">
-            <h3 class="text-lg font-bold mb-6">Savings Momentum (Monthly)</h3>
-            <div class="h-[300px]"><canvas id="timeChart"></canvas></div>
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Financial Performance Trend</h3>
+                    <p class="text-sm text-slate-400">Visualization of loss over time</p>
+                </div>
+                <div class="bg-slate-100 p-1.5 rounded-2xl flex gap-1">
+                    <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
+                    <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
+                </div>
+            </div>
+            <div class="h-[350px] w-full"><canvas id="timeChart"></canvas></div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="card">
-                <h3 class="font-bold text-emerald-400 mb-6 flex items-center gap-2">🏆 Top 10 High-Value ASINs (Saved)</h3>
-                <div id="topAsinGrid" class="space-y-3"></div>
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-2xl">🏆</span>
+                    <h3 class="text-lg font-bold text-slate-800">Top 10 High-Risk ASINs</h3>
+                </div>
+                <div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
             <div class="card">
-                <h3 class="font-bold text-blue-400 mb-6 flex items-center gap-2">🏢 Top 10 Impacted Merchants</h3>
-                <div id="topMerchantGrid" class="space-y-3"></div>
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-2xl">🏢</span>
+                    <h3 class="text-lg font-bold text-slate-800">Merchant Risk Ranking</h3>
+                </div>
+                <div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Issue Types</h3><div class="h-[200px] w-full"><canvas id="issueChart"></canvas></div></div>
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Road Type</h3><div class="h-[200px] w-full"><canvas id="roadChart"></canvas></div></div>
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Action Success</h3><div class="h-[200px] w-full"><canvas id="actionChart"></canvas></div></div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Root Cause Analysis</h3>
+                <div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div>
+            </div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Inbound Road Distribution</h3>
+                <div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div>
+            </div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Mitigation Action Taken</h3>
+                <div class="h-[240px] w-full"><canvas id="actionChart"></canvas></div>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold">Recent Recovery Logs</h3>
-                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search logs..." class="bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-sm w-64 outline-none focus:border-emerald-500">
+        <div class="card p-0 overflow-hidden">
+            <div class="p-6 border-b flex flex-wrap justify-between items-center bg-white gap-4">
+                <div>
+                    <h3 class="text-lg font-bold">Comprehensive Logs</h3>
+                    <p class="text-xs text-slate-400">Showing last 20 cloud records</p>
+                </div>
+                <div class="relative">
+                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search by Order, ASIN, or Merchant..." 
+                           class="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20">
+                    <span class="absolute left-3 top-3 text-slate-400">🔍</span>
+                </div>
             </div>
             <div class="overflow-x-auto">
-                <table>
+                <table class="w-full text-left text-sm">
                     <thead>
-                        <tr><th>Date</th><th>Order & ASIN</th><th>Merchant</th><th class="text-right">Saved Value</th><th>Action</th></tr>
+                        <tr class="bg-slate-50/50 text-[11px] uppercase tracking-widest text-slate-400 font-bold">
+                            <th class="p-5">Recording Date</th>
+                            <th class="p-5">Transaction Details</th>
+                            <th class="p-5">Merchant Entity</th>
+                            <th class="p-5 text-right">Value ($)</th>
+                            <th class="p-5 text-center">Status</th>
+                        </tr>
                     </thead>
-                    <tbody id="dataTableBody"></tbody>
+                    <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
                 </table>
             </div>
         </div>
@@ -103,85 +155,158 @@
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFAht24zvBJ4o0DddZyqFtaBrl3K06_R7bnagwxFM5VhuC70jIZKbxCQuk9UF5-qOU/exec"; 
         let entries = [];
         let charts = {};
+        let currentView = 'monthly';
 
         async function fetchCloudData() {
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const cloudData = await response.json();
                 if (cloudData) {
-                    entries = cloudData.filter(item => new Date(item.date || item.Date).getFullYear() === 2026).map(item => ({
-                        date: new Date(item.date || item.Date).toISOString().split('T')[0],
+                    entries = cloudData.map(item => ({
+                        date: new Date(item.date || item.Date || new Date()).toISOString().split('T')[0],
                         orderId: String(item.orderId || item["Order ID"] || ""),
                         asin: String(item.asin || item.ASIN || "").toUpperCase(),
                         price: parseFloat(item.price || item.Price || 0),
+                        merchantId: String(item.merchantId || item["Merchant ID"] || "N/A"),
                         merchantName: String(item.merchantName || item["Merchant Name"] || "N/A"),
-                        issue: item.issue || item.Issue || "N/A",
+                        issue: item.issue || item.Issue || "Unknown",
                         road: item.road || item.Road || "N/A",
-                        action: item.action || item.Action || "N/A"
+                        action: item.action || item.Action || "Pending"
                     }));
                     updateUI();
-                    document.getElementById('syncStatus').innerText = "✅ Live Cloud Savings Connected";
+                    document.getElementById('syncStatus').innerText = "Live Cloud Feed Connected";
                 }
-            } catch (e) { document.getElementById('syncStatus').innerText = "❌ Sync Error"; }
+            } catch (e) {
+                document.getElementById('syncStatus').innerText = "Connection Failed (Sync Error)";
+            }
         }
 
         function updateUI() {
-            let total = 0; const merchants = new Set();
-            entries.forEach(e => { total += e.price; merchants.add(e.merchantName); });
-            document.getElementById('yearlyTotal').innerText = "$" + total.toLocaleString();
-            document.getElementById('totalItems').innerText = entries.length;
-            document.getElementById('merchantCount').innerText = merchants.size;
-            document.getElementById('avgSaved').innerText = "$" + (entries.length ? (total/entries.length).toFixed(1) : 0);
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            let d=0, m=0, y=0;
+            entries.forEach(e => {
+                const ed = new Date(e.date);
+                if(e.date === todayStr) d += e.price;
+                if(ed.getFullYear() === now.getFullYear()) {
+                    y += e.price;
+                    if(ed.getMonth() === now.getMonth()) m += e.price;
+                }
+            });
+            document.getElementById('dailyTotal').innerText = d.toLocaleString();
+            document.getElementById('monthlyTotal').innerText = m.toLocaleString();
+            document.getElementById('yearlyTotal').innerText = y.toLocaleString();
+            document.getElementById('totalItems').innerText = entries.length.toLocaleString();
+
             renderTimeChart(); renderPieCharts(); renderTopList('topAsinGrid', 'asin'); renderTopList('topMerchantGrid', 'merchantName'); renderTable();
         }
 
         function renderTimeChart() {
-            const dataArr = Array(12).fill(0); entries.forEach(e => dataArr[new Date(e.date).getMonth()] += e.price);
+            const labels = currentView === 'monthly' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Q1','Q2','Q3','Q4'];
+            const dataArr = Array(labels.length).fill(0);
+            entries.forEach(e => {
+                const ed = new Date(e.date);
+                if(ed.getFullYear() === new Date().getFullYear()) {
+                    const idx = currentView === 'monthly' ? ed.getMonth() : Math.floor(ed.getMonth()/3);
+                    dataArr[idx] += e.price;
+                }
+            });
             if(charts.time) charts.time.destroy();
             charts.time = new Chart(document.getElementById('timeChart'), {
                 type: 'line',
-                data: { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], datasets: [{ data: dataArr, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
+                data: { labels, datasets: [{ 
+                    label: 'Lost Value',
+                    data: dataArr, 
+                    borderColor: '#10b981', 
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)', 
+                    fill: true, 
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#fff',
+                    pointBorderWidth: 3
+                }] },
+                options: { 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+                }
             });
         }
 
         function renderPieCharts() {
-            const cfg = (id, key, colors) => {
+            const generatePie = (id, key, colors) => {
                 const counts = {}; entries.forEach(e => counts[e[key]] = (counts[e[key]]||0)+1);
                 if(charts[id]) charts[id].destroy();
                 charts[id] = new Chart(document.getElementById(id), {
                     type: 'doughnut',
                     data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
-                    options: { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 9 } } } } }
+                    options: { 
+                        maintainAspectRatio: false, 
+                        cutout: '70%',
+                        plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { size: 10, weight: '600' } } } } 
+                    }
                 });
             };
-            cfg('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
-            cfg('roadChart', 'road', ['#10b981', '#f43f5e']);
-            cfg('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981']);
+            generatePie('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6']);
+            generatePie('roadChart', 'road', ['#10b981', '#f43f5e']);
+            generatePie('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981']);
         }
 
         function renderTopList(id, key) {
-            const stats = {}; entries.forEach(e => stats[e[key]] = (stats[e[key]] || 0) + e.price);
+            const stats = {};
+            entries.forEach(e => { stats[e[key]] = (stats[e[key]] || 0) + e.price; });
             const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]).slice(0, 10);
             document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
-                    <span class="text-xs font-bold text-slate-500">#${i+1} <span class="text-slate-200 ml-2">${name}</span></span>
-                    <span class="text-emerald-400 font-bold">$${val.toLocaleString()}</span>
-                </div>`).join('');
+                <div class="flex justify-between items-center p-4 bg-slate-50/50 rounded-2xl hover:bg-white transition-all border border-transparent hover:border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 flex items-center justify-center bg-slate-200 rounded-lg text-[10px] font-bold text-slate-500">${i+1}</span>
+                        <span class="font-bold text-slate-700 text-sm">${name}</span>
+                    </div>
+                    <span class="text-emerald-600 font-bold">$${val.toLocaleString()}</span>
+                </div>
+            `).join('');
         }
 
         function renderTable() {
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
             tbody.innerHTML = entries.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
-                .slice(0,15).map(e => `
-                <tr>
-                    <td class="text-slate-500 font-mono text-xs">${e.date}</td>
-                    <td><div class="font-bold">${e.orderId}</div><div class="text-[10px] text-blue-400 font-bold uppercase">${e.asin}</div></td>
-                    <td class="text-xs text-slate-300">${e.merchantName}</td>
-                    <td class="text-right font-bold text-emerald-400">$${e.price.toLocaleString()}</td>
-                    <td><span class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded text-[9px] font-bold uppercase">${e.action}</span></td>
-                </tr>`).join('');
+                .slice(0,20).map(e => `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-5 font-mono text-[11px] text-slate-400">${e.date}</td>
+                    <td class="p-5">
+                        <div class="font-bold text-slate-700">${e.orderId}</div>
+                        <div class="text-[10px] text-indigo-500 font-bold uppercase tracking-wider">${e.asin}</div>
+                    </td>
+                    <td class="p-5">
+                        <div class="text-xs font-semibold text-slate-600">${e.merchantName}</div>
+                        <div class="text-[9px] text-slate-400 uppercase tracking-tighter">${e.merchantId}</div>
+                    </td>
+                    <td class="p-5 text-right font-bold text-slate-800">$${e.price.toLocaleString()}</td>
+                    <td class="p-5 text-center">
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function switchTimeView(v) { 
+            currentView = v; 
+            document.getElementById('btn-monthly').className = v==='monthly'?'tab-btn tab-active':'tab-btn tab-inactive'; 
+            document.getElementById('btn-quarterly').className = v==='quarterly'?'tab-btn tab-active':'tab-btn tab-inactive'; 
+            renderTimeChart(); 
+        }
+
+        function exportCSV() {
+            let csv = "Date,Order ID,ASIN,Price,Merchant ID,Merchant Name,Issue,Road,Action\n";
+            entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Master_Report.csv'; a.click();
+        }
+
+        function exportData() { 
+            const blob = new Blob([JSON.stringify(entries)], { type: 'application/json' }); 
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Cloud_Backup.json'; a.click(); 
         }
 
         window.onload = fetchCloudData;
