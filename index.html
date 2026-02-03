@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Master | Professional Analytics</title>
+    <title>Returns Master | Analytics</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
     
@@ -21,36 +21,25 @@
             background-repeat: no-repeat; background-size: 100% 800px;
             min-height: 100vh; color: #334155;
         }
-
-        /* --- تعديل البروز المضاف --- */
         .card { 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);
             border-radius: 28px; padding: 25px; 
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04);
             border: 1px solid rgba(255, 255, 255, 0.6);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* حركة البروز */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        /* تأثير البروز عند الوقوف بالماوس */
         .card:hover { 
             transform: translateY(-8px) scale(1.01); 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            border-color: rgba(16, 185, 129, 0.4);
         }
-
-        /* بروز صفوف الجدول */
-        tr.hover-row:hover {
-            background-color: rgba(16, 185, 129, 0.05) !important;
-            transition: background 0.2s;
-        }
-        /* ------------------------ */
-
         .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
+        
+        /* Tabs Styling */
         .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
         .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
-        
+
         .progress-container { width: 100%; background: rgba(255,255,255,0.1); border-radius: 10px; height: 4px; margin-top: 8px; overflow: hidden; }
         .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
         
@@ -88,9 +77,23 @@
             <div class="card border-l-8 border-l-rose-500"><p class="stat-label">Total Items Saved</p><p class="stat-value" id="totalItems">0</p></div>
         </div>
 
+        <div class="card">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Financial Recovery Trend</h3>
+                    <p class="text-sm text-slate-400">Visualization of saved value over time</p>
+                </div>
+                <div class="bg-slate-100 p-1.5 rounded-2xl flex gap-1">
+                    <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
+                    <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
+                </div>
+            </div>
+            <div class="h-[350px] w-full"><canvas id="timeChart"></canvas></div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="card flex flex-col items-center"><h3 class="stat-label mb-6 text-center">Root Cause %</h3><div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div></div>
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6 text-center">Inbound Logistics (RTO/RTN) %</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
+            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6 text-center">Inbound (RTO/RTN) %</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
             <div class="card flex flex-col items-center"><h3 class="stat-label mb-6 text-center">Action Summary %</h3><div class="h-[240px] w-full"><canvas id="actionChart"></canvas></div></div>
         </div>
 
@@ -101,13 +104,13 @@
 
         <div class="card p-0 overflow-hidden">
             <div class="p-6 border-b flex flex-wrap justify-between items-center bg-white gap-4">
-                <div><h3 class="text-lg font-bold">Comprehensive Logs</h3><p class="text-xs text-slate-400">Search by Merchant Name, ID, ASIN or Order ID</p></div>
+                <div><h3 class="text-lg font-bold">Comprehensive Logs</h3><p class="text-xs text-slate-400">Search by Merchant, ID, ASIN or Order</p></div>
                 <div class="relative">
-                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search (Merchant, ID, ASIN...)" class="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500/20">
+                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search..." class="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500/20">
                     <span class="absolute left-3 top-3">🔍</span>
                 </div>
             </div>
-            <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr class="bg-slate-50/50 text-[11px] uppercase tracking-widest text-slate-400 font-bold"><th class="p-5">Recording Date</th><th class="p-5">Transaction Details</th><th class="p-5">Merchant Entity</th><th class="p-5 text-right">Value ($)</th><th class="p-5 text-center">Status</th></tr></thead><tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody></table></div>
+            <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr class="bg-slate-50/50 text-[11px] uppercase tracking-widest text-slate-400 font-bold"><th class="p-5">Date</th><th class="p-5">Details</th><th class="p-5">Merchant</th><th class="p-5 text-right">Value ($)</th><th class="p-5 text-center">Status</th></tr></thead><tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody></table></div>
         </div>
     </main>
 
@@ -115,15 +118,14 @@
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFAht24zvBJ4o0DddZyqFtaBrl3K06_R7bnagwxFM5VhuC70jIZKbxCQuk9UF5-qOU/exec"; 
         let entries = [];
         let charts = {};
+        let currentView = 'monthly';
 
         async function fetchCloudData() {
             const bar = document.getElementById('progressBar');
             const status = document.getElementById('syncStatus');
             try {
-                status.innerText = "Connecting to Cloud...";
-                bar.style.width = "30%";
+                status.innerText = "Connecting..."; bar.style.width = "30%";
                 const response = await fetch(GOOGLE_SCRIPT_URL);
-                bar.style.width = "70%";
                 const cloudData = await response.json();
                 if (cloudData) {
                     entries = cloudData.map(item => ({
@@ -137,15 +139,11 @@
                         road: item.road || item.Road || "N/A",
                         action: item.action || item.Action || "Pending"
                     }));
-                    bar.style.width = "100%";
-                    status.innerText = "✅ Live Cloud Connected";
+                    bar.style.width = "100%"; status.innerText = "✅ Cloud Connected";
                     updateUI();
                     setTimeout(() => bar.style.width = "0%", 2000);
                 }
-            } catch (e) { 
-                status.innerText = "❌ Sync Failed";
-                bar.style.backgroundColor = "#ef4444";
-            }
+            } catch (e) { status.innerText = "❌ Sync Failed"; }
         }
 
         function updateUI() {
@@ -164,36 +162,57 @@
             document.getElementById('monthlyTotal').innerText = m.toLocaleString();
             document.getElementById('yearlyTotal').innerText = y.toLocaleString();
             document.getElementById('totalItems').innerText = entries.length.toLocaleString();
-            renderPieCharts(); renderTopList('topAsinGrid', 'asin'); renderTopList('topMerchantGrid', 'merchantName'); renderTable();
+            renderTimeChart(); renderPieCharts(); renderTopList('topAsinGrid', 'asin'); renderTopList('topMerchantGrid', 'merchantName'); renderTable();
+        }
+
+        function renderTimeChart() {
+            const labels = currentView === 'monthly' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Q1','Q2','Q3','Q4'];
+            const dataArr = Array(labels.length).fill(0);
+            entries.forEach(e => {
+                const ed = new Date(e.date);
+                if(ed.getFullYear() === 2026) {
+                    const idx = currentView === 'monthly' ? ed.getMonth() : Math.floor(ed.getMonth()/3);
+                    dataArr[idx] += e.price;
+                }
+            });
+            if(charts.time) charts.time.destroy();
+            charts.time = new Chart(document.getElementById('timeChart'), {
+                type: 'line',
+                data: { labels, datasets: [{ label: 'Saved Value', data: dataArr, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function switchTimeView(v) { 
+            currentView = v; 
+            document.getElementById('btn-monthly').className = v==='monthly'?'tab-btn tab-active':'tab-btn tab-inactive'; 
+            document.getElementById('btn-quarterly').className = v==='quarterly'?'tab-btn tab-active':'tab-btn tab-inactive'; 
+            renderTimeChart(); 
         }
 
         function renderPieCharts() {
-            const generateChart = (id, key, colors) => {
-                const counts = {};
-                entries.forEach(e => counts[e[key]] = (counts[e[key]] || 0) + 1);
+            const gen = (id, key, colors) => {
+                const counts = {}; entries.forEach(e => counts[e[key]] = (counts[e[key]] || 0) + 1);
                 const total = entries.length;
-                const labels = Object.keys(counts).map(label => {
-                    const percentage = ((counts[label] / total) * 100).toFixed(1);
-                    return `${label} (${percentage}%)`;
-                });
+                const labels = Object.keys(counts).map(l => `${l} (${((counts[l]/total)*100).toFixed(1)}%)`);
                 if(charts[id]) charts[id].destroy();
                 charts[id] = new Chart(document.getElementById(id), {
                     type: 'doughnut',
-                    data: { labels: labels, datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
-                    options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 12, font: { size: 9, weight: '600' } } } } }
+                    data: { labels, datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
+                    options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9 } } } } }
                 });
             };
-            generateChart('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
-            generateChart('roadChart', 'road', ['#10b981', '#f43f5e']);
-            generateChart('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981']);
+            gen('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
+            gen('roadChart', 'road', ['#10b981', '#f43f5e']);
+            gen('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981']);
         }
 
         function renderTopList(id, key) {
             const stats = {}; entries.forEach(e => stats[e[key]] = (stats[e[key]] || 0) + e.price);
-            const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]).slice(0, 10);
+            const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]).slice(0, 5);
             document.getElementById(id).innerHTML = sorted.map(([name, val], i) => `
-                <div class="flex justify-between items-center p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-emerald-100 hover:bg-white hover:shadow-md transition-all cursor-default">
-                    <div class="flex items-center gap-3"><span class="w-7 h-7 flex items-center justify-center bg-slate-200 rounded-lg text-[10px] font-bold text-slate-500">${i+1}</span><span class="font-bold text-slate-700 text-xs">${name}</span></div>
+                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl hover:bg-emerald-50 transition-all">
+                    <span class="text-xs font-bold text-slate-700">${i+1}. ${name}</span>
                     <span class="text-emerald-600 font-bold text-xs">$${val.toLocaleString()}</span>
                 </div>`).join('');
         }
@@ -201,14 +220,14 @@
         function renderTable() {
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
-            tbody.innerHTML = entries.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s) || e.merchantId.toLowerCase().includes(s))
-                .slice(0,25).map(e => `
-                <tr class="hover-row transition-colors">
-                    <td class="p-5 font-mono text-[11px] text-slate-400">${e.date}</td>
-                    <td class="p-5"><div class="font-bold text-slate-700">${e.orderId}</div><div class="text-[10px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
-                    <td class="p-5"><div class="text-xs font-semibold text-slate-600">${e.merchantName}</div><div class="text-[9px] text-slate-400 uppercase">${e.merchantId}</div></td>
+            tbody.innerHTML = entries.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
+                .slice(0,20).map(e => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
+                    <td class="p-5"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold">${e.asin}</div></td>
+                    <td class="p-5"><div class="text-xs font-semibold text-slate-600">${e.merchantName}</div></td>
                     <td class="p-5 text-right font-bold text-emerald-600">$${e.price.toLocaleString()}</td>
-                    <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
+                    <td class="p-5 text-center"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[9px] font-bold uppercase">${e.action}</span></td>
                 </tr>`).join('');
         }
 
@@ -216,7 +235,7 @@
             let csv = "Date,Order ID,ASIN,Price,Merchant ID,Merchant Name,Issue,Road,Action\n";
             entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Master_Report.csv'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Report.csv'; a.click();
         }
 
         window.onload = fetchCloudData;
