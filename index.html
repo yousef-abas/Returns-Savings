@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Master | Analytics Dashboard</title>
+    <title>Returns Master | Professional Analytics</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
     
@@ -28,18 +28,11 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .card:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.12);
-            border-color: rgba(16, 185, 129, 0.4);
-        }
         .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
-        
         .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
         .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
-
         #syncStatus { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
@@ -88,32 +81,35 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="card">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="text-2xl">🏆</span>
-                    <h3 class="text-lg font-bold text-slate-800">Top 10 High-Value ASINs</h3>
-                </div>
+                <div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏆</span><h3 class="text-lg font-bold text-slate-800">Top 10 High-Value ASINs</h3></div>
                 <div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
             <div class="card">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="text-2xl">🏢</span>
-                    <h3 class="text-lg font-bold text-slate-800">Merchant Impact Ranking</h3>
-                </div>
+                <div class="flex items-center gap-3 mb-6"><span class="text-2xl">🏢</span><h3 class="text-lg font-bold text-slate-800">Merchant Impact Ranking</h3></div>
                 <div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6 text-center">Root Cause Distribution</h3><div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div></div>
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6 text-center">Inbound Logistics</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6 text-center">Action Summary</h3><div class="h-[240px] w-full"><canvas id="actionChart"></canvas></div></div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Root Cause %</h3>
+                <div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div>
+            </div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Inbound Logistics (RTO/RTN) %</h3>
+                <div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div>
+            </div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6 text-center">Action Summary %</h3>
+                <div class="h-[240px] w-full"><canvas id="actionChart"></canvas></div>
+            </div>
         </div>
 
         <div class="card p-0 overflow-hidden">
             <div class="p-6 border-b flex flex-wrap justify-between items-center bg-white gap-4">
                 <div><h3 class="text-lg font-bold">Comprehensive Logs</h3><p class="text-xs text-slate-400">Search by Merchant Name, ID, ASIN or Order ID</p></div>
                 <div class="relative">
-                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search (Merchant, ID, ASIN...)" class="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none">
+                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search (Merchant, ID, ASIN...)" class="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500/20">
                     <span class="absolute left-3 top-3">🔍</span>
                 </div>
             </div>
@@ -202,18 +198,40 @@
         }
 
         function renderPieCharts() {
-            const cfg = (id, key, colors) => {
-                const counts = {}; entries.forEach(e => counts[e[key]] = (counts[e[key]]||0)+1);
+            const generateChart = (id, key, colors) => {
+                const counts = {};
+                entries.forEach(e => counts[e[key]] = (counts[e[key]] || 0) + 1);
+                
+                const total = entries.length;
+                const labels = Object.keys(counts).map(label => {
+                    const percentage = ((counts[label] / total) * 100).toFixed(1);
+                    return `${label} (${percentage}%)`;
+                });
+
                 if(charts[id]) charts[id].destroy();
                 charts[id] = new Chart(document.getElementById(id), {
                     type: 'doughnut',
-                    data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
-                    options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 10 } } } } }
+                    data: { labels: labels, datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
+                    options: { 
+                        maintainAspectRatio: false, 
+                        cutout: '70%', 
+                        plugins: { 
+                            legend: { 
+                                position: 'bottom', 
+                                labels: { 
+                                    usePointStyle: true, 
+                                    padding: 15,
+                                    font: { size: 10, weight: '600' } 
+                                } 
+                            } 
+                        } 
+                    }
                 });
             };
-            cfg('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
-            cfg('roadChart', 'road', ['#10b981', '#f43f5e']);
-            cfg('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981']);
+
+            generateChart('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
+            generateChart('roadChart', 'road', ['#10b981', '#f43f5e']);
+            generateChart('actionChart', 'action', ['#3b82f6', '#8b5cf6', '#10b981']);
         }
 
         function renderTopList(id, key) {
@@ -229,7 +247,6 @@
         function renderTable() {
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
-            
             tbody.innerHTML = entries.slice().reverse().filter(e => 
                 e.orderId.toLowerCase().includes(s) || 
                 e.asin.toLowerCase().includes(s) || 
@@ -263,4 +280,3 @@
     </script>
 </body>
 </html>
-
