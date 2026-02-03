@@ -48,7 +48,10 @@
             <select id="merchantFilter" onchange="updateUI()" class="merchant-select">
                 <option value="all">🌐 All Merchants</option>
             </select>
-            <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg hover:scale-105 transition-all">🔄 Sync Cloud</button>
+            <div class="flex gap-3">
+                <button onclick="exportCSV()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">📊 Export Report</button>
+                <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg hover:scale-105 transition-all">🔄 Sync Cloud</button>
+            </div>
         </div>
     </nav>
 
@@ -146,12 +149,10 @@
             const selectedMerchant = document.getElementById('merchantFilter').value;
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
-
             let filtered = entries;
             if (selectedMerchant !== 'all') filtered = filtered.filter(e => e.merchantName === selectedMerchant);
             if (start) filtered = filtered.filter(e => e.date >= start);
             if (end) filtered = filtered.filter(e => e.date <= end);
-
             const now = new Date(); const today = now.toISOString().split('T')[0];
             let d=0, m=0, y=0;
             filtered.forEach(e => {
@@ -161,16 +162,11 @@
                     y += e.price; if(ed.getMonth() === now.getMonth()) m += e.price;
                 }
             });
-
             document.getElementById('dailyTotal').innerText = d.toLocaleString();
             document.getElementById('monthlyTotal').innerText = m.toLocaleString();
             document.getElementById('yearlyTotal').innerText = y.toLocaleString();
             document.getElementById('totalItems').innerText = filtered.length.toLocaleString();
-            
-            renderTimeChart(filtered); 
-            renderPieCharts(filtered); 
-            renderSerialReturners(filtered);
-            renderTable(filtered);
+            renderTimeChart(filtered); renderPieCharts(filtered); renderSerialReturners(filtered); renderTable(filtered);
         }
 
         function renderSerialReturners(data) {
@@ -187,23 +183,16 @@
         function renderTable(data = entries) {
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
-            
-            // حساب المرتجعات لكل تاجر لوضع البادج (Merchant Health)
             const merchantCounts = {};
             entries.forEach(e => merchantCounts[e.merchantName] = (merchantCounts[e.merchantName] || 0) + 1);
-
             tbody.innerHTML = data.slice().reverse().filter(e => e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || e.merchantName.toLowerCase().includes(s))
                 .slice(0,25).map(e => {
-                    const isHigh = merchantCounts[e.merchantName] > 5;
-                    const badge = isHigh ? '<span class="ml-1 text-rose-500">🔴</span>' : '<span class="ml-1 text-emerald-500">🟢</span>';
+                    const badge = merchantCounts[e.merchantName] > 5 ? '<span class="ml-1 text-rose-500">🔴</span>' : '<span class="ml-1 text-emerald-500">🟢</span>';
                     return `
                     <tr class="hover:bg-emerald-50/40 transition-colors">
                         <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
                         <td class="p-5"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
-                        <td class="p-5">
-                            <div class="text-xs font-semibold text-slate-600 flex items-center">${e.merchantName} ${badge}</div>
-                            <div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div>
-                        </td>
+                        <td class="p-5"><div class="text-xs font-semibold text-slate-600 flex items-center">${e.merchantName}${badge}</div><div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div></td>
                         <td class="p-5 text-right font-bold text-emerald-600">$${e.price.toLocaleString()}</td>
                         <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
                     </tr>`}).join('');
@@ -246,6 +235,13 @@
             };
             gen('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
             gen('roadChart', 'road', ['#10b981', '#f43f5e']);
+        }
+
+        function exportCSV() {
+            let csv = "Date,Order ID,ASIN,Price,Merchant ID,Merchant Name,Issue,Road,Action\n";
+            entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Report.csv'; a.click();
         }
 
         window.onload = fetchCloudData;
