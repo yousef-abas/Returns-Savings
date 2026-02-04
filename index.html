@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Master | Ultimate Dashboard</title>
+    <title>Returns Master | Final Fixed Edition</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,7 +14,7 @@
             background-image: radial-gradient(at 0% 0%, hsla(160, 40%, 10%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(210, 40%, 30%, 1) 0, transparent 50%);
             background-repeat: no-repeat; background-size: 100% 800px; min-height: 100vh; color: #334155;
         }
-        /* تأثير البروز للكروت */
+        /* تأثير البروز المطلوب */
         .card { 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 28px; padding: 25px; 
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04); border: 1px solid rgba(255, 255, 255, 0.6);
@@ -22,14 +22,8 @@
         }
         .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
         
-        /* تأثير البروز للأسماء والـ ASIN */
         .list-item-glow { transition: all 0.3s ease; border: 1px solid transparent; cursor: pointer; }
-        .list-item-glow:hover { 
-            background: white !important; 
-            border-color: #10b981 !important; 
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); 
-            transform: translateX(5px); 
-        }
+        .list-item-glow:hover { background: white !important; border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); transform: translateX(5px); }
 
         .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
@@ -37,11 +31,9 @@
         .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
         .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
-        
         .merchant-select {
             background: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.5); color: #1e293b;
             backdrop-filter: blur(10px); border-radius: 15px; padding: 8px 15px; font-size: 12px; font-weight: 700; outline: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .date-input { background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; }
     </style>
@@ -52,7 +44,7 @@
             <div class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl border border-white/30 shadow-xl">🚀</div>
             <div>
                 <h1 class="text-3xl font-bold text-white tracking-tight">Returns Master Pro</h1>
-                <p class="text-[10px] text-emerald-50 font-bold uppercase tracking-wider" id="syncStatus">System Ready</p>
+                <p class="text-[10px] text-emerald-50 font-bold uppercase tracking-wider">System Ready</p>
                 <div class="w-full bg-white/10 rounded-full h-1 mt-1 overflow-hidden"><div id="progressBar" class="progress-bar"></div></div>
             </div>
         </div>
@@ -110,7 +102,7 @@
         <div class="card p-0 overflow-hidden">
             <div class="p-6 border-b flex justify-between items-center bg-white">
                 <h3 class="text-lg font-bold">Comprehensive Logs</h3>
-                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search by Order, ASIN, Merchant ID..." class="w-80 px-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
+                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search Order, ASIN, Merchant ID..." class="w-80 px-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
@@ -134,17 +126,23 @@
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const cloudData = await response.json();
                 if (cloudData) {
-                    entries = cloudData.map(item => ({
-                        date: new Date(item.date || item.Date || new Date()).toISOString().split('T')[0],
-                        orderId: String(item.orderId || item["Order ID"] || ""),
-                        asin: String(item.asin || item.ASIN || "").toUpperCase(),
-                        price: parseFloat(item.price || item.Price || 0),
-                        merchantId: String(item.merchantId || item["Merchant ID"] || "N/A"),
-                        merchantName: String(item.merchantName || item["Merchant Name"] || "N/A"),
-                        issue: item.issue || item.Issue || "Unknown",
-                        road: item.road || item.Road || "N/A",
-                        action: item.action || item.Action || "Pending"
-                    }));
+                    entries = cloudData.map(item => {
+                        // الحل القاضي لمشكلة الـ VPN والتاريخ: قراءة النص الخام
+                        let rDate = (item.date || item.Date || "").toString();
+                        let cleanDate = rDate.includes('T') ? rDate.split('T')[0] : rDate.split(' ')[0];
+                        
+                        return {
+                            date: cleanDate,
+                            orderId: String(item.orderId || item["Order ID"] || ""),
+                            asin: String(item.asin || item.ASIN || "").toUpperCase(),
+                            price: parseFloat(item.price || item.Price || 0),
+                            merchantId: String(item.merchantId || item["Merchant ID"] || "N/A"),
+                            merchantName: String(item.merchantName || item["Merchant Name"] || "N/A"),
+                            issue: item.issue || item.Issue || "Unknown",
+                            road: item.road || item.Road || "N/A",
+                            action: item.action || item.Action || "Pending"
+                        };
+                    });
                     bar.style.width = "100%";
                     populateMerchantFilter();
                     updateUI();
@@ -166,17 +164,22 @@
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
             let filtered = entries;
+            
             if (selMerchant !== 'all') filtered = filtered.filter(e => e.merchantName === selMerchant);
             if (start) filtered = filtered.filter(e => e.date >= start);
             if (end) filtered = filtered.filter(e => e.date <= end);
 
-            const now = new Date(); const today = now.toISOString().split('T')[0];
+            // مقارنة التاريخ كنص لتجنب أخطاء الـ VPN
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('en-CA'); // YYYY-MM-DD حسب ساعة جهازك الفعلية
+
             let d=0, m=0, y=0;
             filtered.forEach(e => {
-                const ed = new Date(e.date);
-                if(e.date === today) d += e.price;
-                if(ed.getFullYear() === now.getFullYear()) {
-                    y += e.price; if(ed.getMonth() === now.getMonth()) m += e.price;
+                if(e.date === todayStr) d += e.price;
+                const eParts = e.date.split('-');
+                if(parseInt(eParts[0]) === now.getFullYear()) {
+                    y += e.price;
+                    if(parseInt(eParts[1]) === (now.getMonth() + 1)) m += e.price;
                 }
             });
 
@@ -185,22 +188,19 @@
             document.getElementById('yearlyTotal').innerText = y.toLocaleString();
             document.getElementById('totalItems').innerText = filtered.length.toLocaleString();
             
-            renderTimeChart(filtered); 
-            renderPieCharts(filtered); 
-            renderSerialReturners(filtered);
-            renderList('topAsinGrid', 'asin', false, filtered); 
-            renderList('topMerchantGrid', 'merchantName', true, filtered); 
-            renderTable(filtered);
+            renderTimeChart(filtered); renderPieCharts(filtered); renderSerialReturners(filtered);
+            renderList('topAsinGrid', 'asin', false, filtered); renderList('topMerchantGrid', 'merchantName', true, filtered); renderTable(filtered);
         }
 
         function renderTimeChart(data) {
             const labels = currentView === 'monthly' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Q1','Q2','Q3','Q4'];
             const dataArr = Array(labels.length).fill(0);
             data.forEach(e => {
-                const ed = new Date(e.date);
-                if(ed.getFullYear() === 2026) {
-                    const idx = currentView === 'monthly' ? ed.getMonth() : Math.floor(ed.getMonth()/3);
-                    dataArr[idx] += e.price;
+                const eParts = e.date.split('-');
+                if(parseInt(eParts[0]) === 2026) {
+                    const monthIdx = parseInt(eParts[1]) - 1;
+                    const idx = currentView === 'monthly' ? monthIdx : Math.floor(monthIdx/3);
+                    if(idx >= 0 && idx < dataArr.length) dataArr[idx] += e.price;
                 }
             });
             if(charts.time) charts.time.destroy();
@@ -218,19 +218,11 @@
                 if(charts[id]) charts[id].destroy();
                 charts[id] = new Chart(document.getElementById(id), {
                     type: 'pie',
-                    data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
+                    data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors }] },
                     options: { 
                         maintainAspectRatio: false,
                         plugins: { 
-                            tooltip: {
-                                callbacks: {
-                                    label: (item) => {
-                                        let val = item.raw;
-                                        let perc = ((val / total) * 100).toFixed(1) + '%';
-                                        return `${item.label}: ${val} (${perc})`;
-                                    }
-                                }
-                            },
+                            tooltip: { callbacks: { label: (i) => `${i.label}: ${i.raw} (${((i.raw/total)*100).toFixed(1)}%)` } },
                             legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9 } } } 
                         } 
                     }
@@ -241,8 +233,7 @@
         }
 
         function renderSerialReturners(data) {
-            const counts = {};
-            data.forEach(e => counts[e.merchantName] = (counts[e.merchantName] || 0) + 1);
+            const counts = {}; data.forEach(e => counts[e.merchantName] = (counts[e.merchantName] || 0) + 1);
             const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 5);
             document.getElementById('serialReturnersList').innerHTML = sorted.map(([name, count]) => `
                 <div class="bg-slate-50/80 p-3 rounded-2xl flex justify-between items-center border border-slate-100 list-item-glow">
@@ -252,8 +243,7 @@
         }
 
         function renderList(id, key, showID, data) {
-            const stats = {};
-            data.forEach(e => {
+            const stats = {}; data.forEach(e => {
                 if (!stats[e[key]]) stats[e[key]] = { val: 0, sub: e.merchantId };
                 stats[e[key]].val += e.price;
             });
@@ -272,12 +262,9 @@
             const s = document.getElementById('tableSearch').value.toLowerCase();
             const tbody = document.getElementById('dataTableBody');
             const filteredData = data.slice().reverse().filter(e => 
-                e.orderId.toLowerCase().includes(s) || 
-                e.asin.toLowerCase().includes(s) || 
-                e.merchantName.toLowerCase().includes(s) ||
-                e.merchantId.toLowerCase().includes(s)
+                e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || 
+                e.merchantName.toLowerCase().includes(s) || e.merchantId.toLowerCase().includes(s)
             );
-
             tbody.innerHTML = filteredData.slice(0,25).map(e => `
                 <tr class="hover:bg-emerald-50/40 transition-colors">
                     <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
