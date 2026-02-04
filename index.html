@@ -20,28 +20,21 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
-        
         .list-item-glow { transition: all 0.3s ease; border: 1px solid transparent; }
         .list-item-glow:hover { background: white !important; border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); transform: translateX(5px); }
-
         .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
         .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
         .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .tab-inactive { color: #64748b; background: #f1f5f9; }
         .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
-        
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         #syncStatus { animation: pulse 2s infinite; }
-
-        /* تعديل قائمة التجار لتكون واضحة فوراً */
         .merchant-select {
             background: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.5); color: #1e293b;
             backdrop-filter: blur(10px); border-radius: 15px; padding: 8px 15px; font-size: 12px; font-weight: 700; outline: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .merchant-select option { color: #1e293b; background: white; }
-
         .date-input { background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; cursor: pointer; }
     </style>
 </head>
@@ -81,6 +74,21 @@
             <div class="card border-l-8 border-l-rose-500"><p class="stat-label">Total Items</p><p class="stat-value" id="totalItems">0</p></div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6">Root Cause %</h3>
+                <div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div>
+            </div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6">ROAD Summary %</h3>
+                <div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div>
+            </div>
+            <div class="card flex flex-col items-center">
+                <h3 class="stat-label mb-6">Serial Returners</h3>
+                <div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px] pr-2"></div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
                 <h3 class="text-xl font-bold text-slate-800">Financial Trend Analysis</h3>
@@ -97,15 +105,6 @@
                 </div>
             </div>
             <div class="h-[350px] w-full"><canvas id="timeChart"></canvas></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Root Cause %</h3><div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div></div>
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">ROAD Summary %</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
-            <div class="card flex flex-col items-center">
-                <h3 class="stat-label mb-6">Serial Returners</h3>
-                <div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px] pr-2"></div>
-            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -238,7 +237,6 @@
             const tbody = document.getElementById('dataTableBody');
             const mCounts = {}; entries.forEach(e => mCounts[e.merchantName] = (mCounts[e.merchantName] || 0) + 1);
 
-            // إصلاح منطق البحث ليشمل كل الحقول
             const filteredData = data.slice().reverse().filter(e => 
                 e.orderId.toLowerCase().includes(s) || 
                 e.asin.toLowerCase().includes(s) || 
@@ -286,16 +284,38 @@
 
         function renderPieCharts(data) {
             const gen = (id, key, colors) => {
-                const counts = {}; data.forEach(e => counts[e[key]] = (counts[e[key]] || 0) + 1);
+                const counts = {}; 
+                data.forEach(e => {
+                    const val = e[key] || "Unknown";
+                    counts[val] = (counts[val] || 0) + 1;
+                });
+                
                 if(charts[id]) charts[id].destroy();
                 charts[id] = new Chart(document.getElementById(id), {
                     type: 'doughnut',
-                    data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors, borderWeight: 0 }] },
-                    options: { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9 } } } } }
+                    data: { 
+                        labels: Object.keys(counts), 
+                        datasets: [{ 
+                            data: Object.values(counts), 
+                            backgroundColor: colors, 
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }] 
+                    },
+                    options: { 
+                        maintainAspectRatio: false, 
+                        cutout: '70%', 
+                        plugins: { 
+                            legend: { 
+                                position: 'bottom', 
+                                labels: { usePointStyle: true, font: { size: 10, weight: '600' }, padding: 15 } 
+                            } 
+                        } 
+                    }
                 });
             };
-            gen('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
-            gen('roadChart', 'road', ['#10b981', '#f43f5e']);
+            gen('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#94a3b8']);
+            gen('roadChart', 'road', ['#10b981', '#f43f5e', '#fbbf24', '#3b82f6']);
         }
 
         function exportCSV() {
