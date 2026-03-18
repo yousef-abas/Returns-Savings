@@ -3,28 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Master | Final Fixed Edition</title>
+    <title>Returns Master | Developed by Youssef Abbas</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* --- Animation for the Green Dot --- */
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .animate-pulse-green { animation: pulse-green 2s infinite; }
+
         body { 
             font-family: 'Outfit', sans-serif; background-color: #f8fafc; 
             background-image: radial-gradient(at 0% 0%, hsla(160, 40%, 10%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(210, 40%, 30%, 1) 0, transparent 50%);
             background-repeat: no-repeat; background-size: 100% 800px; min-height: 100vh; color: #334155;
+            overflow: hidden; 
         }
-        /* تأثير البروز المطلوب */
+
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: all 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        .intro-ball {
+            width: 120px; height: 120px; background: white; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 50px rgba(16, 185, 129, 0.3);
+            animation: dropBounce 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+        }
+        .intro-text {
+            color: white; font-size: 3rem; font-weight: 800; margin-top: 25px;
+            letter-spacing: -1px; opacity: 0; animation: fadeInIntro 1s ease 1.2s forwards;
+        }
+        .developer-tag {
+            color: #94a3b8; font-size: 0.9rem; font-weight: 400; margin-top: 10px;
+            letter-spacing: 2px; text-transform: uppercase; opacity: 0; animation: fadeInIntro 1.5s ease 2.2s forwards;
+        }
+        @keyframes dropBounce {
+            0% { transform: translateY(-1000px) scale(0.3); opacity: 0; }
+            60% { transform: translateY(20px) scale(1.1); opacity: 1; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        @keyframes fadeInIntro { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { opacity: 0 !important; visibility: hidden !important; transform: scale(1.1); }
+
+        #main-dashboard { opacity: 0; transition: opacity 1.5s ease; }
+        .dashboard-visible { opacity: 1 !important; }
         .card { 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 28px; padding: 25px; 
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04); border: 1px solid rgba(255, 255, 255, 0.6);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
-        
         .list-item-glow { transition: all 0.3s ease; border: 1px solid transparent; cursor: pointer; }
         .list-item-glow:hover { background: white !important; border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); transform: translateX(5px); }
-
         .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
         .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
@@ -36,88 +74,151 @@
             backdrop-filter: blur(10px); border-radius: 15px; padding: 8px 15px; font-size: 12px; font-weight: 700; outline: none;
         }
         .date-input { background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; }
+
+        /* --- Side Peek Styles --- */
+        #side-peek-panel {
+            position: fixed; top: 0; right: -450px; width: 420px; height: 100vh;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(25px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1); box-shadow: -20px 0 50px rgba(0, 0, 0, 0.3);
+            z-index: 2000; transition: right 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            color: #f1f5f9; display: flex; flex-direction: column;
+        }
+        #side-peek-panel.open { right: 0; }
+        .peek-header { padding: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .peek-content { padding: 30px; flex-grow: 1; overflow-y: auto; }
+        .peek-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+        .peek-value { font-size: 1.1rem; font-weight: 600; color: #ffffff; margin-bottom: 20px; }
+        .peek-badge { display: inline-block; padding: 4px 12px; rounded: 50px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; }
+        tbody tr { cursor: pointer; }
     </style>
 </head>
 <body class="pb-12">
-    <nav class="w-full pt-8 pb-4 container mx-auto px-8 flex flex-wrap justify-between items-center gap-6">
-        <div class="flex items-center gap-5">
-            <div class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl border border-white/30 shadow-xl">🚀</div>
-            <div>
-                <h1 class="text-3xl font-bold text-white tracking-tight">Returns Master Pro</h1>
-                <p class="text-[10px] text-emerald-50 font-bold uppercase tracking-wider">System Ready</p>
-                <div class="w-full bg-white/10 rounded-full h-1 mt-1 overflow-hidden"><div id="progressBar" class="progress-bar"></div></div>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <select id="merchantFilter" onchange="updateUI()" class="merchant-select"><option value="all">🌐 All Merchants</option></select>
-            <div class="flex gap-3">
-                <button onclick="exportCSV()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">📊 Export</button>
-                <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg hover:scale-105 transition-all">🔄 Sync Cloud</button>
-            </div>
-        </div>
-    </nav>
 
-    <main class="container mx-auto px-8 mt-6 space-y-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="card border-l-8 border-l-emerald-500"><p class="stat-label">Daily Savings</p><p class="stat-value" id="dailyTotal">0</p></div>
-            <div class="card border-l-8 border-l-indigo-500"><p class="stat-label">Monthly Recovery</p><p class="stat-value" id="monthlyTotal">0</p></div>
-            <div class="card border-l-8 border-l-amber-500"><p class="stat-label">Annual Saved</p><p class="stat-value" id="yearlyTotal">0</p></div>
-            <div class="card border-l-8 border-l-rose-500"><p class="stat-label">Total Items</p><p class="stat-value" id="totalItems">0</p></div>
-        </div>
+    <div id="intro-screen">
+        <div class="intro-ball text-6xl">🚀</div>
+        <h1 class="intro-text">Returns Master Pro</h1>
+        <p class="developer-tag">Developed by Youssef Abbas</p>
+    </div>
 
-        <div class="card">
-            <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
-                <h3 class="text-xl font-bold text-slate-800">Financial Trend Analysis</h3>
-                <div class="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl">
-                    <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
-                    <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
-                    <div class="h-6 w-px bg-slate-300 mx-1"></div>
-                    <div class="flex items-center gap-2 px-3">
-                        <input type="date" id="startDate" onchange="updateUI()" class="date-input">
-                        <span class="text-[10px] font-bold text-slate-400">TO</span>
-                        <input type="date" id="endDate" onchange="updateUI()" class="date-input">
+    <div id="side-peek-panel">
+        <div class="peek-header flex justify-between items-center">
+            <h2 class="text-2xl font-bold tracking-tight">Order Analysis</h2>
+            <button onclick="closeSidePeek()" class="text-slate-400 hover:text-white text-3xl font-light transition-colors">&times;</button>
+        </div>
+        <div class="peek-content">
+            <p class="peek-label">Order ID</p><p id="peek-order-id" class="peek-value">---</p>
+            <p class="peek-label">ASIN</p><p id="peek-asin" class="peek-value text-indigo-300">---</p>
+            <div class="h-px bg-white/5 my-4"></div>
+            <p class="peek-label">Issue / Reason</p><p id="peek-issue" class="peek-value text-rose-400">---</p>
+            <p class="peek-label">ROAD / Status</p><p id="peek-road" class="peek-value text-amber-400">---</p>
+            <div class="h-px bg-white/5 my-4"></div>
+            <p class="peek-label">Merchant Details</p>
+            <p id="peek-merchant-name" class="peek-value mb-1">---</p>
+            <p id="peek-merchant-id" class="text-xs font-mono text-slate-400 mb-6">---</p>
+            <p class="peek-label">Value (EGP)</p><p id="peek-value" class="peek-value text-emerald-400 text-2xl font-bold">---</p>
+            <p class="peek-label">Action Taken</p><div id="peek-action" class="peek-badge bg-emerald-500/20 text-emerald-400">---</div>
+            <p class="peek-label text-center mt-8">Date Processed</p><p id="peek-date" class="text-center font-mono text-slate-500">---</p>
+        </div>
+    </div>
+
+    <div id="main-dashboard">
+        <nav class="w-full pt-8 pb-4 container mx-auto px-8 flex flex-wrap justify-between items-center gap-6">
+            <div class="flex items-center gap-5">
+                <div class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl border border-white/30 shadow-xl">🚀</div>
+                <div>
+                    <h1 class="text-3xl font-bold text-white tracking-tight">Returns Master Pro</h1>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-pulse-green absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <p class="text-[10px] text-emerald-50 font-bold uppercase tracking-wider">Live</p>
                     </div>
+                    <div class="w-full bg-white/10 rounded-full h-1 mt-1 overflow-hidden"><div id="progressBar" class="progress-bar"></div></div>
                 </div>
             </div>
-            <div class="h-[350px] w-full"><canvas id="timeChart"></canvas></div>
-        </div>
+            <div class="flex items-center gap-4">
+                <select id="merchantFilter" onchange="updateUI()" class="merchant-select"><option value="all">🌐 All Merchants</option></select>
+                <div class="flex gap-3">
+                    <button onclick="exportCSV()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">📊 Export</button>
+                    <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg hover:scale-105 transition-all">🔄 Sync Cloud</button>
+                </div>
+            </div>
+        </nav>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Root Cause Analysis</h3><div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div></div>
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">ROAD Summary</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
-            <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Serial Returners</h3><div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px] pr-2"></div></div>
-        </div>
+        <main class="container mx-auto px-8 mt-6 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="card border-l-8 border-l-emerald-500"><p class="stat-label">Daily Savings</p><p class="stat-value" id="dailyTotal">0</p></div>
+                <div class="card border-l-8 border-l-indigo-500"><p class="stat-label">Monthly Recovery</p><p class="stat-value" id="monthlyTotal">0</p></div>
+                <div class="card border-l-8 border-l-amber-500"><p class="stat-label">Annual Saved</p><p class="stat-value" id="yearlyTotal">0</p></div>
+                <div class="card border-l-8 border-l-rose-500"><p class="stat-label">Total Items</p><p class="stat-value" id="totalItems">0</p></div>
+            </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="card">
-                <h3 class="text-lg font-bold text-slate-800 mb-6">🏆 Top 10 High-Value ASINs</h3>
-                <div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div>
+                <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
+                    <h3 class="text-xl font-bold text-slate-800">Financial Trend Analysis</h3>
+                    <div class="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl">
+                        <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
+                        <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
+                        <div class="h-6 w-px bg-slate-300 mx-1"></div>
+                        <div class="flex items-center gap-2 px-3">
+                            <input type="date" id="startDate" onchange="updateUI()" class="date-input">
+                            <span class="text-[10px] font-bold text-slate-400">TO</span>
+                            <input type="date" id="endDate" onchange="updateUI()" class="date-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="h-[350px] w-full"><canvas id="timeChart"></canvas></div>
             </div>
-            <div class="card">
-                <h3 class="text-lg font-bold text-slate-800 mb-6">🏢 Top 10 Merchant Ranking</h3>
-                <div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div>
-            </div>
-        </div>
 
-        <div class="card p-0 overflow-hidden">
-            <div class="p-6 border-b flex justify-between items-center bg-white">
-                <h3 class="text-lg font-bold">Comprehensive Logs</h3>
-                <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search Order, ASIN, Merchant ID..." class="w-80 px-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Root Cause Analysis</h3><div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div></div>
+                <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">ROAD Summary</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
+                <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Serial Returners</h3><div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px] pr-2"></div></div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead class="bg-slate-50 text-[11px] uppercase text-slate-400 font-bold">
-                        <th class="p-5">Date</th><th class="p-5">Order & ASIN</th><th class="p-5">Merchant Info</th><th class="p-5 text-right">Value ($)</th><th class="p-5 text-center">Status</th>
-                    </thead>
-                    <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
-                </table>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">🏆 Top 10 High-Value ASINs</h3>
+                    <div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div>
+                </div>
+                <div class="card">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">🏢 Top 10 Merchant Ranking</h3>
+                    <div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div>
+                </div>
             </div>
-        </div>
-    </main>
+
+            <div class="card p-0 overflow-hidden">
+                <div class="p-6 border-b flex justify-between items-center bg-white">
+                    <h3 class="text-lg font-bold">Comprehensive Logs <span class="text-slate-300 text-xs font-normal ml-2">(Click row for details)</span></h3>
+                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search Order, ASIN..." class="w-80 px-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-[11px] uppercase text-slate-400 font-bold">
+                            <tr><th class="p-5">Date</th><th class="p-5">Order & ASIN</th><th class="p-5">Merchant Info</th><th class="p-5 text-right">Value (EGP)</th><th class="p-5 text-center">Status</th></tr>
+                        </thead>
+                        <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFAht24zvBJ4o0DddZyqFtaBrl3K06_R7bnagwxFM5VhuC70jIZKbxCQuk9UF5-qOU/exec"; 
         let entries = []; let charts = {}; let currentView = 'monthly';
+
+        function initApp() {
+            fetchCloudData();
+            setTimeout(() => {
+                const intro = document.getElementById('intro-screen');
+                const dashboard = document.getElementById('main-dashboard');
+                intro.classList.add('fade-out');
+                dashboard.classList.add('dashboard-visible');
+                document.body.style.overflow = 'auto';
+            }, 5000); 
+        }
 
         async function fetchCloudData() {
             const bar = document.getElementById('progressBar');
@@ -127,10 +228,15 @@
                 const cloudData = await response.json();
                 if (cloudData) {
                     entries = cloudData.map(item => {
-                        // الحل القاضي لمشكلة الـ VPN والتاريخ: قراءة النص الخام
                         let rDate = (item.date || item.Date || "").toString();
                         let cleanDate = rDate.includes('T') ? rDate.split('T')[0] : rDate.split(' ')[0];
                         
+                        // التعديل: استبدال Pending بـ Done فوراً عند استلام البيانات
+                        let statusAction = item.action || item.Action || "Done";
+                        if (statusAction.toLowerCase() === "pending") {
+                            statusAction = "Done";
+                        }
+
                         return {
                             date: cleanDate,
                             orderId: String(item.orderId || item["Order ID"] || ""),
@@ -140,7 +246,7 @@
                             merchantName: String(item.merchantName || item["Merchant Name"] || "N/A"),
                             issue: item.issue || item.Issue || "Unknown",
                             road: item.road || item.Road || "N/A",
-                            action: item.action || item.Action || "Pending"
+                            action: statusAction
                         };
                     });
                     bar.style.width = "100%";
@@ -169,9 +275,8 @@
             if (start) filtered = filtered.filter(e => e.date >= start);
             if (end) filtered = filtered.filter(e => e.date <= end);
 
-            // مقارنة التاريخ كنص لتجنب أخطاء الـ VPN
             const now = new Date();
-            const todayStr = now.toLocaleDateString('en-CA'); // YYYY-MM-DD حسب ساعة جهازك الفعلية
+            const todayStr = now.toLocaleDateString('en-CA'); 
 
             let d=0, m=0, y=0;
             filtered.forEach(e => {
@@ -183,9 +288,9 @@
                 }
             });
 
-            document.getElementById('dailyTotal').innerText = d.toLocaleString();
-            document.getElementById('monthlyTotal').innerText = m.toLocaleString();
-            document.getElementById('yearlyTotal').innerText = y.toLocaleString();
+            document.getElementById('dailyTotal').innerText = d.toLocaleString() + ' EGP';
+            document.getElementById('monthlyTotal').innerText = m.toLocaleString() + ' EGP';
+            document.getElementById('yearlyTotal').innerText = y.toLocaleString() + ' EGP';
             document.getElementById('totalItems').innerText = filtered.length.toLocaleString();
             
             renderTimeChart(filtered); renderPieCharts(filtered); renderSerialReturners(filtered);
@@ -206,7 +311,7 @@
             if(charts.time) charts.time.destroy();
             charts.time = new Chart(document.getElementById('timeChart'), {
                 type: 'line',
-                data: { labels, datasets: [{ label: 'Saved $', data: dataArr, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.05)', fill: true, tension: 0.4 }] },
+                data: { labels, datasets: [{ label: 'Saved EGP', data: dataArr, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.05)', fill: true, tension: 0.4 }] },
                 options: { maintainAspectRatio: false }
             });
         }
@@ -254,7 +359,7 @@
                         <span class="w-7 h-7 flex items-center justify-center bg-slate-200 rounded-lg text-[10px] font-bold text-slate-500">${i+1}</span>
                         <div><p class="font-bold text-slate-700 text-xs">${name}</p><p class="text-[9px] text-slate-400 font-mono">${obj.sub || ''}</p></div>
                     </div>
-                    <span class="text-emerald-600 font-bold text-xs">$${obj.val.toLocaleString()}</span>
+                    <span class="text-emerald-600 font-bold text-xs">${obj.val.toLocaleString()} EGP</span>
                 </div>`).join('');
         }
 
@@ -266,13 +371,30 @@
                 e.merchantName.toLowerCase().includes(s) || e.merchantId.toLowerCase().includes(s)
             );
             tbody.innerHTML = filteredData.slice(0,25).map(e => `
-                <tr class="hover:bg-emerald-50/40 transition-colors">
+                <tr onclick="openSidePeek('${e.orderId}', '${e.date}', '${e.asin}', '${e.merchantName}', '${e.merchantId}', ${e.price}, '${e.action}', '${e.issue}', '${e.road}')" class="hover:bg-emerald-50/40 transition-colors">
                     <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
                     <td class="p-5"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
                     <td class="p-5"><div class="text-xs font-semibold text-slate-600">${e.merchantName}</div><div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div></td>
-                    <td class="p-5 text-right font-bold text-emerald-600">$${e.price.toLocaleString()}</td>
+                    <td class="p-5 text-right font-bold text-emerald-600">${e.price.toLocaleString()} EGP</td>
                     <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
                 </tr>`).join('');
+        }
+
+        function openSidePeek(orderId, date, asin, merchant, merchantId, price, action, issue, road) {
+            document.getElementById('peek-order-id').innerText = orderId;
+            document.getElementById('peek-date').innerText = date;
+            document.getElementById('peek-asin').innerText = asin;
+            document.getElementById('peek-merchant-name').innerText = merchant;
+            document.getElementById('peek-merchant-id').innerText = "ID: " + merchantId;
+            document.getElementById('peek-value').innerText = price.toLocaleString() + " EGP";
+            document.getElementById('peek-action').innerText = action;
+            document.getElementById('peek-issue').innerText = issue;
+            document.getElementById('peek-road').innerText = road;
+            document.getElementById('side-peek-panel').classList.add('open');
+        }
+
+        function closeSidePeek() {
+            document.getElementById('side-peek-panel').classList.remove('open');
         }
 
         function switchTimeView(v) { 
@@ -283,13 +405,14 @@
         }
 
         function exportCSV() {
-            let csv = "Date,Order ID,ASIN,Price,Merchant ID,Merchant Name,Issue,Road,Action\n";
+            let csv = "Date,Order ID,ASIN,Price (EGP),Merchant ID,Merchant Name,Issue,Road,Action\n";
             entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Report.csv'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Report_EGP.csv'; a.click();
         }
 
-        window.onload = fetchCloudData;
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidePeek(); });
+        window.onload = initApp;
     </script>
 </body>
 </html>
