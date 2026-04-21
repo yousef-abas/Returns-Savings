@@ -231,7 +231,6 @@
                         let rDate = (item.date || item.Date || "").toString();
                         let cleanDate = rDate.includes('T') ? rDate.split('T')[0] : rDate.split(' ')[0];
                         
-                        // التعديل: استبدال Pending بـ Done فوراً عند استلام البيانات
                         let statusAction = item.action || item.Action || "Done";
                         if (statusAction.toLowerCase() === "pending") {
                             statusAction = "Done";
@@ -299,20 +298,65 @@
 
         function renderTimeChart(data) {
             const labels = currentView === 'monthly' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Q1','Q2','Q3','Q4'];
-            const dataArr = Array(labels.length).fill(0);
+            
+            const priceData = Array(labels.length).fill(0);
+            const countData = Array(labels.length).fill(0);
+
             data.forEach(e => {
                 const eParts = e.date.split('-');
                 if(parseInt(eParts[0]) === 2026) {
                     const monthIdx = parseInt(eParts[1]) - 1;
                     const idx = currentView === 'monthly' ? monthIdx : Math.floor(monthIdx/3);
-                    if(idx >= 0 && idx < dataArr.length) dataArr[idx] += e.price;
+                    
+                    if(idx >= 0 && idx < priceData.length) {
+                        priceData[idx] += e.price;
+                        countData[idx] += 1;
+                    }
                 }
             });
+
             if(charts.time) charts.time.destroy();
-            charts.time = new Chart(document.getElementById('timeChart'), {
+            
+            const ctx = document.getElementById('timeChart').getContext('2d');
+            charts.time = new Chart(ctx, {
                 type: 'line',
-                data: { labels, datasets: [{ label: 'Saved EGP', data: dataArr, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.05)', fill: true, tension: 0.4 }] },
-                options: { maintainAspectRatio: false }
+                data: { 
+                    labels, 
+                    datasets: [{ 
+                        label: 'Saved EGP', 
+                        data: priceData, 
+                        borderColor: '#10b981', 
+                        backgroundColor: 'rgba(16, 185, 129, 0.05)', 
+                        fill: true, 
+                        tension: 0.4,
+                        countInfo: countData 
+                    }] 
+                },
+                options: { 
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let price = context.parsed.y.toLocaleString();
+                                    let count = context.dataset.countInfo[context.dataIndex];
+                                    return [
+                                        ` Total Value: ${price} EGP`,
+                                        ` Total Orders: ${count} orders`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return value.toLocaleString() + ' EGP'; }
+                            }
+                        }
+                    }
+                }
             });
         }
 
