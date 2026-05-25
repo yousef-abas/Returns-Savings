@@ -1,462 +1,1401 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Returns Master | Developed by Youssef Abbas</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* --- Animation for the Green Dot --- */
-        @keyframes pulse-green {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-        .animate-pulse-green { animation: pulse-green 2s infinite; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Returns Master Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e2a;
+  --sidebar:#160f3a;
+  --main:#13123a;
+  --border:rgba(255,255,255,0.07);
+  --surface:rgba(255,255,255,0.04);
+  --surface2:rgba(255,255,255,0.07);
+  --text:#e2e8f0;
+  --muted:#64748b;
+  --muted2:#94a3b8;
+  --accent:#6366f1;
+  --font:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;overflow:hidden;font-family:var(--font);background:var(--bg);color:var(--text)}
 
-        body { 
-            font-family: 'Outfit', sans-serif; background-color: #f8fafc; 
-            background-image: radial-gradient(at 0% 0%, hsla(160, 40%, 10%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(210, 40%, 30%, 1) 0, transparent 50%);
-            background-repeat: no-repeat; background-size: 100% 800px; min-height: 100vh; color: #334155;
-            overflow: hidden; 
-        }
+/* ── LOADER ── */
+#loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .8s ease,visibility .8s ease}
+#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.ld-logo{font-size:2.2rem;font-weight:800;letter-spacing:-1px;margin-bottom:32px;animation:fadeUp .6s .2s both}
+.ld-logo span{color:#6366f1}
+.ld-bar{width:200px;height:2px;background:rgba(255,255,255,0.08);border-radius:1px;overflow:hidden}
+.ld-fill{height:100%;background:linear-gradient(90deg,#6366f1,#a855f7);animation:lfill 2.2s ease .3s both}
+.ld-sub{margin-top:14px;font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);animation:fadeUp .6s .5s both}
+@keyframes lfill{from{width:0}to{width:100%}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-        #intro-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-            z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: all 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        }
-        .intro-ball {
-            width: 120px; height: 120px; background: white; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 50px rgba(16, 185, 129, 0.3);
-            animation: dropBounce 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            opacity: 0;
-        }
-        .intro-text {
-            color: white; font-size: 3rem; font-weight: 800; margin-top: 25px;
-            letter-spacing: -1px; opacity: 0; animation: fadeInIntro 1s ease 1.2s forwards;
-        }
-        .developer-tag {
-            color: #94a3b8; font-size: 0.9rem; font-weight: 400; margin-top: 10px;
-            letter-spacing: 2px; text-transform: uppercase; opacity: 0; animation: fadeInIntro 1.5s ease 2.2s forwards;
-        }
-        @keyframes dropBounce {
-            0% { transform: translateY(-1000px) scale(0.3); opacity: 0; }
-            60% { transform: translateY(20px) scale(1.1); opacity: 1; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        @keyframes fadeInIntro { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-out { opacity: 0 !important; visibility: hidden !important; transform: scale(1.1); }
+/* ── TOPBAR ── */
+.topbar{height:60px;background:var(--sidebar);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;z-index:10}
+.logo{width:210px;display:flex;align-items:center;gap:3px;font-size:1.1rem;font-weight:800;letter-spacing:-.5px;flex-shrink:0}
+.logo em{font-style:normal;color:#6366f1;font-size:1.5rem}
+.tsearch{flex:1;max-width:440px;height:36px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 14px;transition:border-color .2s}
+.tsearch:focus-within{border-color:rgba(99,102,241,.4)}
+.tsearch input{background:transparent;border:none;outline:none;color:var(--text);font-family:var(--font);font-size:.82rem;width:100%}
+.tsearch input::placeholder{color:var(--muted)}
+.tright{display:flex;align-items:center;gap:10px}
+.ibtn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.9rem;transition:all .2s;color:var(--muted2)}
+.ibtn:hover{background:var(--surface2);color:var(--text)}
+.sep{width:1px;height:22px;background:var(--border)}
+.uchip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:5px 12px;cursor:pointer;font-size:.82rem;font-weight:600}
+.uavatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff}
 
-        #main-dashboard { opacity: 0; transition: opacity 1.5s ease; }
-        .dashboard-visible { opacity: 1 !important; }
-        .card { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 28px; padding: 25px; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04); border: 1px solid rgba(255, 255, 255, 0.6);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
-        .list-item-glow { transition: all 0.3s ease; border: 1px solid transparent; cursor: pointer; }
-        .list-item-glow:hover { background: white !important; border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); transform: translateX(5px); }
-        .stat-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e293b; }
-        .tab-btn { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; }
-        .tab-active { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-        .tab-inactive { color: #64748b; background: #f1f5f9; }
-        .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
-        .merchant-select {
-            background: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.5); color: #1e293b;
-            backdrop-filter: blur(10px); border-radius: 15px; padding: 8px 15px; font-size: 12px; font-weight: 700; outline: none;
-        }
-        .date-input { background: transparent; border: none; font-size: 11px; font-weight: 600; color: #64748b; outline: none; }
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 60px)}
 
-        /* --- Side Peek Styles --- */
-        #side-peek-panel {
-            position: fixed; top: 0; right: -450px; width: 420px; height: 100vh;
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(25px);
-            border-left: 1px solid rgba(255, 255, 255, 0.1); box-shadow: -20px 0 50px rgba(0, 0, 0, 0.3);
-            z-index: 2000; transition: right 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            color: #f1f5f9; display: flex; flex-direction: column;
-        }
-        #side-peek-panel.open { right: 0; }
-        .peek-header { padding: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .peek-content { padding: 30px; flex-grow: 1; overflow-y: auto; }
-        .peek-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
-        .peek-value { font-size: 1.1rem; font-weight: 600; color: #ffffff; margin-bottom: 20px; }
-        .peek-badge { display: inline-block; padding: 4px 12px; rounded: 50px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; }
-        tbody tr { cursor: pointer; }
-    </style>
+/* ── SIDEBAR ── */
+.sidebar{width:210px;background:var(--sidebar);border-right:1px solid var(--border);flex-shrink:0;overflow-y:auto;padding:16px 10px;display:flex;flex-direction:column;gap:2px}
+.sec-label{font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:10px 10px 6px;margin-top:6px}
+.sec-label:first-child{margin-top:0}
+.nitem{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:.82rem;font-weight:500;color:var(--muted2);cursor:pointer;transition:all .2s}
+.nitem:hover{background:var(--surface);color:var(--text)}
+.nitem.active{background:#6366f1;color:#fff;font-weight:600}
+.nitem .ni{font-size:.95rem;width:18px;text-align:center;flex-shrink:0}
+
+/* sidebar filters */
+.sb-filter{padding:8px 10px}
+.sb-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:var(--font);font-size:.75rem;outline:none;cursor:pointer;margin-bottom:7px}
+.sb-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--muted2);font-family:var(--font);font-size:.72rem;outline:none;margin-bottom:6px;color-scheme:dark}
+.sb-btn{width:100%;padding:8px;border-radius:8px;font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;margin-bottom:6px}
+.sb-btn.primary{background:#6366f1;color:#fff}
+.sb-btn.primary:hover{background:#4f46e5;box-shadow:0 0 16px rgba(99,102,241,.4)}
+.sb-btn.outline{background:transparent;border:1px solid var(--border);color:var(--muted2)}
+.sb-btn.outline:hover{background:var(--surface);color:var(--text)}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;padding:24px 24px 40px;background:var(--main)}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.ph-title{font-size:1.35rem;font-weight:800;letter-spacing:-.5px}
+.ph-right{display:flex;align-items:center;gap:10px}
+.ph-btn{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:7px 14px;font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text)}
+.ph-btn:hover{background:var(--surface2)}
+.ph-btn.primary{background:#6366f1;border-color:#6366f1;color:#fff}
+.ph-btn.primary:hover{background:#4f46e5;box-shadow:0 0 16px rgba(99,102,241,.3)}
+
+/* ── STAT CARDS ── */
+.scards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.scard{border-radius:16px;padding:18px 20px;position:relative;overflow:hidden;min-height:115px;display:flex;flex-direction:column;justify-content:space-between}
+.scard.c1{background:linear-gradient(135deg,#4f46e5,#7c3aed)}
+.scard.c2{background:linear-gradient(135deg,#0e9abf,#06b6d4)}
+.scard.c3{background:linear-gradient(135deg,#7c3aed,#a855f7)}
+.scard.c4{background:linear-gradient(135deg,#db2777,#f43f5e)}
+.scard::after{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:rgba(255,255,255,.05);border-radius:50%}
+.sc-top{display:flex;align-items:center;justify-content:space-between}
+.sc-label{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:5px}
+.sc-menu{display:flex;flex-direction:column;gap:2px;cursor:pointer;padding:2px;opacity:.7}
+.sc-menu span{width:3px;height:3px;background:#fff;border-radius:50%;display:block}
+.sc-bot{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.sc-num{font-size:1.9rem;font-weight:800;letter-spacing:-1.5px;line-height:1;color:#fff}
+.sc-sub{font-size:.67rem;color:rgba(255,255,255,.75);margin-top:3px}
+.ring-wrap{position:relative;width:52px;height:52px;flex-shrink:0}
+.ring-wrap canvas{position:absolute;top:0;left:0}
+.ring-pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.58rem;font-weight:700;color:#fff;white-space:nowrap}
+
+/* ── CONTENT GRID ── */
+.cgrid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-bottom:16px}
+.panel{background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:14px;padding:20px}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.panel-title{font-size:.9rem;font-weight:700}
+.panel-dots{display:flex;flex-direction:column;gap:2px;cursor:pointer}
+.panel-dots span{width:3px;height:3px;background:var(--muted);border-radius:50%;display:block}
+
+/* tabs */
+.tabs{display:flex;gap:4px;background:var(--bg);border-radius:8px;padding:3px}
+.tab{padding:5px 14px;border-radius:6px;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;color:var(--muted);background:transparent;font-family:var(--font)}
+.tab.active{background:#6366f1;color:#fff}
+
+/* chart */
+.cw{height:240px;position:relative;width:100%}
+.clegend{display:flex;gap:14px;margin-bottom:12px}
+.cli{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--muted2)}
+.cld{width:8px;height:8px;border-radius:50%}
+
+/* right panel */
+.rpanel{display:flex;flex-direction:column;gap:14px}
+
+/* top ASINs / merchants */
+.rank-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.rank-item:last-child{border-bottom:none}
+.rank-n{font-size:.65rem;color:var(--muted);width:18px;font-weight:600;flex-shrink:0}
+.rank-name{flex:1;font-size:.77rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-sub{font-size:.62rem;color:var(--muted);font-family:monospace}
+.rank-bar-bg{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.rank-bar-fg{height:100%;border-radius:2px}
+.rank-val{font-size:.7rem;font-weight:700;white-space:nowrap;flex-shrink:0}
+
+/* notif cards */
+.nc{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px;cursor:pointer;transition:all .2s;margin-bottom:9px}
+.nc:last-child{margin-bottom:0}
+.nc:hover{background:var(--surface2);border-color:rgba(99,102,241,.3)}
+.nc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.nc-title{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600}
+.nc-ico{width:26px;height:26px;border-radius:7px;background:rgba(99,102,241,.15);display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.nc-sub{font-size:.7rem;color:var(--muted2);line-height:1.45;margin-bottom:8px}
+.nc-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 11px;font-size:.67rem;font-weight:600;cursor:pointer;color:var(--text);transition:all .2s;font-family:var(--font)}
+.nc-btn:hover{background:rgba(255,255,255,.12)}
+
+/* ── SECOND ROW GRID ── */
+.cgrid2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+
+/* pie / doughnut */
+.piew{height:220px;position:relative}
+
+/* serial returners list */
+.sr-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:all .2s}
+.sr-item:hover{background:var(--surface2);border-color:rgba(244,63,94,.3)}
+.sr-name{font-size:.77rem;font-weight:500}
+.sr-badge{background:rgba(244,63,94,.15);color:#f43f5e;border:1px solid rgba(244,63,94,.25);border-radius:5px;padding:2px 9px;font-size:.65rem;font-weight:700}
+
+/* ── TABLE ── */
+.tpanel{background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.thdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.tsbox{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:7px 14px;transition:border-color .2s}
+.tsbox:focus-within{border-color:rgba(99,102,241,.4)}
+.tsbox input{background:transparent;border:none;outline:none;color:var(--text);font-family:var(--font);font-size:.8rem;width:200px}
+.tsbox input::placeholder{color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+thead th{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:12px 20px;text-align:left;background:rgba(255,255,255,.02)}
+tbody tr{border-top:1px solid rgba(255,255,255,.035);cursor:pointer;transition:background .15s}
+tbody tr:hover{background:rgba(99,102,241,.06)}
+tbody td{padding:13px 20px;font-size:.8rem}
+.td-mono{font-family:monospace;font-size:.68rem;color:var(--muted)}
+.td-asin{font-family:monospace;font-size:.7rem;color:#818cf8;font-weight:700}
+.td-price{font-weight:700;color:#4ade80;text-align:right}
+.td-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:5px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.2)}
+.td-merchant{font-size:.77rem;font-weight:500}
+.td-mid{font-family:monospace;font-size:.65rem;color:var(--muted);margin-top:2px}
+
+/* ── SIDE PEEK ── */
+#peek{position:fixed;top:0;right:-460px;width:440px;height:100vh;background:#1a1635;border-left:1px solid var(--border);z-index:1000;display:flex;flex-direction:column;transition:right .45s cubic-bezier(.23,1,.32,1);overflow:hidden}
+#peek.open{right:0}
+.pk-top{padding:28px 28px 20px;border-bottom:1px solid var(--border);position:relative}
+.pk-close{position:absolute;top:20px;right:20px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:1.1rem;color:var(--muted);transition:all .2s;background:transparent}
+.pk-close:hover{border-color:#f43f5e;color:#f43f5e}
+.pk-label{font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.pk-val{font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:18px}
+.pk-val.green{color:#4ade80;font-size:1.7rem;font-weight:800;letter-spacing:-1px}
+.pk-val.blue{color:#818cf8;font-family:monospace}
+.pk-val.red{color:#f87171}
+.pk-val.yellow{color:#fbbf24}
+.pk-body{padding:24px 28px;flex:1;overflow-y:auto}
+.pk-divider{height:1px;background:var(--border);margin:16px 0}
+.pk-center{text-align:center;font-family:monospace;font-size:.68rem;color:var(--muted)}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.15)}
+
+/* ── ALERTS PANEL ── */
+#alertsPanel{
+  position:fixed;top:60px;right:10px;width:340px;
+  background:#1a1635;border:1px solid var(--border);
+  border-radius:14px;z-index:3000;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+  overflow:hidden;
+  transition:opacity .25s ease,transform .25s ease,visibility .25s;
+  opacity:0;visibility:hidden;transform:translateY(-8px);
+}
+#alertsPanel.open{opacity:1;visibility:visible;transform:translateY(0)}
+.ap-hdr{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.ap-title{font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.ap-close{background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1;transition:color .2s}
+.ap-close:hover{color:var(--text)}
+.ap-body{max-height:400px;overflow-y:auto;padding:10px}
+.alert-item{display:flex;gap:12px;padding:12px;border-radius:10px;margin-bottom:6px;background:var(--surface);border:1px solid var(--border);transition:all .2s;cursor:default}
+.alert-item:hover{background:var(--surface2)}
+.alert-item:last-child{margin-bottom:0}
+.alert-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.alert-text{flex:1;min-width:0}
+.alert-title{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:3px}
+.alert-sub{font-size:.68rem;color:var(--muted2);line-height:1.4}
+.alert-time{font-size:.6rem;color:var(--muted);margin-top:4px}
+.alert-empty{text-align:center;padding:30px 20px;color:var(--muted);font-size:.8rem}
+
+/* ── CHAT PANEL ── */
+#chatPanel{
+  position:fixed;bottom:20px;right:20px;width:380px;height:520px;
+  background:#1a1635;border:1px solid var(--border);
+  border-radius:16px;z-index:3000;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:opacity .3s ease,transform .3s ease,visibility .3s;
+  opacity:0;visibility:hidden;transform:translateY(16px) scale(.97);
+}
+#chatPanel.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.chat-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.chat-hdr-ico{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.chat-hdr-info{flex:1}
+.chat-hdr-title{font-size:.82rem;font-weight:700}
+.chat-hdr-sub{font-size:.6rem;color:var(--muted);margin-top:1px}
+.chat-close{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;transition:color .2s;line-height:1}
+.chat-close:hover{color:var(--text)}
+.chat-key-bar{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.chat-key-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-family:var(--font);font-size:.72rem;outline:none;transition:border-color .2s}
+.chat-key-input:focus{border-color:rgba(99,102,241,.5)}
+.chat-key-input::placeholder{color:var(--muted)}
+.chat-key-btn{background:#6366f1;border:none;border-radius:8px;padding:7px 12px;color:#fff;font-size:.7rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap}
+.chat-key-btn:hover{background:#4f46e5}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.chat-bubble{max-width:85%;padding:10px 13px;border-radius:12px;font-size:.78rem;line-height:1.55;}
+.chat-bubble.user{align-self:flex-end;background:#6366f1;color:#fff;border-bottom-right-radius:4px}
+.chat-bubble.ai{align-self:flex-start;background:var(--surface2);color:var(--text);border-bottom-left-radius:4px;border:1px solid var(--border)}
+.chat-bubble.ai.typing{opacity:.6}
+.chat-bar{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.chat-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 13px;color:var(--text);font-family:var(--font);font-size:.8rem;outline:none;resize:none;height:38px;transition:border-color .2s}
+.chat-input:focus{border-color:rgba(99,102,241,.4)}
+.chat-input::placeholder{color:var(--muted)}
+.chat-send{width:38px;height:38px;background:#6366f1;border:none;border-radius:10px;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.chat-send:hover{background:#4f46e5;box-shadow:0 0 14px rgba(99,102,241,.4)}
+.chat-send:disabled{background:var(--surface);color:var(--muted);cursor:not-allowed}
+</style>
 </head>
-<body class="pb-12">
+<body>
 
-    <div id="intro-screen">
-        <div class="intro-ball text-6xl">🚀</div>
-        <h1 class="intro-text">Returns Master Pro</h1>
-        <p class="developer-tag">Developed by Youssef Abbas</p>
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-logo"><span>R</span>eturns Master Pro</div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+  <div class="ld-sub">Connecting to cloud data…</div>
+</div>
+
+<!-- SIDE PEEK -->
+<div id="peek">
+  <div class="pk-top">
+    <div class="pk-label">Order ID</div>
+    <div id="pk-order" style="font-size:1.1rem;font-weight:800;letter-spacing:-.5px;margin-bottom:0">—</div>
+    <button class="pk-close" onclick="closePeek()">×</button>
+  </div>
+  <div class="pk-body">
+    <div class="pk-label">ASIN</div><div class="pk-val blue" id="pk-asin">—</div>
+    <div class="pk-label">Value (EGP)</div><div class="pk-val green" id="pk-price">—</div>
+    <div class="pk-divider"></div>
+    <div class="pk-label">Issue / Root Cause</div><div class="pk-val red" id="pk-issue">—</div>
+    <div class="pk-label">ROAD / Status</div><div class="pk-val yellow" id="pk-road">—</div>
+    <div class="pk-divider"></div>
+    <div class="pk-label">Merchant Name</div><div class="pk-val" id="pk-merchant">—</div>
+    <div class="pk-label">Merchant ID</div><div class="pk-val blue" id="pk-mid">—</div>
+    <div class="pk-label">Action Taken</div><div class="pk-val" id="pk-action">—</div>
+    <div class="pk-divider"></div>
+    <div class="pk-center" id="pk-date">—</div>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo"><em>R</em>ETURNS MASTER</div>
+  <div class="tsearch">
+    <span style="color:var(--muted)">🔍</span>
+    <input id="topSearch" placeholder="Search order, ASIN, merchant…" oninput="renderTable()">
+  </div>
+  <div class="tright">
+    <div class="ibtn ibtn-alerts" title="Smart Alerts" onclick="toggleAlerts()" style="position:relative">
+      🔔
+      <span id="alertBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#f43f5e;color:#fff;font-size:.5rem;font-weight:800;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;border:2px solid var(--sidebar)">0</span>
     </div>
+    <div class="ibtn" title="AI Analyst" onclick="toggleChat()">💬</div>
+    <div class="ibtn" title="Sync" onclick="window.location.reload()">🔄</div>
+    <div class="sep"></div>
+    <div class="uchip">
+      <div class="uavatar">YA</div>
+      <span>Youssef</span>
+      <span style="color:var(--muted);font-size:.7rem;margin-left:2px">▾</span>
+    </div>
+  </div>
+</div>
 
-    <div id="side-peek-panel">
-        <div class="peek-header flex justify-between items-center">
-            <h2 class="text-2xl font-bold tracking-tight">Order Analysis</h2>
-            <button onclick="closeSidePeek()" class="text-slate-400 hover:text-white text-3xl font-light transition-colors">&times;</button>
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sec-label">Menu</div>
+    <div class="nitem active" onclick="showSection('dashboard')"><span class="ni">🏠</span> Dashboard</div>
+    <div class="nitem" onclick="showSection('asin')"><span class="ni">📦</span> ASIN Analysis</div>
+    <div class="nitem" onclick="showSection('merchants')"><span class="ni">🏢</span> Merchants</div>
+    <div class="nitem" onclick="showSection('logs')"><span class="ni">📋</span> Full Logs</div>
+
+    <div class="sec-label">Manage</div>
+    <div class="nitem" onclick="showSection('issues')"><span class="ni">⚠️</span> Issues / ROAD</div>
+    <div class="nitem" onclick="showSection('serial')"><span class="ni">🚨</span> Serial Returners</div>
+
+    <div class="sec-label">Filters</div>
+    <div class="sb-filter">
+      <select id="merchantFilter" class="sb-select" onchange="updateUI()"></select>
+      <input type="date" id="startDate" class="sb-input" onchange="updateUI()" placeholder="From date">
+      <input type="date" id="endDate" class="sb-input" onchange="updateUI()" placeholder="To date">
+      <button class="sb-btn outline" onclick="clearFilters()">✕ Clear Filters</button>
+      <button class="sb-btn primary" onclick="exportCSV()">↑ Export CSV</button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="mainContent">
+
+    <!-- ── DASHBOARD SECTION ── -->
+    <div id="sec-dashboard">
+      <div class="ph">
+        <div class="ph-title">Dashboard</div>
+        <div class="ph-right">
+          <div class="ph-btn" onclick="showSection('logs')">📋 View All Logs</div>
+          <div class="ph-btn primary" onclick="exportCSV()">↑ Export</div>
         </div>
-        <div class="peek-content">
-            <p class="peek-label">Order ID</p><p id="peek-order-id" class="peek-value">---</p>
-            <p class="peek-label">ASIN</p><p id="peek-asin" class="peek-value text-indigo-300">---</p>
-            <div class="h-px bg-white/5 my-4"></div>
-            <p class="peek-label">Issue / Reason</p><p id="peek-issue" class="peek-value text-rose-400">---</p>
-            <p class="peek-label">ROAD / Status</p><p id="peek-road" class="peek-value text-amber-400">---</p>
-            <div class="h-px bg-white/5 my-4"></div>
-            <p class="peek-label">Merchant Details</p>
-            <p id="peek-merchant-name" class="peek-value mb-1">---</p>
-            <p id="peek-merchant-id" class="text-xs font-mono text-slate-400 mb-6">---</p>
-            <p class="peek-label">Value (EGP)</p><p id="peek-value" class="peek-value text-emerald-400 text-2xl font-bold">---</p>
-            <p class="peek-label">Action Taken</p><div id="peek-action" class="peek-badge bg-emerald-500/20 text-emerald-400">---</div>
-            <p class="peek-label text-center mt-8">Date Processed</p><p id="peek-date" class="text-center font-mono text-slate-500">---</p>
+      </div>
+
+      <!-- STAT CARDS -->
+      <div class="scards">
+        <div class="scard c1">
+          <div class="sc-top">
+            <div class="sc-label">🔒 Daily Savings</div>
+            <div class="sc-menu"><span></span><span></span><span></span></div>
+          </div>
+          <div class="sc-bot">
+            <div><div class="sc-num" id="dailyTotal">0</div><div class="sc-sub" id="dailySub">0 orders today</div></div>
+            <div class="ring-wrap"><canvas id="ring1" width="52" height="52"></canvas><div class="ring-pct" id="rlbl1">0%</div></div>
+          </div>
         </div>
+        <div class="scard c2">
+          <div class="sc-top">
+            <div class="sc-label">🔒 Monthly Recovery</div>
+            <div class="sc-menu"><span></span><span></span><span></span></div>
+          </div>
+          <div class="sc-bot">
+            <div><div class="sc-num" id="monthlyTotal">0</div><div class="sc-sub" id="monthlySub">0 orders this month</div></div>
+            <div class="ring-wrap"><canvas id="ring2" width="52" height="52"></canvas><div class="ring-pct" id="rlbl2">0%</div></div>
+          </div>
+        </div>
+        <div class="scard c3">
+          <div class="sc-top">
+            <div class="sc-label">🔒 Annual Saved</div>
+            <div class="sc-menu"><span></span><span></span><span></span></div>
+          </div>
+          <div class="sc-bot">
+            <div><div class="sc-num" id="yearlyTotal">0</div><div class="sc-sub" id="yearlySub">0 orders this year</div></div>
+            <div class="ring-wrap"><canvas id="ring3" width="52" height="52"></canvas><div class="ring-pct" id="rlbl3">0%</div></div>
+          </div>
+        </div>
+        <div class="scard c4">
+          <div class="sc-top">
+            <div class="sc-label">🔒 Total Items</div>
+            <div class="sc-menu"><span></span><span></span><span></span></div>
+          </div>
+          <div class="sc-bot">
+            <div><div class="sc-num" id="totalItems">0</div><div class="sc-sub">items in dataset</div></div>
+            <div class="ring-wrap"><canvas id="ring4" width="52" height="52"></canvas><div class="ring-pct" id="rlbl4">0%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 1: Trend + Right panel -->
+      <div class="cgrid">
+        <div class="panel" style="display:flex;flex-direction:column;gap:16px;">
+          <div class="panel-hdr" style="margin-bottom:0">
+            <div class="panel-title">Returns Over Time</div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div class="clegend">
+                <div class="cli"><div class="cld" style="background:#6366f1"></div>Value (EGP)</div>
+                <div class="cli"><div class="cld" style="background:#06b6d4"></div>Orders</div>
+              </div>
+              <div class="tabs">
+                <button class="tab active" id="btn-monthly" onclick="switchView('monthly')">Monthly</button>
+                <button class="tab" id="btn-quarterly" onclick="switchView('quarterly')">Quarterly</button>
+              </div>
+            </div>
+          </div>
+          <div class="cw"><canvas id="timeChart"></canvas></div>
+          <!-- Fill space below chart with quick merchant summary -->
+          <div style="border-top:1px solid var(--border);padding-top:14px;">
+            <div style="font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Top Merchants This Period</div>
+            <div id="chartBottomMerchants" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"></div>
+          </div>
+        </div>
+
+        <div class="rpanel">
+          <div class="panel">
+            <div class="panel-hdr">
+              <div class="panel-title">Top ASINs</div>
+              <div class="panel-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div id="topAsinMini"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-hdr">
+              <div class="panel-title">Quick Actions</div>
+            </div>
+            <div class="nc" onclick="showSection('merchants')">
+              <div class="nc-top"><div class="nc-title"><div class="nc-ico">🏢</div>Merchant Rankings</div><span style="color:var(--muted)">›</span></div>
+              <div class="nc-sub">View top merchants by return value and frequency</div>
+              <button class="nc-btn">View all</button>
+            </div>
+            <div class="nc" onclick="showSection('serial')">
+              <div class="nc-top"><div class="nc-title"><div class="nc-ico">🚨</div>Serial Returners</div><span style="color:var(--muted)">›</span></div>
+              <div class="nc-sub">Merchants with highest return frequency</div>
+              <button class="nc-btn">View list</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: Pie charts + serial returners -->
+      <div class="cgrid2">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">Root Cause Analysis</div></div>
+          <div class="piew"><canvas id="issueChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">ROAD Summary</div></div>
+          <div class="piew"><canvas id="roadChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">🚨 Serial Returners</div></div>
+          <div id="serialMini" style="overflow-y:auto;max-height:180px"></div>
+        </div>
+      </div>
+
+      <!-- TABLE preview -->
+      <div class="tpanel">
+        <div class="thdr">
+          <div>
+            <div class="panel-title">Recent Logs</div>
+            <div style="font-size:.68rem;color:var(--muted);margin-top:2px">Latest 25 entries — <span style="color:#818cf8;cursor:pointer" onclick="showSection('logs')">see all →</span></div>
+          </div>
+          <div class="tsbox">
+            <span style="color:var(--muted)">⌕</span>
+            <input id="tableSearch" placeholder="Search order, ASIN, merchant…" oninput="renderTable()">
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table><thead><tr>
+            <th>Date</th><th>Order ID</th><th>ASIN</th><th>Merchant</th><th style="text-align:right">Value (EGP)</th><th style="text-align:center">Status</th>
+          </tr></thead>
+          <tbody id="tableBody"></tbody></table>
+        </div>
+      </div>
+    </div><!-- /dashboard -->
+
+    <!-- ── ASIN SECTION ── -->
+    <div id="sec-asin" style="display:none">
+      <div class="ph"><div class="ph-title">📦 ASIN Analysis</div><div class="ph-btn" onclick="showSection('dashboard')">← Back</div></div>
+      <div class="panel" style="margin-bottom:16px">
+        <div class="panel-hdr"><div class="panel-title">Top 20 ASINs by Total Value</div></div>
+        <div id="fullAsinList"></div>
+      </div>
     </div>
 
-    <div id="main-dashboard">
-        <nav class="w-full pt-8 pb-4 container mx-auto px-8 flex flex-wrap justify-between items-center gap-6">
-            <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl border border-white/30 shadow-xl">🚀</div>
-                <div>
-                    <h1 class="text-3xl font-bold text-white tracking-tight">Returns Master Pro</h1>
-                    <div class="flex items-center gap-2 mt-0.5">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-pulse-green absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <p class="text-[10px] text-emerald-50 font-bold uppercase tracking-wider">Live</p>
-                    </div>
-                    <div class="w-full bg-white/10 rounded-full h-1 mt-1 overflow-hidden"><div id="progressBar" class="progress-bar"></div></div>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <select id="merchantFilter" onchange="updateUI()" class="merchant-select"><option value="all">🌐 All Merchants</option></select>
-                <div class="flex gap-3">
-                    <button onclick="exportCSV()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all">📊 Export</button>
-                    <button onclick="window.location.reload()" class="bg-emerald-500 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg hover:scale-105 transition-all">🔄 Sync Cloud</button>
-                </div>
-            </div>
-        </nav>
-
-        <main class="container mx-auto px-8 mt-6 space-y-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="card border-l-8 border-l-emerald-500"><p class="stat-label">Daily Savings</p><p class="stat-value" id="dailyTotal">0</p></div>
-                <div class="card border-l-8 border-l-indigo-500"><p class="stat-label">Monthly Recovery</p><p class="stat-value" id="monthlyTotal">0</p></div>
-                <div class="card border-l-8 border-l-amber-500"><p class="stat-label">Annual Saved</p><p class="stat-value" id="yearlyTotal">0</p></div>
-                <div class="card border-l-8 border-l-rose-500"><p class="stat-label">Total Items</p><p class="stat-value" id="totalItems">0</p></div>
-            </div>
-
-            <div class="card">
-                <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
-                    <h3 class="text-xl font-bold text-slate-800">Financial Trend Analysis</h3>
-                    <div class="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl">
-                        <button onclick="switchTimeView('monthly')" id="btn-monthly" class="tab-btn tab-active">Monthly</button>
-                        <button onclick="switchTimeView('quarterly')" id="btn-quarterly" class="tab-btn tab-inactive">Quarterly</button>
-                        <div class="h-6 w-px bg-slate-300 mx-1"></div>
-                        <div class="flex items-center gap-2 px-3">
-                            <input type="date" id="startDate" onchange="updateUI()" class="date-input">
-                            <span class="text-[10px] font-bold text-slate-400">TO</span>
-                            <input type="date" id="endDate" onchange="updateUI()" class="date-input">
-                        </div>
-                    </div>
-                </div>
-                <div class="h-[350px] w-full"><canvas id="timeChart"></canvas></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Root Cause Analysis</h3><div class="h-[240px] w-full"><canvas id="issueChart"></canvas></div></div>
-                <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">ROAD Summary</h3><div class="h-[240px] w-full"><canvas id="roadChart"></canvas></div></div>
-                <div class="card flex flex-col items-center"><h3 class="stat-label mb-6">Serial Returners</h3><div id="serialReturnersList" class="w-full space-y-4 overflow-y-auto h-[240px] pr-2"></div></div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="card">
-                    <h3 class="text-lg font-bold text-slate-800 mb-6">🏆 Top 10 High-Value ASINs</h3>
-                    <div id="topAsinGrid" class="grid grid-cols-1 gap-3"></div>
-                </div>
-                <div class="card">
-                    <h3 class="text-lg font-bold text-slate-800 mb-6">🏢 Top 10 Merchant Ranking</h3>
-                    <div id="topMerchantGrid" class="grid grid-cols-1 gap-3"></div>
-                </div>
-            </div>
-
-            <div class="card p-0 overflow-hidden">
-                <div class="p-6 border-b flex justify-between items-center bg-white">
-                    <h3 class="text-lg font-bold">Comprehensive Logs <span class="text-slate-300 text-xs font-normal ml-2">(Click row for details)</span></h3>
-                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="Search Order, ASIN..." class="w-80 px-4 py-2 bg-slate-50 border rounded-xl outline-none text-sm">
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-slate-50 text-[11px] uppercase text-slate-400 font-bold">
-                            <tr><th class="p-5">Date</th><th class="p-5">Order & ASIN</th><th class="p-5">Merchant Info</th><th class="p-5 text-right">Value (EGP)</th><th class="p-5 text-center">Status</th></tr>
-                        </thead>
-                        <tbody id="dataTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
+    <!-- ── MERCHANTS SECTION ── -->
+    <div id="sec-merchants" style="display:none">
+      <div class="ph"><div class="ph-title">🏢 Merchant Rankings</div><div class="ph-btn" onclick="showSection('dashboard')">← Back</div></div>
+      <div class="panel" style="margin-bottom:16px">
+        <div class="panel-hdr"><div class="panel-title">Top 20 Merchants by Total Value</div></div>
+        <div id="fullMerchantList"></div>
+      </div>
     </div>
 
-    <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFAht24zvBJ4o0DddZyqFtaBrl3K06_R7bnagwxFM5VhuC70jIZKbxCQuk9UF5-qOU/exec"; 
-        let entries = []; let charts = {}; let currentView = 'monthly';
+    <!-- ── ISSUES / ROAD SECTION ── -->
+    <div id="sec-issues" style="display:none">
+      <div class="ph"><div class="ph-title">⚠️ Issues & ROAD</div><div class="ph-btn" onclick="showSection('dashboard')">← Back</div></div>
+      <!-- Row 1: 3 existing cards -->
+      <div class="cgrid2" style="margin-bottom:16px">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">Root Cause Breakdown</div></div>
+          <div style="height:260px;position:relative"><canvas id="issueChart2"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">ROAD Distribution</div></div>
+          <div style="height:260px;position:relative"><canvas id="roadChart2"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">Issue Counts</div></div>
+          <div id="issueCounts" style="overflow-y:auto;max-height:260px"></div>
+        </div>
+      </div>
+      <!-- Row 2: 2 new cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">📅 Orders Per Month</div>
+            <div style="font-size:.68rem;color:var(--muted)">2026 — monthly order count</div>
+          </div>
+          <div style="height:240px;position:relative"><canvas id="monthlyOrdersChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">📋 Monthly Breakdown</div>
+            <div style="font-size:.68rem;color:var(--muted)">Orders & value per month</div>
+          </div>
+          <div id="monthlyOrdersList" style="overflow-y:auto;max-height:260px"></div>
+        </div>
+      </div>
+    </div>
 
-        function initApp() {
-            fetchCloudData();
-            setTimeout(() => {
-                const intro = document.getElementById('intro-screen');
-                const dashboard = document.getElementById('main-dashboard');
-                intro.classList.add('fade-out');
-                dashboard.classList.add('dashboard-visible');
-                document.body.style.overflow = 'auto';
-            }, 5000); 
+    <!-- ── SERIAL RETURNERS SECTION ── -->
+    <div id="sec-serial" style="display:none">
+      <div class="ph"><div class="ph-title">🚨 Serial Returners</div><div class="ph-btn" onclick="showSection('dashboard')">← Back</div></div>
+      <div class="panel">
+        <div class="panel-hdr"><div class="panel-title">Merchants ranked by return frequency</div></div>
+        <div id="fullSerialList"></div>
+      </div>
+    </div>
+
+    <!-- ── FULL LOGS SECTION ── -->
+    <div id="sec-logs" style="display:none">
+      <div class="ph"><div class="ph-title">📋 Full Logs</div><div class="ph-btn" onclick="showSection('dashboard')">← Back</div></div>
+      <div class="tpanel">
+        <div class="thdr">
+          <div class="panel-title">All Entries</div>
+          <div class="tsbox">
+            <span style="color:var(--muted)">⌕</span>
+            <input id="fullSearch" placeholder="Search order, ASIN, merchant…" oninput="renderFullTable()">
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table><thead><tr>
+            <th>Date</th><th>Order ID</th><th>ASIN</th><th>Merchant</th><th>Issue</th><th>ROAD</th><th style="text-align:right">Value (EGP)</th><th style="text-align:center">Status</th>
+          </tr></thead>
+          <tbody id="fullTableBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFAht24zvBJ4o0DddZyqFtaBrl3K06_R7bnagwxFM5VhuC70jIZKbxCQuk9UF5-qOU/exec";
+let allData = [], filteredData = [];
+let charts = {}, currentView = 'monthly', currentSection = 'dashboard';
+
+// ── INIT ──
+window.onload = () => {
+  fetchData();
+  setTimeout(() => document.getElementById('loader').classList.add('gone'), 2800);
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closePeek(); });
+};
+
+// ── FETCH ──
+async function fetchData() {
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const raw = await res.json();
+    allData = raw.map(item => {
+      let d = (item.date||item.Date||'').toString();
+      d = d.includes('T') ? d.split('T')[0] : d.split(' ')[0];
+      let action = item.action||item.Action||'Done';
+      if (action.toLowerCase()==='pending') action = 'Done';
+      return {
+        date: d,
+        orderId: String(item.orderId||item['Order ID']||''),
+        asin: String(item.asin||item.ASIN||'').toUpperCase(),
+        price: parseFloat(item.price||item.Price||0),
+        merchantId: String(item.merchantId||item['Merchant ID']||'N/A'),
+        merchantName: String(item.merchantName||item['Merchant Name']||'N/A'),
+        issue: String(item.issue||item.Issue||'Unknown'),
+        road: String(item.road||item.Road||'N/A'),
+        action
+      };
+    });
+    buildMerchantSelect();
+    updateUI();
+    buildAlertBadge();
+  } catch(e) { console.error('Fetch error:', e); }
+}
+
+// ── FILTERS ──
+function buildMerchantSelect() {
+  const sel = document.getElementById('merchantFilter');
+  const names = [...new Set(allData.map(e=>e.merchantName))].sort();
+  sel.innerHTML = '<option value="all">🌐 All Merchants</option>';
+  names.forEach(n => sel.innerHTML += `<option value="${n}">${n}</option>`);
+}
+
+function clearFilters() {
+  document.getElementById('merchantFilter').value = 'all';
+  document.getElementById('startDate').value = '';
+  document.getElementById('endDate').value = '';
+  updateUI();
+}
+
+function getFiltered() {
+  const m = document.getElementById('merchantFilter').value;
+  const s = document.getElementById('startDate').value;
+  const e = document.getElementById('endDate').value;
+  let data = allData;
+  if (m !== 'all') data = data.filter(x => x.merchantName === m);
+  if (s) data = data.filter(x => x.date >= s);
+  if (e) data = data.filter(x => x.date <= e);
+  return data;
+}
+
+// ── MAIN UPDATE ──
+function updateUI() {
+  filteredData = getFiltered();
+  updateStats(filteredData);
+  renderTimeChart(filteredData);
+  renderPies(filteredData);
+  renderTopAsinMini(filteredData);
+  renderChartBottomMerchants(filteredData);
+  renderSerialMini(filteredData);
+  renderTable();
+  // If on a sub-section, refresh it too
+  if (currentSection === 'asin') renderFullAsin(filteredData);
+  if (currentSection === 'merchants') renderFullMerchants(filteredData);
+  if (currentSection === 'issues') renderIssuesSection(filteredData);
+  if (currentSection === 'serial') renderFullSerial(filteredData);
+  if (currentSection === 'logs') renderFullTable();
+}
+
+// ── STATS ──
+function updateStats(data) {
+  const now = new Date();
+  const today = now.toLocaleDateString('en-CA');
+  const yr = now.getFullYear(), mo = now.getMonth()+1;
+  let dv=0,dc=0,mv=0,mc=0,yv=0,yc=0;
+  let totalVal = data.reduce((s,x)=>s+x.price,0);
+
+  data.forEach(x => {
+    const p = x.date.split('-');
+    if (x.date === today) { dv+=x.price; dc++; }
+    if (parseInt(p[0])===yr) { yv+=x.price; yc++;
+      if (parseInt(p[1])===mo) { mv+=x.price; mc++; }
+    }
+  });
+
+  set('dailyTotal', fmtNum(dv));
+  set('monthlyTotal', fmtNum(mv));
+  set('yearlyTotal', fmtNum(yv));
+  set('totalItems', data.length.toLocaleString());
+  set('dailySub', dc + ' orders today');
+  set('monthlySub', mc + ' orders this month');
+  set('yearlySub', yc + ' orders this year');
+
+  const max = Math.max(dv, mv, yv, 1);
+  drawRing('ring1','rlbl1', pct(dv,max), '#818cf8');
+  drawRing('ring2','rlbl2', pct(mv,max), '#22d3ee');
+  drawRing('ring3','rlbl3', pct(yv,max), '#c084fc');
+  drawRing('ring4','rlbl4', pct(data.length, Math.max(allData.length,1)), '#fb7185');
+}
+
+function pct(a,b){ return Math.round((a/Math.max(b,1))*100); }
+function fmtNum(n){
+  if(n>=1000000000) return (n/1000000000).toFixed(2)+'B';
+  if(n>=1000000)    return (n/1000000).toFixed(2)+'M';
+  if(n>=1000)       return (n/1000).toFixed(1)+'K';
+  return n.toLocaleString();
+}
+function set(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+
+// ── RING DRAW ──
+function drawRing(id, lblId, p, color) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,52,52);
+  const cx=26,cy=26,r=20,lw=4.5;
+  ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,Math.PI*1.5);
+  ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=lw; ctx.lineCap='round'; ctx.stroke();
+  const end = -Math.PI/2 + (p/100)*Math.PI*2;
+  ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,end);
+  ctx.strokeStyle=color; ctx.lineWidth=lw; ctx.lineCap='round'; ctx.stroke();
+  const lbl = document.getElementById(lblId);
+  if (lbl) lbl.textContent = p+'%';
+}
+
+// ── TIME CHART ──
+function renderTimeChart(data) {
+  const labels = currentView==='monthly'
+    ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    : ['Q1','Q2','Q3','Q4'];
+  const vals = Array(labels.length).fill(0);
+  const cnts = Array(labels.length).fill(0);
+
+  data.forEach(x => {
+    const p = x.date.split('-');
+    if (parseInt(p[0])===2026) {
+      const mi = parseInt(p[1])-1;
+      const idx = currentView==='monthly' ? mi : Math.floor(mi/3);
+      if (idx>=0 && idx<vals.length) { vals[idx]+=x.price; cnts[idx]++; }
+    }
+  });
+
+  if (charts.time) charts.time.destroy();
+  const ctx = document.getElementById('timeChart').getContext('2d');
+  const g1=ctx.createLinearGradient(0,0,0,180); g1.addColorStop(0,'rgba(99,102,241,.25)'); g1.addColorStop(1,'rgba(99,102,241,0)');
+  const g2=ctx.createLinearGradient(0,0,0,180); g2.addColorStop(0,'rgba(6,182,212,.2)'); g2.addColorStop(1,'rgba(6,182,212,0)');
+
+  charts.time = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets:[
+      { label:'Value EGP', data:vals, borderColor:'#6366f1', backgroundColor:g1, fill:true, tension:.4, pointRadius:3, pointBackgroundColor:'#6366f1', borderWidth:2 },
+      { label:'Orders', data:cnts, borderColor:'#06b6d4', backgroundColor:g2, fill:true, tension:.4, pointRadius:3, pointBackgroundColor:'#06b6d4', borderWidth:2 }
+    ]},
+    options:{
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'rgba(22,15,58,.97)', borderColor:'rgba(255,255,255,.08)', borderWidth:1,
+          titleFont:{family:'Plus Jakarta Sans',size:11}, bodyFont:{family:'Plus Jakarta Sans',size:11},
+          callbacks:{ label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}` }
         }
+      },
+      scales:{
+        x:{ grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#64748b',font:{family:'Plus Jakarta Sans',size:10}} },
+        y:{ grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#64748b',font:{family:'Plus Jakarta Sans',size:10}} }
+      }
+    }
+  });
+}
 
-        async function fetchCloudData() {
-            const bar = document.getElementById('progressBar');
-            try {
-                bar.style.width = "40%";
-                const response = await fetch(GOOGLE_SCRIPT_URL);
-                const cloudData = await response.json();
-                if (cloudData) {
-                    entries = cloudData.map(item => {
-                        let rDate = (item.date || item.Date || "").toString();
-                        let cleanDate = rDate.includes('T') ? rDate.split('T')[0] : rDate.split(' ')[0];
-                        
-                        let statusAction = item.action || item.Action || "Done";
-                        if (statusAction.toLowerCase() === "pending") {
-                            statusAction = "Done";
-                        }
+// ── PIE CHARTS ──
+function renderPies(data) {
+  mkDoughnut('issueChart','issue',data,['#6366f1','#ec4899','#f59e0b','#10b981','#06b6d4','#f43f5e']);
+  mkDoughnut('roadChart','road',data,['#10b981','#f43f5e','#fbbf24','#3b82f6','#a855f7']);
+}
 
-                        return {
-                            date: cleanDate,
-                            orderId: String(item.orderId || item["Order ID"] || ""),
-                            asin: String(item.asin || item.ASIN || "").toUpperCase(),
-                            price: parseFloat(item.price || item.Price || 0),
-                            merchantId: String(item.merchantId || item["Merchant ID"] || "N/A"),
-                            merchantName: String(item.merchantName || item["Merchant Name"] || "N/A"),
-                            issue: item.issue || item.Issue || "Unknown",
-                            road: item.road || item.Road || "N/A",
-                            action: statusAction
-                        };
-                    });
-                    bar.style.width = "100%";
-                    populateMerchantFilter();
-                    updateUI();
-                }
-            } catch (e) { console.error(e); }
+function mkDoughnut(id, key, data, colors) {
+  const counts={};
+  data.forEach(x=>counts[x[key]]=(counts[x[key]]||0)+1);
+  const total=Object.values(counts).reduce((a,b)=>a+b,0);
+  if(charts[id]) charts[id].destroy();
+  const el=document.getElementById(id); if(!el)return;
+  charts[id]=new Chart(el,{
+    type:'pie',
+    data:{ labels:Object.keys(counts), datasets:[{data:Object.values(counts),backgroundColor:colors,borderColor:'#13123a',borderWidth:2}]},
+    options:{
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'bottom',labels:{color:'#94a3b8',font:{family:'Plus Jakarta Sans',size:9},usePointStyle:true,pointStyle:'circle',padding:10}},
+        tooltip:{ backgroundColor:'rgba(22,15,58,.97)', borderColor:'rgba(255,255,255,.08)', borderWidth:1,
+          callbacks:{ label: c=>`  ${c.label}: ${c.raw} (${((c.raw/total)*100).toFixed(1)}%)` }}
+      }
+    }
+  });
+}
+
+// ── CHART BOTTOM MERCHANTS ──
+function renderChartBottomMerchants(data) {
+  const stats={};
+  data.forEach(x=>{ if(!stats[x.merchantName])stats[x.merchantName]={val:0,count:0}; stats[x.merchantName].val+=x.price; stats[x.merchantName].count++; });
+  const sorted=Object.entries(stats).sort((a,b)=>b[1].val-a[1].val).slice(0,6);
+  const colors=['#6366f1','#06b6d4','#a855f7','#ec4899','#f59e0b','#10b981'];
+  const el=document.getElementById('chartBottomMerchants'); if(!el)return;
+  el.innerHTML=sorted.map(([name,obj],i)=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:9px 12px;cursor:pointer;transition:all .2s;"
+         onmouseover="this.style.borderColor='${colors[i]}44'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div style="width:6px;height:6px;border-radius:50%;background:${colors[i]};flex-shrink:0"></div>
+        <span style="font-size:.7rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">${name}</span>
+      </div>
+      <div style="font-size:.75rem;font-weight:700;color:${colors[i]}">${fmtNum(obj.val)} EGP</div>
+      <div style="font-size:.62rem;color:var(--muted);margin-top:1px">${obj.count} returns</div>
+    </div>`).join('');
+}
+
+// ── TOP ASIN MINI ──
+function renderTopAsinMini(data) {
+  const stats={};
+  data.forEach(x=>{ if(!stats[x.asin])stats[x.asin]=0; stats[x.asin]+=x.price; });
+  const sorted=Object.entries(stats).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const max=sorted[0]?.[1]||1;
+  const colors=['#6366f1','#06b6d4','#a855f7','#ec4899','#f59e0b'];
+  const el=document.getElementById('topAsinMini'); if(!el)return;
+  el.innerHTML=sorted.map(([asin,val],i)=>`
+    <div class="rank-item">
+      <div class="rank-n">${String(i+1).padStart(2,'0')}</div>
+      <div class="rank-name" style="font-family:monospace;color:#818cf8">${asin}</div>
+      <div class="rank-bar-bg"><div class="rank-bar-fg" style="width:${(val/max*100).toFixed(0)}%;background:${colors[i]}"></div></div>
+      <div class="rank-val" style="color:${colors[i]}">${fmtNum(val)}</div>
+    </div>`).join('');
+}
+
+// ── SERIAL MINI ──
+function renderSerialMini(data) {
+  const counts={};
+  data.forEach(x=>counts[x.merchantName]=(counts[x.merchantName]||0)+1);
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const el=document.getElementById('serialMini'); if(!el)return;
+  el.innerHTML=sorted.map(([name,count])=>`
+    <div class="sr-item">
+      <span class="sr-name">${name}</span>
+      <span class="sr-badge">${count} returns</span>
+    </div>`).join('');
+}
+
+// ── TABLE (dashboard preview) ──
+function renderTable() {
+  const q = (document.getElementById('tableSearch')?.value || document.getElementById('topSearch')?.value || '').toLowerCase();
+  const body = document.getElementById('tableBody'); if(!body)return;
+  const rows = filteredData.slice().reverse().filter(x =>
+    x.orderId.toLowerCase().includes(q) ||
+    x.asin.toLowerCase().includes(q) ||
+    x.merchantName.toLowerCase().includes(q) ||
+    x.merchantId.toLowerCase().includes(q)
+  ).slice(0,25);
+  body.innerHTML=rows.map(x=>rowHTML(x)).join('');
+}
+
+function rowHTML(x){
+  return `<tr onclick="openPeek('${esc(x.orderId)}','${x.date}','${x.asin}','${esc(x.merchantName)}','${esc(x.merchantId)}',${x.price},'${esc(x.action)}','${esc(x.issue)}','${esc(x.road)}')">
+    <td class="td-mono">${x.date}</td>
+    <td style="font-size:.8rem;font-weight:500">${x.orderId}</td>
+    <td class="td-asin">${x.asin}</td>
+    <td class="td-merchant">${x.merchantName}<div class="td-mid">${x.merchantId}</div></td>
+    <td class="td-price">${x.price.toLocaleString()}</td>
+    <td style="text-align:center"><span class="td-badge">${x.action}</span></td>
+  </tr>`;
+}
+function esc(s){ return String(s).replace(/'/g,"\\'"); }
+
+// ── FULL TABLE (logs section) ──
+function renderFullTable() {
+  const q = (document.getElementById('fullSearch')?.value || document.getElementById('topSearch')?.value || '').toLowerCase();
+  const body = document.getElementById('fullTableBody'); if(!body)return;
+  const rows = filteredData.slice().reverse().filter(x =>
+    x.orderId.toLowerCase().includes(q) ||
+    x.asin.toLowerCase().includes(q) ||
+    x.merchantName.toLowerCase().includes(q) ||
+    x.merchantId.toLowerCase().includes(q) ||
+    x.issue.toLowerCase().includes(q)
+  );
+  body.innerHTML=rows.map(x=>`
+    <tr onclick="openPeek('${esc(x.orderId)}','${x.date}','${x.asin}','${esc(x.merchantName)}','${esc(x.merchantId)}',${x.price},'${esc(x.action)}','${esc(x.issue)}','${esc(x.road)}')">
+      <td class="td-mono">${x.date}</td>
+      <td style="font-size:.8rem;font-weight:500">${x.orderId}</td>
+      <td class="td-asin">${x.asin}</td>
+      <td class="td-merchant">${x.merchantName}</td>
+      <td style="font-size:.75rem;color:#fbbf24">${x.issue}</td>
+      <td style="font-size:.75rem;color:#818cf8">${x.road}</td>
+      <td class="td-price">${x.price.toLocaleString()}</td>
+      <td style="text-align:center"><span class="td-badge">${x.action}</span></td>
+    </tr>`).join('');
+}
+
+// ── FULL ASIN ──
+function renderFullAsin(data) {
+  const stats={};
+  data.forEach(x=>{ if(!stats[x.asin])stats[x.asin]={val:0,count:0}; stats[x.asin].val+=x.price; stats[x.asin].count++; });
+  const sorted=Object.entries(stats).sort((a,b)=>b[1].val-a[1].val).slice(0,20);
+  const max=sorted[0]?.[1]?.val||1;
+  const colors=['#6366f1','#06b6d4','#a855f7','#ec4899','#f59e0b','#10b981','#f43f5e','#3b82f6'];
+  const el=document.getElementById('fullAsinList'); if(!el)return;
+  el.innerHTML=sorted.map(([asin,obj],i)=>`
+    <div class="rank-item" style="padding:12px 0">
+      <div class="rank-n" style="font-size:.75rem">${i+1}</div>
+      <div style="width:130px;font-family:monospace;color:#818cf8;font-size:.82rem;font-weight:700;flex-shrink:0">${asin}</div>
+      <div class="rank-bar-bg" style="height:4px"><div class="rank-bar-fg" style="width:${(obj.val/max*100).toFixed(0)}%;background:${colors[i%colors.length]}"></div></div>
+      <div style="width:60px;text-align:right;font-size:.72rem;color:var(--muted2)">${obj.count} orders</div>
+      <div class="rank-val" style="color:${colors[i%colors.length]};width:90px;text-align:right">${obj.val.toLocaleString()} EGP</div>
+    </div>`).join('');
+}
+
+// ── FULL MERCHANTS ──
+function renderFullMerchants(data) {
+  const stats={};
+  data.forEach(x=>{ if(!stats[x.merchantName])stats[x.merchantName]={val:0,count:0,id:x.merchantId}; stats[x.merchantName].val+=x.price; stats[x.merchantName].count++; });
+  const sorted=Object.entries(stats).sort((a,b)=>b[1].val-a[1].val).slice(0,20);
+  const max=sorted[0]?.[1]?.val||1;
+  const colors=['#6366f1','#06b6d4','#a855f7','#ec4899','#f59e0b','#10b981'];
+  const el=document.getElementById('fullMerchantList'); if(!el)return;
+  el.innerHTML=sorted.map(([name,obj],i)=>`
+    <div class="rank-item" style="padding:12px 0">
+      <div class="rank-n" style="font-size:.75rem">${i+1}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
+        <div style="font-size:.65rem;font-family:monospace;color:var(--muted)">${obj.id}</div>
+      </div>
+      <div class="rank-bar-bg" style="height:4px;flex:1;max-width:200px"><div class="rank-bar-fg" style="width:${(obj.val/max*100).toFixed(0)}%;background:${colors[i%colors.length]}"></div></div>
+      <div style="width:60px;text-align:right;font-size:.72rem;color:var(--muted2)">${obj.count} returns</div>
+      <div class="rank-val" style="color:${colors[i%colors.length]};width:100px;text-align:right">${obj.val.toLocaleString()} EGP</div>
+    </div>`).join('');
+}
+
+// ── ISSUES SECTION ──
+function renderIssuesSection(data) {
+  mkDoughnut('issueChart2','issue',data,['#6366f1','#ec4899','#f59e0b','#10b981','#06b6d4','#f43f5e']);
+  mkDoughnut('roadChart2','road',data,['#10b981','#f43f5e','#fbbf24','#3b82f6','#a855f7']);
+
+  // Issue counts list
+  const counts={};
+  data.forEach(x=>counts[x.issue]=(counts[x.issue]||0)+1);
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const el=document.getElementById('issueCounts'); if(el)
+  el.innerHTML=sorted.map(([issue,count])=>`
+    <div class="sr-item">
+      <span class="sr-name">${issue}</span>
+      <span class="sr-badge" style="color:#fbbf24;background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25)">${count}</span>
+    </div>`).join('');
+
+  // Monthly orders bar chart
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mCounts=Array(12).fill(0);
+  const mVals=Array(12).fill(0);
+  data.forEach(x=>{
+    const p=x.date.split('-');
+    if(parseInt(p[0])===2026){ const mi=parseInt(p[1])-1; if(mi>=0&&mi<12){mCounts[mi]++;mVals[mi]+=x.price;} }
+  });
+
+  if(charts.monthlyOrders) charts.monthlyOrders.destroy();
+  const mctx=document.getElementById('monthlyOrdersChart'); if(!mctx) return;
+  const mCtx=mctx.getContext('2d');
+  const barGrad=mCtx.createLinearGradient(0,0,0,220);
+  barGrad.addColorStop(0,'rgba(99,102,241,.9)');
+  barGrad.addColorStop(1,'rgba(99,102,241,.3)');
+  charts.monthlyOrders=new Chart(mCtx,{
+    type:'bar',
+    data:{
+      labels:months,
+      datasets:[{
+        label:'Orders',
+        data:mCounts,
+        backgroundColor:barGrad,
+        borderColor:'rgba(99,102,241,1)',
+        borderWidth:0,
+        borderRadius:6,
+        borderSkipped:false
+      }]
+    },
+    options:{
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'rgba(22,15,58,.97)',borderColor:'rgba(255,255,255,.08)',borderWidth:1,
+          titleFont:{family:'Plus Jakarta Sans',size:11},bodyFont:{family:'Plus Jakarta Sans',size:11},
+          callbacks:{
+            label: c=>[` Orders: ${c.parsed.y}`,` Value: ${mVals[c.dataIndex].toLocaleString()} EGP`]
+          }
         }
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#64748b',font:{family:'Plus Jakarta Sans',size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{family:'Plus Jakarta Sans',size:10}}}
+      }
+    }
+  });
 
-        function populateMerchantFilter() {
-            const filter = document.getElementById('merchantFilter');
-            const merchants = [...new Set(entries.map(e => e.merchantName))].sort();
-            filter.innerHTML = '<option value="all">🌐 All Merchants</option>';
-            merchants.forEach(m => {
-                const opt = document.createElement('option'); opt.value = m; opt.innerText = m; filter.appendChild(opt);
-            });
-        }
+  // Monthly breakdown list
+  const listEl=document.getElementById('monthlyOrdersList'); if(!listEl) return;
+  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const colors=['#6366f1','#06b6d4','#a855f7','#ec4899','#f59e0b','#10b981','#f43f5e','#3b82f6','#84cc16','#f97316','#e879f9','#2dd4bf'];
+  const maxC=Math.max(...mCounts,1);
+  listEl.innerHTML=monthNames.map((name,i)=>{
+    if(mCounts[i]===0) return '';
+    return `
+    <div class="rank-item" style="padding:10px 0">
+      <div class="rank-n" style="width:30px;font-size:.7rem;color:var(--muted)">${name.slice(0,3)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:.75rem;font-weight:600;color:var(--text)">${mCounts[i]} orders</span>
+          <span style="font-size:.68rem;color:${colors[i]};font-weight:700">${mVals[i].toLocaleString()} EGP</span>
+        </div>
+        <div class="rank-bar-bg" style="height:4px">
+          <div class="rank-bar-fg" style="width:${(mCounts[i]/maxC*100).toFixed(0)}%;background:${colors[i]}"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-        function updateUI() {
-            const selMerchant = document.getElementById('merchantFilter').value;
-            const start = document.getElementById('startDate').value;
-            const end = document.getElementById('endDate').value;
-            let filtered = entries;
-            
-            if (selMerchant !== 'all') filtered = filtered.filter(e => e.merchantName === selMerchant);
-            if (start) filtered = filtered.filter(e => e.date >= start);
-            if (end) filtered = filtered.filter(e => e.date <= end);
+// ── FULL SERIAL ──
+function renderFullSerial(data) {
+  const counts={};
+  data.forEach(x=>counts[x.merchantName]=(counts[x.merchantName]||0)+1);
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const el=document.getElementById('fullSerialList'); if(!el)return;
+  el.innerHTML=sorted.map(([name,count])=>`
+    <div class="sr-item" style="padding:12px 14px">
+      <span class="sr-name">${name}</span>
+      <span class="sr-badge">${count} returns</span>
+    </div>`).join('');
+}
 
-            const now = new Date();
-            const todayStr = now.toLocaleDateString('en-CA'); 
+// ── SECTION NAVIGATION ──
+function showSection(s) {
+  currentSection = s;
+  ['dashboard','asin','merchants','issues','serial','logs'].forEach(id => {
+    const el=document.getElementById('sec-'+id);
+    if(el) el.style.display = id===s ? 'block' : 'none';
+  });
+  // Mark active nav item
+  document.querySelectorAll('.nitem').forEach(el => el.classList.remove('active'));
+  const map={dashboard:0,asin:1,merchants:2,logs:3,issues:4,serial:5};
+  const idx = map[s];
+  if(idx!==undefined) document.querySelectorAll('.nitem')[idx]?.classList.add('active');
 
-            let d=0, m=0, y=0;
-            filtered.forEach(e => {
-                if(e.date === todayStr) d += e.price;
-                const eParts = e.date.split('-');
-                if(parseInt(eParts[0]) === now.getFullYear()) {
-                    y += e.price;
-                    if(parseInt(eParts[1]) === (now.getMonth() + 1)) m += e.price;
-                }
-            });
+  // Render section-specific content
+  if(s==='asin') renderFullAsin(filteredData);
+  if(s==='merchants') renderFullMerchants(filteredData);
+  if(s==='issues') renderIssuesSection(filteredData);
+  if(s==='serial') renderFullSerial(filteredData);
+  if(s==='logs') renderFullTable();
+}
 
-            document.getElementById('dailyTotal').innerText = d.toLocaleString() + ' EGP';
-            document.getElementById('monthlyTotal').innerText = m.toLocaleString() + ' EGP';
-            document.getElementById('yearlyTotal').innerText = y.toLocaleString() + ' EGP';
-            document.getElementById('totalItems').innerText = filtered.length.toLocaleString();
-            
-            renderTimeChart(filtered); renderPieCharts(filtered); renderSerialReturners(filtered);
-            renderList('topAsinGrid', 'asin', false, filtered); renderList('topMerchantGrid', 'merchantName', true, filtered); renderTable(filtered);
-        }
+// ── VIEW SWITCH ──
+function switchView(v) {
+  currentView=v;
+  document.getElementById('btn-monthly').className='tab'+(v==='monthly'?' active':'');
+  document.getElementById('btn-quarterly').className='tab'+(v==='quarterly'?' active':'');
+  renderTimeChart(filteredData);
+}
 
-        function renderTimeChart(data) {
-            const labels = currentView === 'monthly' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Q1','Q2','Q3','Q4'];
-            
-            const priceData = Array(labels.length).fill(0);
-            const countData = Array(labels.length).fill(0);
+// ── SIDE PEEK ──
+function openPeek(orderId,date,asin,merchant,mid,price,action,issue,road){
+  document.getElementById('pk-order').textContent=orderId;
+  document.getElementById('pk-asin').textContent=asin;
+  document.getElementById('pk-price').textContent=price.toLocaleString()+' EGP';
+  document.getElementById('pk-issue').textContent=issue;
+  document.getElementById('pk-road').textContent=road;
+  document.getElementById('pk-merchant').textContent=merchant;
+  document.getElementById('pk-mid').textContent=mid;
+  document.getElementById('pk-action').textContent=action;
+  document.getElementById('pk-date').textContent=date;
+  document.getElementById('peek').classList.add('open');
+}
+function closePeek(){ document.getElementById('peek').classList.remove('open'); }
 
-            data.forEach(e => {
-                const eParts = e.date.split('-');
-                if(parseInt(eParts[0]) === 2026) {
-                    const monthIdx = parseInt(eParts[1]) - 1;
-                    const idx = currentView === 'monthly' ? monthIdx : Math.floor(monthIdx/3);
-                    
-                    if(idx >= 0 && idx < priceData.length) {
-                        priceData[idx] += e.price;
-                        countData[idx] += 1;
-                    }
-                }
-            });
+// ── SEARCH SYNC ──
+document.addEventListener('input', e => {
+  if(e.target.id==='topSearch'){
+    const q = e.target.value;
+    const tbl=document.getElementById('tableSearch');
+    const ftbl=document.getElementById('fullSearch');
+    if(tbl) tbl.value=q;
+    if(ftbl) ftbl.value=q;
+    renderTable();
+    if(currentSection==='logs') renderFullTable();
+  }
+  if(e.target.id==='tableSearch' || e.target.id==='fullSearch'){
+    renderTable();
+    renderFullTable();
+  }
+});
 
-            if(charts.time) charts.time.destroy();
-            
-            const ctx = document.getElementById('timeChart').getContext('2d');
-            charts.time = new Chart(ctx, {
-                type: 'line',
-                data: { 
-                    labels, 
-                    datasets: [{ 
-                        label: 'Saved EGP', 
-                        data: priceData, 
-                        borderColor: '#10b981', 
-                        backgroundColor: 'rgba(16, 185, 129, 0.05)', 
-                        fill: true, 
-                        tension: 0.4,
-                        countInfo: countData 
-                    }] 
-                },
-                options: { 
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let price = context.parsed.y.toLocaleString();
-                                    let count = context.dataset.countInfo[context.dataIndex];
-                                    return [
-                                        ` Total Value: ${price} EGP`,
-                                        ` Total Orders: ${count} orders`
-                                    ];
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) { return value.toLocaleString() + ' EGP'; }
-                            }
-                        }
-                    }
-                }
-            });
-        }
+// ── EXPORT ──
+function exportCSV(){
+  let csv="Date,Order ID,ASIN,Price (EGP),Merchant ID,Merchant Name,Issue,Road,Action\n";
+  filteredData.forEach(e=>csv+=`${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='returns_master_pro.csv'; a.click();
+}
 
-        function renderPieCharts(data) {
-            const genPie = (id, key, colors) => {
-                const counts = {}; data.forEach(e => counts[e[key]] = (counts[e[key]] || 0) + 1);
-                const total = Object.values(counts).reduce((a, b) => a + b, 0);
-                if(charts[id]) charts[id].destroy();
-                charts[id] = new Chart(document.getElementById(id), {
-                    type: 'pie',
-                    data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: colors }] },
-                    options: { 
-                        maintainAspectRatio: false,
-                        plugins: { 
-                            tooltip: { callbacks: { label: (i) => `${i.label}: ${i.raw} (${((i.raw/total)*100).toFixed(1)}%)` } },
-                            legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9 } } } 
-                        } 
-                    }
-                });
-            };
-            genPie('issueChart', 'issue', ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']);
-            genPie('roadChart', 'road', ['#10b981', '#f43f5e', '#fbbf24', '#3b82f6']);
-        }
+// ══════════════════════════════════════
+// ── SMART ALERTS ──
+// ══════════════════════════════════════
+let alertsOpen = false;
 
-        function renderSerialReturners(data) {
-            const counts = {}; data.forEach(e => counts[e.merchantName] = (counts[e.merchantName] || 0) + 1);
-            const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 5);
-            document.getElementById('serialReturnersList').innerHTML = sorted.map(([name, count]) => `
-                <div class="bg-slate-50/80 p-3 rounded-2xl flex justify-between items-center border border-slate-100 list-item-glow">
-                    <span class="text-xs font-bold text-slate-700 truncate w-32">${name}</span>
-                    <span class="bg-rose-100 text-rose-600 font-bold text-[10px] px-2 py-1 rounded-full">${count} Returns</span>
-                </div>`).join('');
-        }
+// ── Thresholds (user can edit from panel) ──
+let thresholds = {
+  merchantReturns: 5,      // تاجر تجاوز X return في الشهر
+  asinValue: 5000,         // ASIN قيمته تجاوزت X جنيه
+  monthlySpike: 30         // زيادة % مقارنة بالشهر اللي فات
+};
 
-        function renderList(id, key, showID, data) {
-            const stats = {}; data.forEach(e => {
-                if (!stats[e[key]]) stats[e[key]] = { val: 0, sub: e.merchantId };
-                stats[e[key]].val += e.price;
-            });
-            const sorted = Object.entries(stats).sort((a,b) => b[1].val - a[1].val).slice(0, 10);
-            document.getElementById(id).innerHTML = sorted.map(([name, obj], i) => `
-                <div class="flex justify-between items-center p-3 bg-slate-50/50 rounded-2xl list-item-glow">
-                    <div class="flex items-center gap-3">
-                        <span class="w-7 h-7 flex items-center justify-center bg-slate-200 rounded-lg text-[10px] font-bold text-slate-500">${i+1}</span>
-                        <div><p class="font-bold text-slate-700 text-xs">${name}</p><p class="text-[9px] text-slate-400 font-mono">${obj.sub || ''}</p></div>
-                    </div>
-                    <span class="text-emerald-600 font-bold text-xs">${obj.val.toLocaleString()} EGP</span>
-                </div>`).join('');
-        }
+function toggleAlerts(){
+  alertsOpen = !alertsOpen;
+  document.getElementById('alertsPanel').classList.toggle('open', alertsOpen);
+  if(alertsOpen) buildAlerts();
+}
 
-        function renderTable(data = entries) {
-            const s = document.getElementById('tableSearch').value.toLowerCase();
-            const tbody = document.getElementById('dataTableBody');
-            const filteredData = data.slice().reverse().filter(e => 
-                e.orderId.toLowerCase().includes(s) || e.asin.toLowerCase().includes(s) || 
-                e.merchantName.toLowerCase().includes(s) || e.merchantId.toLowerCase().includes(s)
-            );
-            tbody.innerHTML = filteredData.slice(0,25).map(e => `
-                <tr onclick="openSidePeek('${e.orderId}', '${e.date}', '${e.asin}', '${e.merchantName}', '${e.merchantId}', ${e.price}, '${e.action}', '${e.issue}', '${e.road}')" class="hover:bg-emerald-50/40 transition-colors">
-                    <td class="p-5 font-mono text-[10px] text-slate-400">${e.date}</td>
-                    <td class="p-5"><div class="font-bold text-slate-700 text-xs">${e.orderId}</div><div class="text-[9px] text-indigo-500 font-bold uppercase">${e.asin}</div></td>
-                    <td class="p-5"><div class="text-xs font-semibold text-slate-600">${e.merchantName}</div><div class="text-[9px] text-slate-400 font-mono">${e.merchantId}</div></td>
-                    <td class="p-5 text-right font-bold text-emerald-600">${e.price.toLocaleString()} EGP</td>
-                    <td class="p-5 text-center"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-bold uppercase">${e.action}</span></td>
-                </tr>`).join('');
-        }
+function buildAlerts(){
+  const data = allData; // دايماً من كل الداتا مش المفلترة
+  const now = new Date();
+  const thisYear = now.getFullYear();
+  const thisMonth = now.getMonth() + 1;
+  const lastMonth = thisMonth === 1 ? 12 : thisMonth - 1;
+  const lastMonthYear = thisMonth === 1 ? thisYear - 1 : thisYear;
 
-        function openSidePeek(orderId, date, asin, merchant, merchantId, price, action, issue, road) {
-            document.getElementById('peek-order-id').innerText = orderId;
-            document.getElementById('peek-date').innerText = date;
-            document.getElementById('peek-asin').innerText = asin;
-            document.getElementById('peek-merchant-name').innerText = merchant;
-            document.getElementById('peek-merchant-id').innerText = "ID: " + merchantId;
-            document.getElementById('peek-value').innerText = price.toLocaleString() + " EGP";
-            document.getElementById('peek-action').innerText = action;
-            document.getElementById('peek-issue').innerText = issue;
-            document.getElementById('peek-road').innerText = road;
-            document.getElementById('side-peek-panel').classList.add('open');
-        }
+  const alerts = [];
 
-        function closeSidePeek() {
-            document.getElementById('side-peek-panel').classList.remove('open');
-        }
+  // ── 1. تاجر تجاوز الحد في الشهر الحالي ──
+  const mThisMonth = {};
+  data.forEach(x => {
+    const p = x.date.split('-');
+    if (parseInt(p[0]) === thisYear && parseInt(p[1]) === thisMonth)
+      mThisMonth[x.merchantName] = (mThisMonth[x.merchantName]||0) + 1;
+  });
+  Object.entries(mThisMonth)
+    .filter(([,c]) => c >= thresholds.merchantReturns)
+    .sort((a,b) => b[1]-a[1])
+    .forEach(([name, count]) => {
+      alerts.push({
+        level:'danger', ico:'🚨',
+        title:`تاجر تجاوز الحد: ${name}`,
+        sub:`${count} returns هذا الشهر — الحد المضبوط: ${thresholds.merchantReturns}`,
+        tag:'HIGH',
+        color:'rgba(244,63,94,.12)', border:'rgba(244,63,94,.3)', icoColor:'rgba(244,63,94,.2)'
+      });
+    });
 
-        function switchTimeView(v) { 
-            currentView = v; 
-            document.getElementById('btn-monthly').className = v==='monthly'?'tab-btn tab-active':'tab-btn tab-inactive'; 
-            document.getElementById('btn-quarterly').className = v==='quarterly'?'tab-btn tab-active':'tab-btn tab-inactive'; 
-            updateUI(); 
-        }
+  // ── 2. ASIN قيمته تجاوزت الحد ──
+  const aStats = {};
+  data.forEach(x => { if(!aStats[x.asin]) aStats[x.asin]={val:0,count:0}; aStats[x.asin].val+=x.price; aStats[x.asin].count++; });
+  Object.entries(aStats)
+    .filter(([,o]) => o.val >= thresholds.asinValue)
+    .sort((a,b) => b[1].val - a[1].val)
+    .slice(0, 3)
+    .forEach(([asin, obj]) => {
+      alerts.push({
+        level:'warning', ico:'📦',
+        title:`ASIN عالي القيمة: ${asin}`,
+        sub:`إجمالي ${obj.val.toLocaleString()} EGP — ${obj.count} orders — الحد: ${thresholds.asinValue.toLocaleString()} EGP`,
+        tag:'WARN',
+        color:'rgba(251,191,36,.1)', border:'rgba(251,191,36,.25)', icoColor:'rgba(251,191,36,.15)'
+      });
+    });
 
-        function exportCSV() {
-            let csv = "Date,Order ID,ASIN,Price (EGP),Merchant ID,Merchant Name,Issue,Road,Action\n";
-            entries.forEach(e => csv += `${e.date},${e.orderId},${e.asin},${e.price},${e.merchantId},${e.merchantName},${e.issue},${e.road},${e.action}\n`);
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Returns_Report_EGP.csv'; a.click();
-        }
+  // ── 3. زيادة مفاجئة مقارنة بالشهر اللي فات ──
+  let thisMonthCount = 0, lastMonthCount = 0;
+  data.forEach(x => {
+    const p = x.date.split('-');
+    const y = parseInt(p[0]), m = parseInt(p[1]);
+    if (y === thisYear && m === thisMonth) thisMonthCount++;
+    if (y === lastMonthYear && m === lastMonth) lastMonthCount++;
+  });
+  if (lastMonthCount > 0) {
+    const changePct = Math.round(((thisMonthCount - lastMonthCount) / lastMonthCount) * 100);
+    if (changePct >= thresholds.monthlySpike) {
+      alerts.push({
+        level:'danger', ico:'📈',
+        title:`ارتفاع مفاجئ في المرتجعات`,
+        sub:`هذا الشهر: ${thisMonthCount} — الشهر اللي فات: ${lastMonthCount} — زيادة: +${changePct}% (الحد: ${thresholds.monthlySpike}%)`,
+        tag:'SPIKE',
+        color:'rgba(244,63,94,.12)', border:'rgba(244,63,94,.3)', icoColor:'rgba(244,63,94,.2)'
+      });
+    } else if (changePct <= -thresholds.monthlySpike) {
+      alerts.push({
+        level:'success', ico:'📉',
+        title:`انخفاض ممتاز في المرتجعات`,
+        sub:`هذا الشهر: ${thisMonthCount} — الشهر اللي فات: ${lastMonthCount} — انخفاض: ${changePct}%`,
+        tag:'GOOD',
+        color:'rgba(16,185,129,.08)', border:'rgba(16,185,129,.25)', icoColor:'rgba(16,185,129,.15)'
+      });
+    }
+  }
 
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidePeek(); });
-        window.onload = initApp;
-    </script>
+  // ── 4. ملخص إجمالي الشهر الحالي ──
+  let thisMonthVal = 0;
+  data.forEach(x => {
+    const p = x.date.split('-');
+    if (parseInt(p[0]) === thisYear && parseInt(p[1]) === thisMonth) thisMonthVal += x.price;
+  });
+  if (thisMonthVal > 0) {
+    alerts.push({
+      level:'info', ico:'💰',
+      title:`إجمالي الشهر الحالي`,
+      sub:`${thisMonthVal.toLocaleString()} EGP من ${thisMonthCount} return في ${now.toLocaleString('ar-EG',{month:'long'})}`,
+      tag:'INFO',
+      color:'rgba(6,182,212,.08)', border:'rgba(6,182,212,.2)', icoColor:'rgba(6,182,212,.15)'
+    });
+  }
+
+  // ── Update badge ──
+  const dangerCount = alerts.filter(a => a.level==='danger' || a.level==='warning').length;
+  const badge = document.getElementById('alertBadge');
+  const cnt   = document.getElementById('alertCount');
+  if (badge) { badge.style.display = dangerCount>0 ? 'flex' : 'none'; badge.textContent = dangerCount; }
+  if (cnt)   cnt.textContent = alerts.length;
+
+  // ── Render ──
+  const body = document.getElementById('alertsBody');
+  if (!body) return;
+
+  // Settings row
+  const settingsHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;">
+      <div style="font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">⚙️ ضبط الحدود</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div>
+          <div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">Returns/شهر</div>
+          <input type="number" value="${thresholds.merchantReturns}" onchange="thresholds.merchantReturns=+this.value;buildAlerts()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.72rem;outline:none;text-align:center">
+        </div>
+        <div>
+          <div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">ASIN EGP</div>
+          <input type="number" value="${thresholds.asinValue}" onchange="thresholds.asinValue=+this.value;buildAlerts()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.72rem;outline:none;text-align:center">
+        </div>
+        <div>
+          <div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">Spike %</div>
+          <input type="number" value="${thresholds.monthlySpike}" onchange="thresholds.monthlySpike=+this.value;buildAlerts()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.72rem;outline:none;text-align:center">
+        </div>
+      </div>
+    </div>`;
+
+  if (!alerts.length) {
+    body.innerHTML = settingsHTML + '<div class="alert-empty">✅ كل حاجة تمام — مفيش تنبيهات</div>';
+    return;
+  }
+
+  const tagColors = { HIGH:'#f43f5e', WARN:'#fbbf24', SPIKE:'#f43f5e', GOOD:'#10b981', INFO:'#06b6d4' };
+
+  body.innerHTML = settingsHTML + alerts.map(a => `
+    <div class="alert-item" style="background:${a.color};border-color:${a.border}">
+      <div class="alert-ico" style="background:${a.icoColor}">${a.ico}</div>
+      <div class="alert-text">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span class="alert-title" style="flex:1">${a.title}</span>
+          <span style="font-size:.55rem;font-weight:800;color:${tagColors[a.tag]};background:${a.icoColor};padding:2px 6px;border-radius:4px">${a.tag}</span>
+        </div>
+        <div class="alert-sub">${a.sub}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Badge on load ──
+function buildAlertBadge(){
+  const now = new Date();
+  const thisYear = now.getFullYear(), thisMonth = now.getMonth()+1;
+  const mC = {};
+  allData.forEach(x => {
+    const p = x.date.split('-');
+    if(parseInt(p[0])===thisYear && parseInt(p[1])===thisMonth)
+      mC[x.merchantName]=(mC[x.merchantName]||0)+1;
+  });
+  const dangerCount = Object.values(mC).filter(v=>v>=thresholds.merchantReturns).length;
+  const badge = document.getElementById('alertBadge');
+  if(badge && dangerCount>0){ badge.style.display='flex'; badge.textContent=dangerCount; }
+}
+
+// ══════════════════════════════════════
+// ── AI CHAT ──
+// ══════════════════════════════════════
+let chatOpen=false;
+let apiKey='AIzaSyDo2EJgmj9G0XLz1qCBchll-Mk_crUdb00';
+let chatHistory=[];
+
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chatPanel').classList.toggle('open',chatOpen);
+}
+
+function saveApiKey(){
+  const inp=document.getElementById('apiKeyInput');
+  const val=(inp.value||'').trim();
+  if(!val){ inp.style.borderColor='#f43f5e'; setTimeout(()=>inp.style.borderColor='',1500); return; }
+  apiKey=val;
+  document.getElementById('chatKeyBar').style.display='none';
+  addBubble('ai','✅ API Key تم حفظها! دلوقتي تقدر تسأل عن بياناتك.');
+}
+
+function addBubble(role, text){
+  const msgs=document.getElementById('chatMsgs');
+  const div=document.createElement('div');
+  div.className='chat-bubble '+role;
+  div.textContent=text;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+
+function getDataContext(){
+  const data=filteredData.length?filteredData:allData;
+  const total=data.reduce((s,x)=>s+x.price,0);
+  const mC={},aC={},iC={};
+  data.forEach(x=>{
+    mC[x.merchantName]=(mC[x.merchantName]||0)+1;
+    if(!aC[x.asin])aC[x.asin]=0; aC[x.asin]+=x.price;
+    iC[x.issue]=(iC[x.issue]||0)+1;
+  });
+  const topM=Object.entries(mC).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n,c])=>`${n}: ${c} returns`).join(', ');
+  const topA=Object.entries(aC).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n,v])=>`${n}: ${v.toLocaleString()} EGP`).join(', ');
+  const topI=Object.entries(iC).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n,c])=>`${n}: ${c}`).join(', ');
+  const recent=[...data].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3).map(x=>`${x.orderId} (${x.merchantName}, ${x.price} EGP)`).join('; ');
+  return `You are a Returns & Refunds data analyst assistant for an Egyptian e-commerce returns dashboard. Answer in the same language the user uses (Arabic or English). Be concise and insightful.
+
+Current Data Summary (${data.length} records):
+- Total Value Recovered: ${total.toLocaleString()} EGP
+- Top Merchants by Returns: ${topM}
+- Top ASINs by Value: ${topA}
+- Top Issues: ${topI}
+- Most Recent Returns: ${recent}`;
+}
+
+async function sendChat(){
+  const inp=document.getElementById('chatInput');
+  const btn=document.getElementById('chatSendBtn');
+  const msg=(inp.value||'').trim();
+  if(!msg) return;
+  inp.value=''; btn.disabled=true;
+  addBubble('user', msg);
+  chatHistory.push({role:'user',parts:[{text:msg}]});
+
+  const typingDiv=addBubble('ai','...');
+  typingDiv.classList.add('typing');
+
+  try {
+    const systemCtx = getDataContext();
+    const fullHistory = [
+      {role:'user', parts:[{text: systemCtx + '\n\nابدأ المحادثة وكن جاهز للأسئلة.'}]},
+      {role:'model', parts:[{text:'أهلاً! أنا جاهز لتحليل بيانات المرتجعات. اسألني أي حاجة!'}]},
+      ...chatHistory
+    ];
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ contents: fullHistory })
+      }
+    );
+    const json = await res.json();
+    const reply = json?.candidates?.[0]?.content?.parts?.[0]?.text || 'حصل خطأ، حاول تاني.';
+    typingDiv.classList.remove('typing');
+    typingDiv.textContent = reply;
+    chatHistory.push({role:'model', parts:[{text:reply}]});
+  } catch(err){
+    typingDiv.classList.remove('typing');
+    typingDiv.textContent='❌ فشل الاتصال. تأكد من الـ API Key وحاول تاني.';
+  }
+  btn.disabled=false;
+  document.getElementById('chatMsgs').scrollTop=9999;
+}
+</script>
+<!-- ── ALERTS PANEL ── -->
+<div id="alertsPanel">
+  <div class="ap-hdr">
+    <div class="ap-title">🔔 Smart Alerts <span id="alertCount" style="background:rgba(244,63,94,.15);color:#f43f5e;border:1px solid rgba(244,63,94,.25);border-radius:5px;padding:1px 7px;font-size:.65rem;font-weight:700">0</span></div>
+    <button class="ap-close" onclick="toggleAlerts()">×</button>
+  </div>
+  <div class="ap-body" id="alertsBody">
+    <div class="alert-empty">Loading alerts…</div>
+  </div>
+</div>
+
+<!-- ── CHAT PANEL ── -->
+<div id="chatPanel">
+  <div class="chat-hdr">
+    <div class="chat-hdr-ico">🤖</div>
+    <div class="chat-hdr-info">
+      <div class="chat-hdr-title">AI Returns Analyst</div>
+      <div class="chat-hdr-sub">Powered by Gemini 2.0 Flash — اسأل بالعربي أو الإنجليزي</div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">×</button>
+  </div>
+  <div class="chat-key-bar" id="chatKeyBar" style="display:none">
+    <input class="chat-key-input" id="apiKeyInput" type="password" placeholder="أدخل API Key هنا">
+    <button class="chat-key-btn" onclick="saveApiKey()">حفظ</button>
+  </div>
+  <div class="chat-msgs" id="chatMsgs">
+    <div class="chat-bubble ai">مرحباً! 👋 أنا محلل الـ Returns بتاعك — مدعوم بـ Gemini AI.<br><br>اسألني أي حاجة عن بياناتك زي:<br>• "إيه أكتر تاجر مشكلة؟"<br>• "وضّح ليا تريند المرتجعات"<br>• "Which ASIN has the highest value?"</div>
+  </div>
+  <div class="chat-bar">
+    <input class="chat-input" id="chatInput" placeholder="اكتب سؤالك هنا…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
+    <button class="chat-send" id="chatSendBtn" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
 </body>
 </html>
