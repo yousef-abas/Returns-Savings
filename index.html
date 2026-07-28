@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Returns Master Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -20,10 +20,7 @@
   --muted:#64748b;
   --muted2:#94a3b8;
   --accent:#6366f1;
-  --good:#4ade80;
-  --bad:#fb7185;
-  --font:'Cairo','Plus Jakarta Sans',sans-serif;
-  --font-mono:'JetBrains Mono',monospace;
+  --font:'Plus Jakarta Sans',sans-serif;
 }
 html,body{height:100%;overflow:hidden;font-family:var(--font);background:var(--bg);color:var(--text)}
 
@@ -100,10 +97,6 @@ html,body{height:100%;overflow:hidden;font-family:var(--font);background:var(--b
 .sc-bot{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
 .sc-num{font-size:1.9rem;font-weight:800;letter-spacing:-1.5px;line-height:1;color:#fff}
 .sc-sub{font-size:.67rem;color:rgba(255,255,255,.75);margin-top:3px}
-.sc-trend{font-size:.65rem;font-weight:700;margin-top:5px;display:flex;align-items:center;gap:3px;width:fit-content;padding:2px 7px;border-radius:5px;background:rgba(255,255,255,.12)}
-.sc-trend.up{color:#bbf7d0}
-.sc-trend.down{color:#fecdd3}
-.sc-trend.flat{color:rgba(255,255,255,.65)}
 .ring-wrap{position:relative;width:52px;height:52px;flex-shrink:0}
 .ring-wrap canvas{position:absolute;top:0;left:0}
 .ring-pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.58rem;font-weight:700;color:#fff;white-space:nowrap}
@@ -181,17 +174,6 @@ tbody td{padding:13px 20px;font-size:.8rem}
 .td-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:5px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.2)}
 .td-merchant{font-size:.77rem;font-weight:500}
 .td-mid{font-family:monospace;font-size:.65rem;color:var(--muted);margin-top:2px}
-.empty-row td{padding:40px 20px !important;text-align:center;color:var(--muted);font-size:.8rem}
-.tfoot-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px}
-.pg-info{font-size:.7rem;color:var(--muted)}
-.pg-btns{display:flex;align-items:center;gap:6px}
-.pg-btn{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:5px 11px;font-size:.72rem;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;font-family:var(--font)}
-.pg-btn:hover:not(:disabled){background:var(--surface2)}
-.pg-btn:disabled{opacity:.35;cursor:not-allowed}
-th.sortable{cursor:pointer;user-select:none;transition:color .15s}
-th.sortable:hover{color:var(--muted2)}
-th.sortable .sort-ico{opacity:.4;margin-left:3px;font-size:.65em}
-th.sortable.active .sort-ico{opacity:1;color:#818cf8}
 
 /* ── SIDE PEEK ── */
 #peek{position:fixed;top:0;right:-460px;width:440px;height:100vh;background:#1a1635;border-left:1px solid var(--border);z-index:1000;display:flex;flex-direction:column;transition:right .45s cubic-bezier(.23,1,.32,1);overflow:hidden}
@@ -235,8 +217,8 @@ th.sortable.active .sort-ico{opacity:1;color:#818cf8}
 .alert-item:last-child{margin-bottom:0}
 .alert-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .alert-text{flex:1;min-width:0}
-.alert-title{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:3px;unicode-bidi:plaintext}
-.alert-sub{font-size:.68rem;color:var(--muted2);line-height:1.4;unicode-bidi:plaintext}
+.alert-title{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:3px}
+.alert-sub{font-size:.68rem;color:var(--muted2);line-height:1.4}
 .alert-time{font-size:.6rem;color:var(--muted);margin-top:4px}
 .alert-empty{text-align:center;padding:30px 20px;color:var(--muted);font-size:.8rem}
 
@@ -265,10 +247,7 @@ th.sortable.active .sort-ico{opacity:1;color:#818cf8}
 .chat-key-btn{background:#6366f1;border:none;border-radius:8px;padding:7px 12px;color:#fff;font-size:.7rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap}
 .chat-key-btn:hover{background:#4f46e5}
 .chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
-.chat-chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 12px}
-.chat-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:.68rem;font-weight:600;color:var(--muted2);cursor:pointer;transition:all .2s;white-space:nowrap}
-.chat-chip:hover{background:rgba(99,102,241,.18);color:#c7d2fe;border-color:rgba(99,102,241,.4)}
-.chat-bubble{max-width:85%;padding:10px 13px;border-radius:12px;font-size:.78rem;line-height:1.55;unicode-bidi:plaintext}
+.chat-bubble{max-width:85%;padding:10px 13px;border-radius:12px;font-size:.78rem;line-height:1.55;}
 .chat-bubble.user{align-self:flex-end;background:#6366f1;color:#fff;border-bottom-right-radius:4px}
 .chat-bubble.ai{align-self:flex-start;background:var(--surface2);color:var(--text);border-bottom-left-radius:4px;border:1px solid var(--border)}
 .chat-bubble.ai.typing{opacity:.6}
@@ -377,37 +356,37 @@ th.sortable.active .sort-ico{opacity:1;color:#818cf8}
       <div class="scards">
         <div class="scard c1">
           <div class="sc-top">
-            <div class="sc-label">📅 Daily Savings</div>
+            <div class="sc-label">🔒 Daily Savings</div>
             <div class="sc-menu"><span></span><span></span><span></span></div>
           </div>
           <div class="sc-bot">
-            <div><div class="sc-num" id="dailyTotal">0</div><div class="sc-sub" id="dailySub">0 orders today</div><div class="sc-trend" id="dailyTrend" style="display:none"></div></div>
+            <div><div class="sc-num" id="dailyTotal">0</div><div class="sc-sub" id="dailySub">0 orders today</div></div>
             <div class="ring-wrap"><canvas id="ring1" width="52" height="52"></canvas><div class="ring-pct" id="rlbl1">0%</div></div>
           </div>
         </div>
         <div class="scard c2">
           <div class="sc-top">
-            <div class="sc-label">📊 Monthly Recovery</div>
+            <div class="sc-label">🔒 Monthly Recovery</div>
             <div class="sc-menu"><span></span><span></span><span></span></div>
           </div>
           <div class="sc-bot">
-            <div><div class="sc-num" id="monthlyTotal">0</div><div class="sc-sub" id="monthlySub">0 orders this month</div><div class="sc-trend" id="monthlyTrend" style="display:none"></div></div>
+            <div><div class="sc-num" id="monthlyTotal">0</div><div class="sc-sub" id="monthlySub">0 orders this month</div></div>
             <div class="ring-wrap"><canvas id="ring2" width="52" height="52"></canvas><div class="ring-pct" id="rlbl2">0%</div></div>
           </div>
         </div>
         <div class="scard c3">
           <div class="sc-top">
-            <div class="sc-label">🗓️ Annual Saved</div>
+            <div class="sc-label">🔒 Annual Saved</div>
             <div class="sc-menu"><span></span><span></span><span></span></div>
           </div>
           <div class="sc-bot">
-            <div><div class="sc-num" id="yearlyTotal">0</div><div class="sc-sub" id="yearlySub">0 orders this year</div><div class="sc-trend" id="yearlyTrend" style="display:none"></div></div>
+            <div><div class="sc-num" id="yearlyTotal">0</div><div class="sc-sub" id="yearlySub">0 orders this year</div></div>
             <div class="ring-wrap"><canvas id="ring3" width="52" height="52"></canvas><div class="ring-pct" id="rlbl3">0%</div></div>
           </div>
         </div>
         <div class="scard c4">
           <div class="sc-top">
-            <div class="sc-label">📦 Total Items</div>
+            <div class="sc-label">🔒 Total Items</div>
             <div class="sc-menu"><span></span><span></span><span></span></div>
           </div>
           <div class="sc-bot">
@@ -581,19 +560,9 @@ th.sortable.active .sort-ico{opacity:1;color:#818cf8}
         </div>
         <div style="overflow-x:auto">
           <table><thead><tr>
-            <th class="sortable" onclick="sortFullTable('date')">Date <span class="sort-ico">⇅</span></th>
-            <th>Order ID</th><th>ASIN</th><th>Merchant</th><th>Issue</th><th>ROAD</th>
-            <th class="sortable" style="text-align:right" onclick="sortFullTable('price')">Value (EGP) <span class="sort-ico">⇅</span></th>
-            <th style="text-align:center">Status</th>
+            <th>Date</th><th>Order ID</th><th>ASIN</th><th>Merchant</th><th>Issue</th><th>ROAD</th><th style="text-align:right">Value (EGP)</th><th style="text-align:center">Status</th>
           </tr></thead>
           <tbody id="fullTableBody"></tbody></table>
-        </div>
-        <div class="tfoot-bar">
-          <div class="pg-info" id="fullPgInfo">—</div>
-          <div class="pg-btns">
-            <button class="pg-btn" id="fullPgPrev" onclick="changeFullPage(-1)">‹ Prev</button>
-            <button class="pg-btn" id="fullPgNext" onclick="changeFullPage(1)">Next ›</button>
-          </div>
         </div>
       </div>
     </div>
@@ -670,7 +639,6 @@ function getFiltered() {
 // ── MAIN UPDATE ──
 function updateUI() {
   filteredData = getFiltered();
-  fullPage = 1;
   updateStats(filteredData);
   renderTimeChart(filteredData);
   renderPies(filteredData);
@@ -715,51 +683,6 @@ function updateStats(data) {
   drawRing('ring2','rlbl2', pct(mv,max), '#22d3ee');
   drawRing('ring3','rlbl3', pct(yv,max), '#c084fc');
   drawRing('ring4','rlbl4', pct(data.length, Math.max(allData.length,1)), '#fb7185');
-
-  renderTrends();
-}
-
-// ── TRENDS (vs previous equivalent period) ──
-function deltaPct(cur, prev) {
-  if (prev === 0) return cur > 0 ? {p:100,dir:'up'} : {p:0,dir:'flat'};
-  const p = Math.round(((cur - prev) / prev) * 100);
-  return { p: Math.abs(p), dir: p > 0 ? 'up' : p < 0 ? 'down' : 'flat' };
-}
-function setTrend(id, delta, label) {
-  const el = document.getElementById(id); if (!el) return;
-  if (delta.dir === 'flat' && delta.p === 0) { el.style.display = 'none'; return; }
-  const arrow = delta.dir === 'up' ? '▲' : delta.dir === 'down' ? '▼' : '—';
-  el.style.display = 'flex';
-  el.className = 'sc-trend ' + delta.dir;
-  el.textContent = `${arrow} ${delta.p}% ${label}`;
-}
-function renderTrends() {
-  const merchant = document.getElementById('merchantFilter')?.value || 'all';
-  let base = allData;
-  if (merchant !== 'all') base = base.filter(x => x.merchantName === merchant);
-
-  const now = new Date();
-  const todayStr = now.toLocaleDateString('en-CA');
-  const yest = new Date(now); yest.setDate(yest.getDate() - 1);
-  const yestStr = yest.toLocaleDateString('en-CA');
-  const y = now.getFullYear(), m = now.getMonth() + 1;
-  const lm = m === 1 ? 12 : m - 1, lmY = m === 1 ? y - 1 : y;
-  const ly = y - 1;
-
-  let dToday = 0, dYest = 0, mThis = 0, mLast = 0, yThis = 0, yLast = 0;
-  base.forEach(x => {
-    if (x.date === todayStr) dToday += x.price;
-    if (x.date === yestStr) dYest += x.price;
-    const p = x.date.split('-'); const yr = parseInt(p[0]), mo = parseInt(p[1]);
-    if (yr === y && mo === m) mThis += x.price;
-    if (yr === lmY && mo === lm) mLast += x.price;
-    if (yr === y) yThis += x.price;
-    if (yr === ly) yLast += x.price;
-  });
-
-  setTrend('dailyTrend', deltaPct(dToday, dYest), 'vs yesterday');
-  setTrend('monthlyTrend', deltaPct(mThis, mLast), 'vs last month');
-  setTrend('yearlyTrend', deltaPct(yThis, yLast), 'vs last year');
 }
 
 function pct(a,b){ return Math.round((a/Math.max(b,1))*100); }
@@ -918,9 +841,7 @@ function renderTable() {
     x.merchantName.toLowerCase().includes(q) ||
     x.merchantId.toLowerCase().includes(q)
   ).slice(0,25);
-  body.innerHTML = rows.length
-    ? rows.map(x=>rowHTML(x)).join('')
-    : `<tr class="empty-row"><td colspan="6">لا توجد نتائج مطابقة — جرّب تغيير الفلاتر أو كلمة البحث<br><span style="font-size:.68rem">No matching results — try adjusting your filters or search</span></td></tr>`;
+  body.innerHTML=rows.map(x=>rowHTML(x)).join('');
 }
 
 function rowHTML(x){
@@ -935,50 +856,18 @@ function rowHTML(x){
 }
 function esc(s){ return String(s).replace(/'/g,"\\'"); }
 
-// ── FULL TABLE (logs section) — sortable + paginated ──
-let fullSort = { key: 'date', dir: -1 };
-let fullPage = 1;
-const FULL_PAGE_SIZE = 50;
-
-function sortFullTable(key) {
-  fullSort.dir = (fullSort.key === key) ? -fullSort.dir : -1;
-  fullSort.key = key;
-  fullPage = 1;
-  document.querySelectorAll('#sec-logs th.sortable').forEach(th => th.classList.remove('active'));
-  const activeTh = Array.from(document.querySelectorAll('#sec-logs th.sortable')).find(th => th.getAttribute('onclick')?.includes(key));
-  if (activeTh) activeTh.classList.add('active');
-  renderFullTable();
-}
-
-function changeFullPage(delta) {
-  fullPage = Math.max(1, fullPage + delta);
-  renderFullTable();
-}
-
+// ── FULL TABLE (logs section) ──
 function renderFullTable() {
   const q = (document.getElementById('fullSearch')?.value || document.getElementById('topSearch')?.value || '').toLowerCase();
   const body = document.getElementById('fullTableBody'); if(!body)return;
-  let rows = filteredData.filter(x =>
+  const rows = filteredData.slice().reverse().filter(x =>
     x.orderId.toLowerCase().includes(q) ||
     x.asin.toLowerCase().includes(q) ||
     x.merchantName.toLowerCase().includes(q) ||
     x.merchantId.toLowerCase().includes(q) ||
     x.issue.toLowerCase().includes(q)
   );
-
-  rows = rows.slice().sort((a,b) => {
-    let av = a[fullSort.key], bv = b[fullSort.key];
-    if (fullSort.key === 'price') return (av - bv) * fullSort.dir;
-    return (av > bv ? 1 : av < bv ? -1 : 0) * fullSort.dir;
-  });
-
-  const totalPages = Math.max(1, Math.ceil(rows.length / FULL_PAGE_SIZE));
-  fullPage = Math.min(fullPage, totalPages);
-  const start = (fullPage - 1) * FULL_PAGE_SIZE;
-  const pageRows = rows.slice(start, start + FULL_PAGE_SIZE);
-
-  body.innerHTML = pageRows.length
-    ? pageRows.map(x=>`
+  body.innerHTML=rows.map(x=>`
     <tr onclick="openPeek('${esc(x.orderId)}','${x.date}','${x.asin}','${esc(x.merchantName)}','${esc(x.merchantId)}',${x.price},'${esc(x.action)}','${esc(x.issue)}','${esc(x.road)}')">
       <td class="td-mono">${x.date}</td>
       <td style="font-size:.8rem;font-weight:500">${x.orderId}</td>
@@ -988,16 +877,7 @@ function renderFullTable() {
       <td style="font-size:.75rem;color:#818cf8">${x.road}</td>
       <td class="td-price">${x.price.toLocaleString()}</td>
       <td style="text-align:center"><span class="td-badge">${x.action}</span></td>
-    </tr>`).join('')
-    : `<tr class="empty-row"><td colspan="8">لا توجد نتائج مطابقة — جرّب تغيير الفلاتر أو كلمة البحث<br><span style="font-size:.68rem">No matching results — try adjusting your filters or search</span></td></tr>`;
-
-  const info = document.getElementById('fullPgInfo');
-  if (info) info.textContent = rows.length
-    ? `Showing ${start+1}–${Math.min(start+FULL_PAGE_SIZE, rows.length)} of ${rows.length.toLocaleString()}`
-    : 'No records';
-  const prevBtn = document.getElementById('fullPgPrev'), nextBtn = document.getElementById('fullPgNext');
-  if (prevBtn) prevBtn.disabled = fullPage <= 1;
-  if (nextBtn) nextBtn.disabled = fullPage >= totalPages;
+    </tr>`).join('');
 }
 
 // ── FULL ASIN ──
@@ -1195,7 +1075,6 @@ document.addEventListener('input', e => {
     if(currentSection==='logs') renderFullTable();
   }
   if(e.target.id==='tableSearch' || e.target.id==='fullSearch'){
-    if(e.target.id==='fullSearch') fullPage = 1;
     renderTable();
     renderFullTable();
   }
@@ -1393,28 +1272,31 @@ function buildAlertBadge(){
 // ── AI CHAT ──
 // ══════════════════════════════════════
 let chatOpen=false;
-let chatHistory=[]; // {role:'user'|'assistant', content:'...'}
+let apiKey='AIzaSyDo2EJgmj9G0XLz1qCBchll-Mk_crUdb00';
+let chatHistory=[];
 
 function toggleChat(){
   chatOpen=!chatOpen;
   document.getElementById('chatPanel').classList.toggle('open',chatOpen);
 }
 
+function saveApiKey(){
+  const inp=document.getElementById('apiKeyInput');
+  const val=(inp.value||'').trim();
+  if(!val){ inp.style.borderColor='#f43f5e'; setTimeout(()=>inp.style.borderColor='',1500); return; }
+  apiKey=val;
+  document.getElementById('chatKeyBar').style.display='none';
+  addBubble('ai','✅ API Key تم حفظها! دلوقتي تقدر تسأل عن بياناتك.');
+}
+
 function addBubble(role, text){
   const msgs=document.getElementById('chatMsgs');
   const div=document.createElement('div');
-  div.className='chat-bubble '+(role==='user'?'user':'ai');
-  div.setAttribute('dir','auto');
+  div.className='chat-bubble '+role;
   div.textContent=text;
   msgs.appendChild(div);
   msgs.scrollTop=msgs.scrollHeight;
   return div;
-}
-
-function quickAsk(q){
-  const inp=document.getElementById('chatInput');
-  inp.value=q;
-  sendChat();
 }
 
 function getDataContext(){
@@ -1446,36 +1328,36 @@ async function sendChat(){
   const msg=(inp.value||'').trim();
   if(!msg) return;
   inp.value=''; btn.disabled=true;
-  const chipsEl=document.getElementById('chatChips'); if(chipsEl) chipsEl.style.display='none';
   addBubble('user', msg);
-  chatHistory.push({role:'user', content: msg});
+  chatHistory.push({role:'user',parts:[{text:msg}]});
 
   const typingDiv=addBubble('ai','...');
   typingDiv.classList.add('typing');
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        system: getDataContext(),
-        messages: chatHistory
-      })
-    });
+    const systemCtx = getDataContext();
+    const fullHistory = [
+      {role:'user', parts:[{text: systemCtx + '\n\nابدأ المحادثة وكن جاهز للأسئلة.'}]},
+      {role:'model', parts:[{text:'أهلاً! أنا جاهز لتحليل بيانات المرتجعات. اسألني أي حاجة!'}]},
+      ...chatHistory
+    ];
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ contents: fullHistory })
+      }
+    );
     const json = await res.json();
-    const reply = (json?.content || [])
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('\n') || 'حصل خطأ، حاول تاني.';
+    const reply = json?.candidates?.[0]?.content?.parts?.[0]?.text || 'حصل خطأ، حاول تاني.';
     typingDiv.classList.remove('typing');
     typingDiv.textContent = reply;
-    typingDiv.setAttribute('dir','auto');
-    chatHistory.push({role:'assistant', content: reply});
+    chatHistory.push({role:'model', parts:[{text:reply}]});
   } catch(err){
     typingDiv.classList.remove('typing');
-    typingDiv.textContent='❌ حصل خطأ في الاتصال. حاول تاني.';
+    typingDiv.textContent='❌ فشل الاتصال. تأكد من الـ API Key وحاول تاني.';
   }
   btn.disabled=false;
   document.getElementById('chatMsgs').scrollTop=9999;
@@ -1498,18 +1380,16 @@ async function sendChat(){
     <div class="chat-hdr-ico">🤖</div>
     <div class="chat-hdr-info">
       <div class="chat-hdr-title">AI Returns Analyst</div>
-      <div class="chat-hdr-sub">Powered by Claude — اسأل بالعربي أو الإنجليزي</div>
+      <div class="chat-hdr-sub">Powered by Gemini 2.0 Flash — اسأل بالعربي أو الإنجليزي</div>
     </div>
     <button class="chat-close" onclick="toggleChat()">×</button>
   </div>
-  <div class="chat-msgs" id="chatMsgs">
-    <div class="chat-bubble ai" dir="auto">مرحباً! 👋 أنا محلل الـ Returns بتاعك.<br><br>اسألني أي حاجة عن بياناتك، أو دوس على واحد من الاقتراحات تحت.</div>
+  <div class="chat-key-bar" id="chatKeyBar" style="display:none">
+    <input class="chat-key-input" id="apiKeyInput" type="password" placeholder="أدخل API Key هنا">
+    <button class="chat-key-btn" onclick="saveApiKey()">حفظ</button>
   </div>
-  <div class="chat-chips" id="chatChips">
-    <div class="chat-chip" onclick="quickAsk('إيه أكتر تاجر بيرجع منتجات كتير؟')">🏢 أكتر تاجر مشكلة</div>
-    <div class="chat-chip" onclick="quickAsk('وضّح ليا تريند المرتجعات آخر 3 شهور')">📈 تريند المرتجعات</div>
-    <div class="chat-chip" onclick="quickAsk('Which ASIN has the highest return value?')">📦 Top ASIN</div>
-    <div class="chat-chip" onclick="quickAsk('إيه أكتر سبب (Root Cause) بيتكرر؟')">⚠️ أكتر سبب</div>
+  <div class="chat-msgs" id="chatMsgs">
+    <div class="chat-bubble ai">مرحباً! 👋 أنا محلل الـ Returns بتاعك — مدعوم بـ Gemini AI.<br><br>اسألني أي حاجة عن بياناتك زي:<br>• "إيه أكتر تاجر مشكلة؟"<br>• "وضّح ليا تريند المرتجعات"<br>• "Which ASIN has the highest value?"</div>
   </div>
   <div class="chat-bar">
     <input class="chat-input" id="chatInput" placeholder="اكتب سؤالك هنا…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
